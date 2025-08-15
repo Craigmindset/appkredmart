@@ -1,66 +1,81 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useAdminRBACStore, type AdminRole } from "@/store/admin-rbac-store"
-import { toast } from "@/hooks/use-toast"
-import { Eye, EyeOff, Shield, User, X } from "lucide-react"
+import type React from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useAdminRBACStore, type AdminRole } from "@/store/admin-rbac-store";
+import { toast } from "@/hooks/use-toast";
+import { Eye, EyeOff, Shield, User, X } from "lucide-react";
 
 export default function AdminSignIn() {
-  const router = useRouter()
-  const { signIn } = useAdminRBACStore()
-  const [isLoading, setIsLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
+  const router = useRouter();
+  const { signIn } = useAdminRBACStore();
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     role: "super-admin" as AdminRole,
-  })
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!formData.email || !formData.password) {
       toast({
         title: "Error",
         description: "Please fill in all fields.",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Demo authentication - in real app, validate against API
-    signIn(formData.email, formData.role)
+    signIn(formData.email, formData.role);
 
     toast({
       title: "Welcome!",
       description: `Signed in as ${formData.role.replace("-", " ")}`,
-    })
+    });
 
-    router.replace("/admin/dashboard/overview")
-    setIsLoading(false)
-  }
+    router.replace("/admin/dashboard/overview");
+    setIsLoading(false);
+  };
 
   const roleDescriptions = {
     "super-admin": "Full access to all features and settings",
     manager: "Manage merchants, users, inventory, and orders",
     marketer: "Manage products, inventory, and customer support",
     finance: "Access to revenue, transactions, and financial data",
-  }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div
+      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4
+    "
+      style={{
+        backgroundImage: "url('/images/login-bg.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <Card className="w-full max-w-md">
         <CardHeader className="text-center relative">
           <Button
@@ -89,7 +104,9 @@ export default function AdminSignIn() {
                 type="email"
                 placeholder="admin@kredmart.com"
                 value={formData.email}
-                onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, email: e.target.value }))
+                }
                 required
               />
             </div>
@@ -102,7 +119,12 @@ export default function AdminSignIn() {
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   value={formData.password}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, password: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      password: e.target.value,
+                    }))
+                  }
                   className="pr-10"
                   required
                 />
@@ -113,7 +135,11 @@ export default function AdminSignIn() {
                   className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
             </div>
@@ -122,7 +148,9 @@ export default function AdminSignIn() {
               <Label htmlFor="role">Role (Demo)</Label>
               <Select
                 value={formData.role}
-                onValueChange={(value: AdminRole) => setFormData((prev) => ({ ...prev, role: value }))}
+                onValueChange={(value: AdminRole) =>
+                  setFormData((prev) => ({ ...prev, role: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -154,7 +182,9 @@ export default function AdminSignIn() {
                   </SelectItem>
                 </SelectContent>
               </Select>
-              <p className="text-xs text-gray-500">{roleDescriptions[formData.role]}</p>
+              <p className="text-xs text-gray-500">
+                {roleDescriptions[formData.role]}
+              </p>
             </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>
@@ -168,23 +198,8 @@ export default function AdminSignIn() {
               )}
             </Button>
           </form>
-
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <h4 className="text-sm font-semibold text-blue-900 mb-2">Demo Credentials:</h4>
-            <div className="text-xs text-blue-700 space-y-1">
-              <p>
-                <strong>Email:</strong> Any valid email
-              </p>
-              <p>
-                <strong>Password:</strong> Any password (3+ chars)
-              </p>
-              <p>
-                <strong>Roles:</strong> Select different roles to see permission differences
-              </p>
-            </div>
-          </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
