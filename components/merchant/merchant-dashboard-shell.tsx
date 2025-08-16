@@ -175,8 +175,18 @@ export function MerchantDashboardShell({
             </div>
             <div className="flex items-center gap-3">
               {/* Home and Store Links */}
-              <Link href="/" className="text-gray-700 hover:text-blue-700 text-sm font-medium px-2 py-1 rounded hover:bg-gray-100 transition-colors">Home</Link>
-              <Link href="/store" className="text-gray-700 hover:text-blue-700 text-sm font-medium px-2 py-1 rounded hover:bg-gray-100 transition-colors">Store</Link>
+              <Link
+                href="/"
+                className="text-gray-700 hover:text-blue-700 text-sm font-medium px-2 py-1 rounded hover:bg-gray-100 transition-colors"
+              >
+                Home
+              </Link>
+              <Link
+                href="/store"
+                className="text-gray-700 hover:text-blue-700 text-sm font-medium px-2 py-1 rounded hover:bg-gray-100 transition-colors"
+              >
+                Store
+              </Link>
               {/* Wallet */}
               <Button
                 variant="ghost"

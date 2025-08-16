@@ -49,60 +49,32 @@ const MENU = [
 
 type Country = { code: "NGN" | "GHA" | "GB"; label: string; flag: string };
 const COUNTRIES: Country[] = [
-  { code: "NGN", label: "Nigeria", flag: "🇳🇬" },
-  { code: "GHA", label: "Ghana", flag: "🇬🇭" },
-  { code: "GB", label: "United Kingdom", flag: "🇬🇧" },
+  { code: "NGN", label: "Nigeria", flag: "/images/flags/ng.png" },
+  { code: "GHA", label: "Ghana", flag: "/images/flags/gh.png" },
+  { code: "GB", label: "United Kingdom", flag: "/images/flags/uk.png" },
 ];
 
 function CountrySelector() {
   const [selected, setSelected] = useState<Country>(COUNTRIES[0]);
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("kredmart-country");
-      if (saved) {
-        const found = COUNTRIES.find((c) => c.code === saved);
-        if (found) setSelected(found);
-      } else {
-        localStorage.setItem("kredmart-country", COUNTRIES[0].code);
-      }
-    } catch {}
-  }, []);
-
-  const onSelect = (c: Country) => {
-    setSelected(c);
-    try {
-      localStorage.setItem("kredmart-country", c.code);
-    } catch {}
-  };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-8 gap-2">
-          <span
-            aria-hidden="true"
-            className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-muted text-xs"
-            title={selected.label}
-          >
-            {selected.flag}
-          </span>
-          <span className="text-xs font-medium">{selected.code}</span>
+        <Button variant="ghost" className="flex items-center gap-2 px-2">
+          <img src={selected.flag} alt={selected.label + ' flag'} className="w-5 h-5 rounded-full object-cover" />
+          <span className="text-xs font-medium">{selected.label}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-44">
-        {COUNTRIES.map((c) => (
-          <DropdownMenuItem key={c.code} onClick={() => onSelect(c)}>
-            <span
-              aria-hidden="true"
-              className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-muted text-[11px]"
-            >
-              {c.flag}
-            </span>
-            <span className="text-sm">{c.label}</span>
-            <span className="ml-auto text-xs text-muted-foreground">
-              {c.code}
-            </span>
+      <DropdownMenuContent align="end">
+        <DropdownMenuLabel>Select Country</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {COUNTRIES.map((country) => (
+          <DropdownMenuItem
+            key={country.code}
+            onClick={() => setSelected(country)}
+            className="flex items-center gap-2"
+          >
+            <img src={country.flag} alt={country.label + ' flag'} className="w-5 h-5 rounded-full object-cover" />
+            <span className="text-xs font-medium">{country.label}</span>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
