@@ -229,144 +229,142 @@ export function MerchantOrders() {
             </Select>
           </div>
 
-          {/* Orders Table - Only Table Scrolls */}
-          <div className="rounded-md border flex-1 min-h-0 flex flex-col">
-            <div className="flex-1 min-h-0 overflow-y-auto">
-              <div className="overflow-x-auto">
-                <Table className="relative min-w-full">
-                  <TableHeader className="sticky top-0 bg-background z-10">
+          {/* Orders Table - Only Table Scrolls Horizontally */}
+          <div className="rounded-md border w-full">
+            <div className="overflow-x-auto w-full">
+              <Table className="min-w-max w-full">
+                <TableHeader className="sticky top-0 bg-background z-10">
+                  <TableRow>
+                    <TableHead className="min-w-[100px]">Date</TableHead>
+                    <TableHead className="min-w-[120px]">Order ID</TableHead>
+                    <TableHead className="min-w-[140px] hidden sm:table-cell">
+                      Transaction ID
+                    </TableHead>
+                    <TableHead className="min-w-[140px]">Customer</TableHead>
+                    <TableHead className="min-w-[140px] hidden md:table-cell">
+                      Contact
+                    </TableHead>
+                    <TableHead className="min-w-[160px]">Product</TableHead>
+                    <TableHead className="min-w-[120px]">Amount</TableHead>
+                    <TableHead className="min-w-[100px] hidden lg:table-cell">
+                      Payment
+                    </TableHead>
+                    <TableHead className="min-w-[120px]">Status</TableHead>
+                    <TableHead className="min-w-[80px]">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredOrders.length === 0 ? (
                     <TableRow>
-                      <TableHead className="min-w-[100px]">Date</TableHead>
-                      <TableHead className="min-w-[120px]">Order ID</TableHead>
-                      <TableHead className="min-w-[140px] hidden sm:table-cell">
-                        Transaction ID
-                      </TableHead>
-                      <TableHead className="min-w-[140px]">Customer</TableHead>
-                      <TableHead className="min-w-[140px] hidden md:table-cell">
-                        Contact
-                      </TableHead>
-                      <TableHead className="min-w-[160px]">Product</TableHead>
-                      <TableHead className="min-w-[120px]">Amount</TableHead>
-                      <TableHead className="min-w-[100px] hidden lg:table-cell">
-                        Payment
-                      </TableHead>
-                      <TableHead className="min-w-[120px]">Status</TableHead>
-                      <TableHead className="min-w-[80px]">Actions</TableHead>
+                      <TableCell
+                        colSpan={10}
+                        className="text-center py-8 text-muted-foreground"
+                      >
+                        No orders found matching your criteria
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredOrders.length === 0 ? (
-                      <TableRow>
-                        <TableCell
-                          colSpan={10}
-                          className="text-center py-8 text-muted-foreground"
-                        >
-                          No orders found matching your criteria
+                  ) : (
+                    filteredOrders.map((order) => (
+                      <TableRow key={order.id}>
+                        <TableCell className="font-medium text-sm">
+                          {order.date}
+                        </TableCell>
+                        <TableCell className="font-mono text-sm">
+                          {order.orderId}
+                        </TableCell>
+                        <TableCell className="font-mono text-xs hidden sm:table-cell">
+                          {order.transactionId}
+                        </TableCell>
+                        <TableCell>
+                          <div className="max-w-[140px]">
+                            <div className="font-medium text-sm truncate">
+                              {order.customer}
+                            </div>
+                            <div className="text-xs text-muted-foreground md:hidden truncate">
+                              {order.customerContact}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-mono text-xs hidden md:table-cell">
+                          {order.customerContact}
+                        </TableCell>
+                        <TableCell>
+                          <div
+                            className="max-w-[160px] truncate text-sm"
+                            title={order.product}
+                          >
+                            {order.product}
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-medium text-sm">
+                          ₦{order.amount.toLocaleString()}
+                        </TableCell>
+                        <TableCell className="hidden lg:table-cell">
+                          <Badge
+                            variant="secondary"
+                            className={`${getPaymentColor(
+                              order.payment
+                            )} text-xs`}
+                          >
+                            {order.payment}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant="secondary"
+                            className={`${getStatusColor(
+                              order.deliveryStatus
+                            )} text-xs`}
+                          >
+                            {order.deliveryStatus}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  handlePickLocation(order.orderId)
+                                }
+                              >
+                                <MapPin className="mr-2 h-4 w-4" />
+                                Pick Location
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  handleCustomerAddress(
+                                    order.orderId,
+                                    order.customer
+                                  )
+                                }
+                              >
+                                <User className="mr-2 h-4 w-4" />
+                                Customer Address
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  handleProceedToDeliver(order.orderId)
+                                }
+                              >
+                                <Truck className="mr-2 h-4 w-4" />
+                                Proceed to Deliver
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </TableCell>
                       </TableRow>
-                    ) : (
-                      filteredOrders.map((order) => (
-                        <TableRow key={order.id}>
-                          <TableCell className="font-medium text-sm">
-                            {order.date}
-                          </TableCell>
-                          <TableCell className="font-mono text-sm">
-                            {order.orderId}
-                          </TableCell>
-                          <TableCell className="font-mono text-xs hidden sm:table-cell">
-                            {order.transactionId}
-                          </TableCell>
-                          <TableCell>
-                            <div className="max-w-[140px]">
-                              <div className="font-medium text-sm truncate">
-                                {order.customer}
-                              </div>
-                              <div className="text-xs text-muted-foreground md:hidden truncate">
-                                {order.customerContact}
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell className="font-mono text-xs hidden md:table-cell">
-                            {order.customerContact}
-                          </TableCell>
-                          <TableCell>
-                            <div
-                              className="max-w-[160px] truncate text-sm"
-                              title={order.product}
-                            >
-                              {order.product}
-                            </div>
-                          </TableCell>
-                          <TableCell className="font-medium text-sm">
-                            ₦{order.amount.toLocaleString()}
-                          </TableCell>
-                          <TableCell className="hidden lg:table-cell">
-                            <Badge
-                              variant="secondary"
-                              className={`${getPaymentColor(
-                                order.payment
-                              )} text-xs`}
-                            >
-                              {order.payment}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Badge
-                              variant="secondary"
-                              className={`${getStatusColor(
-                                order.deliveryStatus
-                              )} text-xs`}
-                            >
-                              {order.deliveryStatus}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                  <span className="sr-only">Open menu</span>
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    handlePickLocation(order.orderId)
-                                  }
-                                >
-                                  <MapPin className="mr-2 h-4 w-4" />
-                                  Pick Location
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    handleCustomerAddress(
-                                      order.orderId,
-                                      order.customer
-                                    )
-                                  }
-                                >
-                                  <User className="mr-2 h-4 w-4" />
-                                  Customer Address
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    handleProceedToDeliver(order.orderId)
-                                  }
-                                >
-                                  <Truck className="mr-2 h-4 w-4" />
-                                  Proceed to Deliver
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </div>{" "}
-              {/* close overflow-x-auto */}
-            </div>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>{" "}
+            {/* close overflow-x-auto */}
           </div>
         </CardContent>
       </Card>

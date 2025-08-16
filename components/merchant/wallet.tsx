@@ -1,17 +1,50 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Copy, Download, Eye, EyeOff, MoreHorizontal, Plus, Send, WalletIcon } from "lucide-react"
-import { toast } from "sonner"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Copy,
+  Download,
+  Eye,
+  EyeOff,
+  MoreHorizontal,
+  Plus,
+  Send,
+  WalletIcon,
+} from "lucide-react";
+import { toast } from "sonner";
 
 // Demo wallet data
 const walletData = {
@@ -19,7 +52,7 @@ const walletData = {
   accountName: "KredMart Merchant - John's Electronics",
   accountNumber: "1234567890",
   bankName: "KredMart Bank",
-}
+};
 
 // Demo transaction data
 const demoTransactions = [
@@ -73,7 +106,7 @@ const demoTransactions = [
     status: "Completed",
     reference: "TXN-12345674",
   },
-]
+];
 
 // Nigerian banks list
 const nigerianBanks = [
@@ -95,57 +128,61 @@ const nigerianBanks = [
   "SunTrust Bank",
   "Providus Bank",
   "Titan Trust Bank",
-]
+];
 
 export function Wallet() {
-  const [showBalance, setShowBalance] = useState(true)
-  const [showWithdrawModal, setShowWithdrawModal] = useState(false)
-  const [showPinModal, setShowPinModal] = useState(false)
-  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [showBalance, setShowBalance] = useState(true);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [withdrawalData, setWithdrawalData] = useState({
     receiverBank: "",
     receiverAccount: "",
     receiverName: "",
     amount: "",
-  })
-  const [transferPin, setTransferPin] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  });
+  const [transferPin, setTransferPin] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text)
-    toast.success(`${label} copied to clipboard`)
-  }
+    navigator.clipboard.writeText(text);
+    toast.success(`${label} copied to clipboard`);
+  };
 
   const handleWithdrawSubmit = () => {
-    if (!withdrawalData.receiverBank || !withdrawalData.receiverAccount || !withdrawalData.amount) {
-      toast.error("Please fill in all required fields")
-      return
+    if (
+      !withdrawalData.receiverBank ||
+      !withdrawalData.receiverAccount ||
+      !withdrawalData.amount
+    ) {
+      toast.error("Please fill in all required fields");
+      return;
     }
 
     if (Number.parseFloat(withdrawalData.amount) > walletData.balance) {
-      toast.error("Insufficient balance")
-      return
+      toast.error("Insufficient balance");
+      return;
     }
 
-    setShowWithdrawModal(false)
-    setShowPinModal(true)
-  }
+    setShowWithdrawModal(false);
+    setShowPinModal(true);
+  };
 
   const handlePinSubmit = () => {
     if (transferPin.length !== 4) {
-      toast.error("Please enter a 4-digit PIN")
-      return
+      toast.error("Please enter a 4-digit PIN");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     // Simulate PIN verification
     setTimeout(() => {
       if (transferPin === "1234") {
         // Demo PIN
-        setIsLoading(false)
-        setShowPinModal(false)
-        setShowSuccessModal(true)
+        setIsLoading(false);
+        setShowPinModal(false);
+        setShowSuccessModal(true);
 
         // Reset form
         setWithdrawalData({
@@ -153,38 +190,40 @@ export function Wallet() {
           receiverAccount: "",
           receiverName: "",
           amount: "",
-        })
-        setTransferPin("")
+        });
+        setTransferPin("");
 
         // Auto close success modal and redirect
         setTimeout(() => {
-          setShowSuccessModal(false)
-          toast.success("Transfer completed successfully")
-        }, 3000)
+          setShowSuccessModal(false);
+          toast.success("Transfer completed successfully");
+        }, 3000);
       } else {
-        setIsLoading(false)
-        toast.error("Incorrect PIN. Please try again.")
-        setTransferPin("")
+        setIsLoading(false);
+        toast.error("Incorrect PIN. Please try again.");
+        setTransferPin("");
       }
-    }, 2000)
-  }
+    }, 2000);
+  };
 
   const downloadReceipt = (transaction: any) => {
     // Simulate receipt download
-    toast.success(`Receipt for ${transaction.reference} downloaded`)
-  }
+    toast.success(`Receipt for ${transaction.reference} downloaded`);
+  };
 
   const getTransactionColor = (type: string) => {
     return type === "Credit"
       ? "bg-green-100 text-green-800 hover:bg-green-200"
-      : "bg-red-100 text-red-800 hover:bg-red-200"
-  }
+      : "bg-red-100 text-red-800 hover:bg-red-200";
+  };
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Wallet</h1>
-        <p className="text-muted-foreground mt-2">Manage your merchant wallet and transactions</p>
+        <p className="text-muted-foreground mt-2">
+          Manage your merchant wallet and transactions
+        </p>
       </div>
 
       {/* Wallet Overview */}
@@ -201,8 +240,10 @@ export function Wallet() {
             <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-3">
-                  <div className="text-4xl font-bold">
-                    {showBalance ? `₦${walletData.balance.toLocaleString()}` : "₦****"}
+                  <div className="text-2xl font-bold">
+                    {showBalance
+                      ? `₦${walletData.balance.toLocaleString()}`
+                      : "₦****"}
                   </div>
                   <Button
                     variant="ghost"
@@ -210,17 +251,26 @@ export function Wallet() {
                     onClick={() => setShowBalance(!showBalance)}
                     className="h-8 w-8 p-0"
                   >
-                    {showBalance ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showBalance ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
                   </Button>
                 </div>
-                <div className="text-sm text-muted-foreground mt-1">Available balance</div>
+                <div className="text-sm text-muted-foreground mt-1">
+                  Available balance
+                </div>
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" className="bg-transparent">
                   <Plus className="mr-2 h-4 w-4" />
                   Add Funds
                 </Button>
-                <Button onClick={() => setShowWithdrawModal(true)} className="bg-blue-600 hover:bg-blue-700">
+                <Button
+                  onClick={() => setShowWithdrawModal(true)}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
                   <Send className="mr-2 h-4 w-4" />
                   Withdraw
                 </Button>
@@ -236,13 +286,19 @@ export function Wallet() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label className="text-sm font-medium text-muted-foreground">Account Name</Label>
+              <Label className="text-sm font-medium text-muted-foreground">
+                Account Name
+              </Label>
               <div className="flex items-center justify-between mt-1 p-2 bg-muted rounded-md">
-                <span className="text-sm font-medium truncate">{walletData.accountName}</span>
+                <span className="text-sm font-medium truncate">
+                  {walletData.accountName}
+                </span>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => copyToClipboard(walletData.accountName, "Account name")}
+                  onClick={() =>
+                    copyToClipboard(walletData.accountName, "Account name")
+                  }
                   className="h-6 w-6 p-0 ml-2"
                 >
                   <Copy className="h-3 w-3" />
@@ -251,13 +307,19 @@ export function Wallet() {
             </div>
 
             <div>
-              <Label className="text-sm font-medium text-muted-foreground">Account Number</Label>
+              <Label className="text-sm font-medium text-muted-foreground">
+                Account Number
+              </Label>
               <div className="flex items-center justify-between mt-1 p-2 bg-muted rounded-md">
-                <span className="text-sm font-mono font-medium">{walletData.accountNumber}</span>
+                <span className="text-sm font-mono font-medium">
+                  {walletData.accountNumber}
+                </span>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => copyToClipboard(walletData.accountNumber, "Account number")}
+                  onClick={() =>
+                    copyToClipboard(walletData.accountNumber, "Account number")
+                  }
                   className="h-6 w-6 p-0 ml-2"
                 >
                   <Copy className="h-3 w-3" />
@@ -266,9 +328,13 @@ export function Wallet() {
             </div>
 
             <div>
-              <Label className="text-sm font-medium text-muted-foreground">Bank Name</Label>
+              <Label className="text-sm font-medium text-muted-foreground">
+                Bank Name
+              </Label>
               <div className="mt-1 p-2 bg-muted rounded-md">
-                <span className="text-sm font-medium">{walletData.bankName}</span>
+                <span className="text-sm font-medium">
+                  {walletData.bankName}
+                </span>
               </div>
             </div>
           </CardContent>
@@ -300,11 +366,16 @@ export function Wallet() {
                     <TableCell>
                       <div>
                         <div className="font-medium">{transaction.date}</div>
-                        <div className="text-sm text-muted-foreground">{transaction.time}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {transaction.time}
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="secondary" className={getTransactionColor(transaction.type)}>
+                      <Badge
+                        variant="secondary"
+                        className={getTransactionColor(transaction.type)}
+                      >
                         {transaction.type}
                       </Badge>
                     </TableCell>
@@ -313,14 +384,25 @@ export function Wallet() {
                         {transaction.description}
                       </div>
                     </TableCell>
-                    <TableCell className="font-mono text-sm">{transaction.reference}</TableCell>
+                    <TableCell className="font-mono text-sm">
+                      {transaction.reference}
+                    </TableCell>
                     <TableCell className="font-semibold">
-                      <span className={transaction.amount > 0 ? "text-green-600" : "text-red-600"}>
+                      <span
+                        className={
+                          transaction.amount > 0
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }
+                      >
                         ₦{Math.abs(transaction.amount).toLocaleString()}
                       </span>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="bg-green-100 text-green-800">
+                      <Badge
+                        variant="outline"
+                        className="bg-green-100 text-green-800"
+                      >
                         {transaction.status}
                       </Badge>
                     </TableCell>
@@ -332,7 +414,9 @@ export function Wallet() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => downloadReceipt(transaction)}>
+                          <DropdownMenuItem
+                            onClick={() => downloadReceipt(transaction)}
+                          >
                             <Download className="mr-2 h-4 w-4" />
                             Download Receipt
                           </DropdownMenuItem>
@@ -352,7 +436,9 @@ export function Wallet() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Withdraw Funds</DialogTitle>
-            <DialogDescription>Transfer money from your wallet to your bank account</DialogDescription>
+            <DialogDescription>
+              Transfer money from your wallet to your bank account
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -362,17 +448,37 @@ export function Wallet() {
                   id="receiverBank"
                   placeholder="Type bank name or select from dropdown"
                   value={withdrawalData.receiverBank}
-                  onChange={(e) => setWithdrawalData((prev) => ({ ...prev, receiverBank: e.target.value }))}
+                  onChange={(e) =>
+                    setWithdrawalData((prev) => ({
+                      ...prev,
+                      receiverBank: e.target.value,
+                    }))
+                  }
                   className="pr-10"
                 />
                 <Select
                   value={withdrawalData.receiverBank}
-                  onValueChange={(value) => setWithdrawalData((prev) => ({ ...prev, receiverBank: value }))}
+                  onValueChange={(value) =>
+                    setWithdrawalData((prev) => ({
+                      ...prev,
+                      receiverBank: value,
+                    }))
+                  }
                 >
                   <SelectTrigger className="absolute right-0 top-0 h-full w-10 border-0 bg-transparent p-0 hover:bg-muted">
                     <SelectValue />
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    <svg
+                      className="h-4 w-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   </SelectTrigger>
                   <SelectContent>
@@ -392,7 +498,12 @@ export function Wallet() {
                 id="receiverAccount"
                 placeholder="Enter account number"
                 value={withdrawalData.receiverAccount}
-                onChange={(e) => setWithdrawalData((prev) => ({ ...prev, receiverAccount: e.target.value }))}
+                onChange={(e) =>
+                  setWithdrawalData((prev) => ({
+                    ...prev,
+                    receiverAccount: e.target.value,
+                  }))
+                }
               />
             </div>
 
@@ -402,7 +513,12 @@ export function Wallet() {
                 id="receiverName"
                 placeholder="Account holder name"
                 value={withdrawalData.receiverName}
-                onChange={(e) => setWithdrawalData((prev) => ({ ...prev, receiverName: e.target.value }))}
+                onChange={(e) =>
+                  setWithdrawalData((prev) => ({
+                    ...prev,
+                    receiverName: e.target.value,
+                  }))
+                }
               />
             </div>
 
@@ -413,7 +529,12 @@ export function Wallet() {
                 type="number"
                 placeholder="Enter amount"
                 value={withdrawalData.amount}
-                onChange={(e) => setWithdrawalData((prev) => ({ ...prev, amount: e.target.value }))}
+                onChange={(e) =>
+                  setWithdrawalData((prev) => ({
+                    ...prev,
+                    amount: e.target.value,
+                  }))
+                }
               />
               <div className="text-sm text-muted-foreground mt-1">
                 Available: ₦{walletData.balance.toLocaleString()}
@@ -421,7 +542,10 @@ export function Wallet() {
             </div>
 
             <div className="flex justify-end gap-2 pt-4">
-              <Button variant="outline" onClick={() => setShowWithdrawModal(false)}>
+              <Button
+                variant="outline"
+                onClick={() => setShowWithdrawModal(false)}
+              >
                 Cancel
               </Button>
               <Button onClick={handleWithdrawSubmit}>Confirm Transfer</Button>
@@ -435,7 +559,9 @@ export function Wallet() {
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle>Enter Transfer PIN</DialogTitle>
-            <DialogDescription>Please enter your 4-digit transfer PIN to complete the transaction</DialogDescription>
+            <DialogDescription>
+              Please enter your 4-digit transfer PIN to complete the transaction
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -446,17 +572,28 @@ export function Wallet() {
                 placeholder="Enter 4-digit PIN"
                 maxLength={4}
                 value={transferPin}
-                onChange={(e) => setTransferPin(e.target.value.replace(/\D/g, ""))}
+                onChange={(e) =>
+                  setTransferPin(e.target.value.replace(/\D/g, ""))
+                }
                 className="text-center text-lg tracking-widest"
               />
-              <div className="text-xs text-muted-foreground mt-1 text-center">Demo PIN: 1234</div>
+              <div className="text-xs text-muted-foreground mt-1 text-center">
+                Demo PIN: 1234
+              </div>
             </div>
 
             <div className="flex justify-end gap-2 pt-4">
-              <Button variant="outline" onClick={() => setShowPinModal(false)} disabled={isLoading}>
+              <Button
+                variant="outline"
+                onClick={() => setShowPinModal(false)}
+                disabled={isLoading}
+              >
                 Cancel
               </Button>
-              <Button onClick={handlePinSubmit} disabled={isLoading || transferPin.length !== 4}>
+              <Button
+                onClick={handlePinSubmit}
+                disabled={isLoading || transferPin.length !== 4}
+              >
                 {isLoading ? "Verifying..." : "Submit"}
               </Button>
             </div>
@@ -468,21 +605,35 @@ export function Wallet() {
       <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle className="text-center text-green-600">Transfer Successful!</DialogTitle>
+            <DialogTitle className="text-center text-green-600">
+              Transfer Successful!
+            </DialogTitle>
             <DialogDescription className="text-center">
               Your withdrawal has been processed successfully
             </DialogDescription>
           </DialogHeader>
           <div className="text-center py-4">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <svg
+                className="w-8 h-8 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
             </div>
-            <p className="text-sm text-muted-foreground">You will be redirected to your wallet shortly...</p>
+            <p className="text-sm text-muted-foreground">
+              You will be redirected to your wallet shortly...
+            </p>
           </div>
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

@@ -114,7 +114,10 @@ export function MerchantDashboardShell({
                       isActive={pathname === item.href}
                       className="w-full justify-start px-3 py-2.5 text-blue-200 hover:bg-blue-800 hover:text-white data-[active=true]:bg-blue-600 data-[active=true]:text-white rounded-lg transition-all duration-200"
                     >
-                      <Link href={item.href} className="flex items-center gap-3">
+                      <Link
+                        href={item.href}
+                        className="flex items-center gap-3"
+                      >
                         <item.icon className="h-4 w-4 flex-shrink-0" />
                         <span className="font-medium">{item.label}</span>
                       </Link>
@@ -155,8 +158,8 @@ export function MerchantDashboardShell({
         </SidebarFooter>
       </Sidebar>
       <SidebarInset className="flex-1 bg-gray-50">
-        {/* Static Header (now normal block, not sticky) */}
-        <header className="w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/75">
+        {/* Sticky Header */}
+        <header className="sticky top-0 z-30 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/75">
           <div className="flex h-16 items-center justify-between px-6">
             <div className="flex items-center gap-4">
               <SidebarTrigger className="h-8 w-8 p-0 hover:bg-gray-100 rounded-md transition-colors" />
@@ -171,6 +174,9 @@ export function MerchantDashboardShell({
               </div>
             </div>
             <div className="flex items-center gap-3">
+              {/* Home and Store Links */}
+              <Link href="/" className="text-gray-700 hover:text-blue-700 text-sm font-medium px-2 py-1 rounded hover:bg-gray-100 transition-colors">Home</Link>
+              <Link href="/store" className="text-gray-700 hover:text-blue-700 text-sm font-medium px-2 py-1 rounded hover:bg-gray-100 transition-colors">Store</Link>
               {/* Wallet */}
               <Button
                 variant="ghost"
