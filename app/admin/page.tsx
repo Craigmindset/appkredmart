@@ -145,7 +145,7 @@ export default function AdminSignIn() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="role">Role (Demo)</Label>
+              <Label htmlFor="role">Role</Label>
               <Select
                 value={formData.role}
                 onValueChange={(value: AdminRole) =>
