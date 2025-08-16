@@ -1,13 +1,20 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { formatNaira } from "@/lib/currency"
+import { useState } from "react";
+import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { formatNaira } from "@/lib/currency";
 import {
   TrendingUp,
   Package,
@@ -23,7 +30,7 @@ import {
   Truck,
   AlertCircle,
   Upload,
-} from "lucide-react"
+} from "lucide-react";
 
 // Demo data for merchant overview
 const demoMerchantData = {
@@ -108,51 +115,59 @@ const demoMerchantData = {
       stock: 6,
     },
   ],
-}
+};
 
 function getStatusColor(status: string) {
   switch (status) {
     case "completed":
-      return "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300"
+      return "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300";
     case "processing":
-      return "bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300"
+      return "bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300";
     case "shipped":
-      return "bg-purple-100 text-purple-700 dark:bg-purple-950/50 dark:text-purple-300"
+      return "bg-purple-100 text-purple-700 dark:bg-purple-950/50 dark:text-purple-300";
     case "pending":
-      return "bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300"
+      return "bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300";
     default:
-      return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
+      return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200";
   }
 }
 
 function getStatusIcon(status: string) {
   switch (status) {
     case "completed":
-      return <CheckCircle className="h-4 w-4" />
+      return <CheckCircle className="h-4 w-4" />;
     case "processing":
-      return <Clock className="h-4 w-4" />
+      return <Clock className="h-4 w-4" />;
     case "shipped":
-      return <Truck className="h-4 w-4" />
+      return <Truck className="h-4 w-4" />;
     case "pending":
-      return <AlertCircle className="h-4 w-4" />
+      return <AlertCircle className="h-4 w-4" />;
     default:
-      return null
+      return null;
   }
 }
 
 export function Overview() {
-  const [activeTab, setActiveTab] = useState<"orders" | "products">("orders")
+  const [activeTab, setActiveTab] = useState<"orders" | "products">("orders");
 
   return (
     <div className="space-y-8">
       {/* Header Section */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mt-10">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard Overview</h1>
-          <p className="text-lg text-muted-foreground">Monitor your store performance and track key business metrics</p>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Dashboard Overview
+          </h1>
+          <p className="text-lg text-muted-foreground">
+            Monitor your store performance and track key business metrics
+          </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" size="default" className="gap-2 bg-transparent">
+          <Button
+            variant="outline"
+            size="default"
+            className="gap-2 bg-transparent"
+          >
             <Download className="h-4 w-4" />
             Export Report
           </Button>
@@ -170,12 +185,16 @@ export function Overview() {
         <Card className="overflow-hidden">
           <CardHeader className="bg-emerald-600 text-emerald-50 pb-4">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-emerald-50 text-lg">Total Revenue</CardTitle>
+              <CardTitle className="text-emerald-50 text-lg">
+                Total Revenue
+              </CardTitle>
               <DollarSign className="h-6 w-6 opacity-90" />
             </div>
           </CardHeader>
           <CardContent className="py-6">
-            <div className="text-3xl font-bold mb-2">{formatNaira(demoMerchantData.revenue)}</div>
+            <div className="text-3xl font-bold mb-2">
+              {formatNaira(demoMerchantData.revenue)}
+            </div>
             <div className="flex items-center text-sm text-emerald-600">
               <TrendingUp className="h-4 w-4 mr-2" />
               +12.5% from last month
@@ -186,12 +205,16 @@ export function Overview() {
         <Card className="overflow-hidden">
           <CardHeader className="bg-blue-600 text-blue-50 pb-4">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-blue-50 text-lg">Total Orders</CardTitle>
+              <CardTitle className="text-blue-50 text-lg">
+                Total Orders
+              </CardTitle>
               <ShoppingCart className="h-6 w-6 opacity-90" />
             </div>
           </CardHeader>
           <CardContent className="py-6">
-            <div className="text-3xl font-bold mb-2">{demoMerchantData.orders}</div>
+            <div className="text-3xl font-bold mb-2">
+              {demoMerchantData.orders}
+            </div>
             <div className="flex items-center text-sm text-blue-600">
               <TrendingUp className="h-4 w-4 mr-2" />
               +8.2% from last month
@@ -207,20 +230,28 @@ export function Overview() {
             </div>
           </CardHeader>
           <CardContent className="py-6">
-            <div className="text-3xl font-bold mb-2">{demoMerchantData.products}</div>
-            <div className="text-sm text-muted-foreground">+3 new products this month</div>
+            <div className="text-3xl font-bold mb-2">
+              {demoMerchantData.products}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              +3 new products this month
+            </div>
           </CardContent>
         </Card>
 
         <Card className="overflow-hidden">
           <CardHeader className="bg-orange-600 text-orange-50 pb-4">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-orange-50 text-lg">Customers</CardTitle>
+              <CardTitle className="text-orange-50 text-lg">
+                Customers
+              </CardTitle>
               <Users className="h-6 w-6 opacity-90" />
             </div>
           </CardHeader>
           <CardContent className="py-6">
-            <div className="text-3xl font-bold mb-2">{demoMerchantData.customers}</div>
+            <div className="text-3xl font-bold mb-2">
+              {demoMerchantData.customers}
+            </div>
             <div className="flex items-center text-sm text-orange-600">
               <TrendingUp className="h-4 w-4 mr-2" />
               +15.3% from last month
@@ -240,7 +271,9 @@ export function Overview() {
               <ArrowUpRight className="h-5 w-5 text-muted-foreground group-hover:text-blue-600 transition-colors" />
             </div>
             <h3 className="font-semibold text-lg mb-2">Add New Product</h3>
-            <p className="text-muted-foreground">Upload and manage your product catalog with ease</p>
+            <p className="text-muted-foreground">
+              Upload and manage your product catalog with ease
+            </p>
           </CardContent>
         </Card>
 
@@ -253,7 +286,9 @@ export function Overview() {
               <ArrowUpRight className="h-5 w-5 text-muted-foreground group-hover:text-green-600 transition-colors" />
             </div>
             <h3 className="font-semibold text-lg mb-2">Manage Inventory</h3>
-            <p className="text-muted-foreground">Update stock levels, pricing, and product details</p>
+            <p className="text-muted-foreground">
+              Update stock levels, pricing, and product details
+            </p>
           </CardContent>
         </Card>
 
@@ -266,7 +301,9 @@ export function Overview() {
               <ArrowUpRight className="h-5 w-5 text-muted-foreground group-hover:text-purple-600 transition-colors" />
             </div>
             <h3 className="font-semibold text-lg mb-2">View Analytics</h3>
-            <p className="text-muted-foreground">Detailed performance reports and insights</p>
+            <p className="text-muted-foreground">
+              Detailed performance reports and insights
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -277,13 +314,19 @@ export function Overview() {
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="space-y-2">
               <CardTitle className="text-2xl">Recent Activity</CardTitle>
-              <p className="text-muted-foreground">View your latest orders and top-performing products</p>
+              <p className="text-muted-foreground">
+                View your latest orders and top-performing products
+              </p>
             </div>
             <div className="flex gap-3">
               <Button asChild variant="outline" size="default">
                 <Link href="/dashboard/merchant/transactions">View All</Link>
               </Button>
-              <Button variant="outline" size="default" className="gap-2 bg-transparent">
+              <Button
+                variant="outline"
+                size="default"
+                className="gap-2 bg-transparent"
+              >
                 <Download className="h-4 w-4" />
                 Export
               </Button>
@@ -291,7 +334,10 @@ export function Overview() {
           </div>
         </CardHeader>
         <CardContent>
-          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+          <Tabs
+            value={activeTab}
+            onValueChange={(v) => setActiveTab(v as typeof activeTab)}
+          >
             <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="orders" className="text-base py-3">
                 Recent Orders
@@ -319,10 +365,18 @@ export function Overview() {
                   <TableBody>
                     {demoMerchantData.recentOrders.map((order) => (
                       <TableRow key={order.id} className="hover:bg-muted/50">
-                        <TableCell className="font-medium">{order.id}</TableCell>
-                        <TableCell className="font-medium">{order.customer}</TableCell>
-                        <TableCell className="max-w-[200px] truncate">{order.product}</TableCell>
-                        <TableCell className="text-right font-semibold">{formatNaira(order.amount)}</TableCell>
+                        <TableCell className="font-medium">
+                          {order.id}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {order.customer}
+                        </TableCell>
+                        <TableCell className="max-w-[200px] truncate">
+                          {order.product}
+                        </TableCell>
+                        <TableCell className="text-right font-semibold">
+                          {formatNaira(order.amount)}
+                        </TableCell>
                         <TableCell>
                           <Badge variant="outline" className="font-medium">
                             {order.paymentMethod}
@@ -331,14 +385,24 @@ export function Overview() {
                         <TableCell>
                           <div className="flex items-center gap-2">
                             {getStatusIcon(order.status)}
-                            <Badge className={`font-medium ${getStatusColor(order.status)}`}>{order.status}</Badge>
+                            <Badge
+                              className={`font-medium ${getStatusColor(
+                                order.status
+                              )}`}
+                            >
+                              {order.status}
+                            </Badge>
                           </div>
                         </TableCell>
                         <TableCell className="text-muted-foreground">
                           {new Date(order.date).toLocaleDateString()}
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                          >
                             <Eye className="h-4 w-4" />
                           </Button>
                         </TableCell>
@@ -365,17 +429,34 @@ export function Overview() {
                   <TableBody>
                     {demoMerchantData.topProducts.map((product) => (
                       <TableRow key={product.id} className="hover:bg-muted/50">
-                        <TableCell className="font-medium">{product.id}</TableCell>
-                        <TableCell className="font-medium">{product.name}</TableCell>
-                        <TableCell className="text-right font-semibold">{product.sales}</TableCell>
-                        <TableCell className="text-right font-semibold">{formatNaira(product.revenue)}</TableCell>
+                        <TableCell className="font-medium">
+                          {product.id}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {product.name}
+                        </TableCell>
+                        <TableCell className="text-right font-semibold">
+                          {product.sales}
+                        </TableCell>
+                        <TableCell className="text-right font-semibold">
+                          {formatNaira(product.revenue)}
+                        </TableCell>
                         <TableCell className="text-right">
-                          <Badge variant={product.stock < 10 ? "destructive" : "secondary"} className="font-medium">
+                          <Badge
+                            variant={
+                              product.stock < 10 ? "destructive" : "secondary"
+                            }
+                            className="font-medium"
+                          >
                             {product.stock} in stock
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                          >
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </TableCell>
@@ -389,5 +470,5 @@ export function Overview() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

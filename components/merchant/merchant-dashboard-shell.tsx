@@ -1,41 +1,72 @@
-"use client"
+"use client";
 
-import React from "react"
+import React from "react";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarInset,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarHeader,
-  SidebarFooter,
-  SidebarInset,
   SidebarProvider,
-  SidebarRail,
-} from "@/components/ui/sidebar"
-import { Home, LayoutList, Settings, Wallet, Upload, PackageSearch, Boxes, LogOut, ShoppingBag } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+  SidebarTrigger,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+} from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  LogOut,
+  Wallet,
+  ShoppingBag,
+  LayoutList,
+  Boxes,
+  Upload,
+  PackageSearch,
+  Settings,
+  Home,
+} from "lucide-react";
 
 const merchantNavItems = [
-  { label: "Overview", href: "/dashboard/merchant/overview", icon: Home },
-  { label: "Orders", href: "/dashboard/merchant/orders", icon: ShoppingBag },
-  { label: "Transactions", href: "/dashboard/merchant/transactions", icon: LayoutList },
-  { label: "Inventory", href: "/dashboard/merchant/inventory", icon: Boxes },
-  { label: "Product Upload", href: "/dashboard/merchant/product-upload", icon: Upload },
-  { label: "Wallet", href: "/dashboard/merchant/wallet", icon: Wallet },
-  { label: "Track Order", href: "/dashboard/merchant/track-order", icon: PackageSearch },
-  { label: "Account Settings", href: "/dashboard/merchant/account", icon: Settings },
-]
+  { label: "Overview", href: "/admindesk/dashboard/overview", icon: Home },
+  { label: "Orders", href: "/admindesk/dashboard/orders", icon: ShoppingBag },
+  {
+    label: "Transactions",
+    href: "/admindesk/dashboard/transactions",
+    icon: LayoutList,
+  },
+  { label: "Inventory", href: "/admindesk/dashboard/inventory", icon: Boxes },
+  {
+    label: "Product Upload",
+    href: "/admindesk/dashboard/product-upload",
+    icon: Upload,
+  },
+  { label: "Wallet", href: "/admindesk/dashboard/wallet", icon: Wallet },
+  {
+    label: "Track Order",
+    href: "/admindesk/dashboard/track-order",
+    icon: PackageSearch,
+  },
+  {
+    label: "Account Settings",
+    href: "/admindesk/dashboard/account",
+    icon: Settings,
+  },
+];
 
-export function MerchantDashboardShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
+export function MerchantDashboardShell({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
 
   // Demo merchant data since auth is removed
   const demoMerchant = {
@@ -44,74 +75,148 @@ export function MerchantDashboardShell({ children }: { children: React.ReactNode
     email: "merchant@kredmart.com",
     storeName: "Demo Store",
     balance: 125000,
-    pendingOrders: 8,
-    totalProducts: 45,
-  }
+  };
 
   const initials =
-    (demoMerchant?.firstName?.[0] ?? "") + (demoMerchant?.lastName?.[0] ?? (demoMerchant?.firstName ? "" : "M"))
+    (demoMerchant?.firstName?.[0] ?? "") +
+    (demoMerchant?.lastName?.[0] ?? (demoMerchant?.firstName ? "" : "M"));
 
   const handleLogout = () => {
     // Since auth is removed, just redirect to merchant sign-in
-    window.location.href = "/admindesk"
-  }
+    window.location.href = "/admindesk";
+  };
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-svh w-full">
-        <Sidebar collapsible="icon">
-          <SidebarHeader>
-            <div className="px-2 py-1">
-              <div className="text-sm font-semibold">KredMart</div>
-              <div className="text-xs text-muted-foreground">Merchant Portal</div>
+      <Sidebar className="border-r border-gray-200 bg-blue-900">
+        <SidebarHeader className="border-b border-blue-700 bg-blue-900">
+          <div className="flex items-center gap-3 px-3 py-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white">
+              <Settings className="h-5 w-5" />
             </div>
-          </SidebarHeader>
-          <SidebarContent>
-            <SidebarGroup>
-              <SidebarGroupLabel>Merchant Dashboard</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {merchantNavItems.map((item) => (
-                    <SidebarMenuItem key={item.href}>
-                      <SidebarMenuButton asChild isActive={pathname === item.href}>
-                        <Link href={item.href}>
-                          {React.createElement(item.icon)}
-                          <span>{item.label}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </SidebarContent>
-          <SidebarFooter className="px-2 pb-2">
-            <div className="flex items-center gap-2 px-2 mb-2">
-              <Avatar className="h-6 w-6">
-                <AvatarFallback className="text-[10px]">{initials.toUpperCase()}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <div className="text-xs font-medium truncate">{demoMerchant.storeName}</div>
-                <div className="text-xs text-muted-foreground truncate">{demoMerchant.email}</div>
+            <div className="flex flex-col">
+              <span className="text-lg font-bold text-white">KredMart</span>
+              <span className="text-xs text-blue-300">Merchant Portal</span>
+            </div>
+          </div>
+        </SidebarHeader>
+        <SidebarContent className="bg-blue-900 overflow-y-auto scrollbar-hide">
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-blue-300 text-xs font-semibold uppercase tracking-wider px-3 py-2">
+              Merchant Navigation
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu className="space-y-1 px-2">
+                {merchantNavItems.map((item) => (
+                  <SidebarMenuItem key={item.label}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={pathname === item.href}
+                      className="w-full justify-start px-3 py-2.5 text-blue-200 hover:bg-blue-800 hover:text-white data-[active=true]:bg-blue-600 data-[active=true]:text-white rounded-lg transition-all duration-200"
+                    >
+                      <Link href={item.href} className="flex items-center gap-3">
+                        <item.icon className="h-4 w-4 flex-shrink-0" />
+                        <span className="font-medium">{item.label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter className="border-t border-blue-700 bg-blue-900 p-4">
+          <div className="flex items-center gap-3 mb-3">
+            <Avatar className="h-8 w-8">
+              <AvatarFallback className="bg-blue-600 text-white text-sm">
+                {initials.toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-white truncate">
+                {demoMerchant.storeName}
+              </p>
+              <p className="text-xs text-blue-300 truncate">
+                {demoMerchant.email}
+              </p>
+            </div>
+          </div>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                onClick={handleLogout}
+                className="w-full justify-start px-3 py-2 text-blue-200 hover:bg-blue-800 hover:text-white rounded-lg transition-colors duration-200"
+              >
+                <LogOut className="h-4 w-4 mr-3" />
+                <span>Log Out</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      </Sidebar>
+      <SidebarInset className="flex-1 bg-gray-50">
+        {/* Static Header (now normal block, not sticky) */}
+        <header className="w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/75">
+          <div className="flex h-16 items-center justify-between px-6">
+            <div className="flex items-center gap-4">
+              <SidebarTrigger className="h-8 w-8 p-0 hover:bg-gray-100 rounded-md transition-colors" />
+              <Separator orientation="vertical" className="h-6" />
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">
+                  Merchant Dashboard
+                </h1>
+                <p className="text-sm text-gray-500">
+                  Welcome, {demoMerchant.firstName}
+                </p>
               </div>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-1 bg-transparent text-rose-600 hover:text-rose-700 hover:bg-rose-50"
-              onClick={handleLogout}
-            >
-              <LogOut className="h-3 w-3 mr-1" />
-              Logout
-            </Button>
-          </SidebarFooter>
-          <SidebarRail />
-        </Sidebar>
-
-        <SidebarInset className="w-full">
-          <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
-        </SidebarInset>
-      </div>
+            <div className="flex items-center gap-3">
+              {/* Wallet */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2 hover:bg-gray-100"
+              >
+                <Wallet className="h-4 w-4 text-green-600" />
+                <span className="hidden sm:inline text-sm font-medium text-gray-900">
+                  ₦{demoMerchant.balance.toLocaleString()}
+                </span>
+              </Button>
+              {/* Profile */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2 hover:bg-gray-100"
+              >
+                <Avatar className="h-7 w-7">
+                  <AvatarFallback className="bg-blue-600 text-white text-xs">
+                    {initials.toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="hidden sm:inline text-sm font-medium text-gray-900">
+                  {demoMerchant.firstName}
+                </span>
+              </Button>
+              {/* Logout */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogout}
+                className="hover:bg-gray-100"
+              >
+                <LogOut className="h-4 w-4 text-gray-600" />
+              </Button>
+            </div>
+          </div>
+        </header>
+        <main className="flex-1 overflow-hidden">
+          <div className="h-full overflow-auto">
+            <div className="animate-in slide-in-from-right-5 duration-300 ease-out">
+              <div className="p-6">{children}</div>
+            </div>
+          </div>
+        </main>
+      </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
