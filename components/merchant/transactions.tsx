@@ -291,7 +291,7 @@ export function Transactions() {
 
       {/* Summary Stats - Moved to top */}
       <div className="flex gap-2 mx-0">
-        <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-2 rounded border border-blue-200 w-[300px]">
+        <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-2 rounded border border-blue-200 w-[300px] h-[100px]">
           <div className="text-xl font-bold text-blue-800">
             {demoTransactions.length}
           </div>
