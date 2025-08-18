@@ -1,13 +1,21 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { ArrowRight, LayoutDashboard, CreditCard, ShoppingBag, TrendingUp, Users, Package } from "lucide-react"
-import Link from "next/link"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  ArrowRight,
+  LayoutDashboard,
+  CreditCard,
+  ShoppingBag,
+  TrendingUp,
+  Users,
+  Package,
+} from "lucide-react";
+import Link from "next/link";
 
 interface WelcomeProps {
-  username?: string
+  username?: string;
 }
 
 export default function Welcome({ username = "User" }: WelcomeProps) {
@@ -43,7 +51,8 @@ export default function Welcome({ username = "User" }: WelcomeProps) {
           </h1>
 
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Ready to continue your journey? Choose what you'd like to do next and let's make it happen.
+            Ready to continue your journey? Choose what you'd like to do next
+            and let's make it happen.
           </p>
         </div>
 
@@ -57,8 +66,11 @@ export default function Welcome({ username = "User" }: WelcomeProps) {
                 <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                   <LayoutDashboard className="h-6 w-6 text-white" />
                 </div>
-                <Badge variant="secondary" className="bg-blue-100 text-blue-700 hover:bg-blue-200">
-                  Popular
+                <Badge
+                  variant="secondary"
+                  className="bg-blue-100 text-blue-700 hover:bg-blue-200"
+                >
+                  More
                 </Badge>
               </div>
 
@@ -66,7 +78,8 @@ export default function Welcome({ username = "User" }: WelcomeProps) {
                 Continue to Dashboard
               </h3>
               <p className="text-gray-600 mb-6 text-sm leading-relaxed">
-                Access your personal dashboard to view orders, track deliveries, and manage your account.
+                Access your personal dashboard to view orders, track deliveries,
+                and manage your account.
               </p>
 
               <Link href="/dashboard/overview">
@@ -86,14 +99,20 @@ export default function Welcome({ username = "User" }: WelcomeProps) {
                 <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                   <CreditCard className="h-6 w-6 text-white" />
                 </div>
-                <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-200">
+                <Badge
+                  variant="secondary"
+                  className="bg-green-100 text-green-700 hover:bg-green-200"
+                >
                   Fast Approval
                 </Badge>
               </div>
 
-              <h3 className="text-xl font-bold mb-3 group-hover:text-green-600 transition-colors">Request a Loan</h3>
+              <h3 className="text-xl font-bold mb-3 group-hover:text-green-600 transition-colors">
+                Request a Loan
+              </h3>
               <p className="text-gray-600 mb-6 text-sm leading-relaxed">
-                Get instant access to credit for your purchases with our quick and easy loan application process.
+                Get instant access to credit for your purchases with our quick
+                and easy loan application process.
               </p>
 
               <Link href="/create-wallet">
@@ -113,7 +132,10 @@ export default function Welcome({ username = "User" }: WelcomeProps) {
                 <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                   <ShoppingBag className="h-6 w-6 text-white" />
                 </div>
-                <Badge variant="secondary" className="bg-purple-100 text-purple-700 hover:bg-purple-200">
+                <Badge
+                  variant="secondary"
+                  className="bg-purple-100 text-purple-700 hover:bg-purple-200"
+                >
                   New Arrivals
                 </Badge>
               </div>
@@ -122,7 +144,8 @@ export default function Welcome({ username = "User" }: WelcomeProps) {
                 Continue Shopping
               </h3>
               <p className="text-gray-600 mb-6 text-sm leading-relaxed">
-                Explore our latest products and exclusive deals. Find everything you need in one place.
+                Explore our latest products and exclusive deals. Find everything
+                you need in one place.
               </p>
 
               <Link href="/store">
@@ -163,5 +186,5 @@ export default function Welcome({ username = "User" }: WelcomeProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

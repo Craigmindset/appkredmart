@@ -159,16 +159,16 @@ export function MerchantDashboardShell({
       </Sidebar>
       <SidebarInset className="flex-1 bg-gray-50">
         {/* Sticky Header */}
-        <header className="sticky top-0 z-30 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/75">
+        <header className="sticky top-0 z-30 w-full border-b border-blue-700 bg-blue-700/95 backdrop-blur supports-[backdrop-filter]:bg-blue-700/90">
           <div className="flex h-16 items-center justify-between px-6">
             <div className="flex items-center gap-4">
-              <SidebarTrigger className="h-8 w-8 p-0 hover:bg-gray-100 rounded-md transition-colors" />
-              <Separator orientation="vertical" className="h-6" />
+              <SidebarTrigger className="h-8 w-8 p-0 hover:bg-blue-800 rounded-md transition-colors" />
+              <Separator orientation="vertical" className="h-6 bg-blue-300" />
               <div>
-                <h1 className="text-xl font-bold text-gray-900">
+                <h1 className="text-xl font-bold text-white">
                   Merchant Dashboard
                 </h1>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-blue-200">
                   Welcome, {demoMerchant.firstName}
                 </p>
               </div>
@@ -177,13 +177,13 @@ export function MerchantDashboardShell({
               {/* Home and Store Links */}
               <Link
                 href="/"
-                className="text-gray-700 hover:text-blue-700 text-sm font-medium px-2 py-1 rounded hover:bg-gray-100 transition-colors"
+                className="text-white hover:text-blue-200 text-sm font-medium px-2 py-1 rounded hover:bg-blue-800 transition-colors"
               >
                 Home
               </Link>
               <Link
                 href="/store"
-                className="text-gray-700 hover:text-blue-700 text-sm font-medium px-2 py-1 rounded hover:bg-gray-100 transition-colors"
+                className="text-white hover:text-blue-200 text-sm font-medium px-2 py-1 rounded hover:bg-blue-800 transition-colors"
               >
                 Store
               </Link>
@@ -191,10 +191,10 @@ export function MerchantDashboardShell({
               <Button
                 variant="ghost"
                 size="sm"
-                className="gap-2 hover:bg-gray-100"
+                className="gap-2 hover:bg-blue-800"
               >
-                <Wallet className="h-4 w-4 text-green-600" />
-                <span className="hidden sm:inline text-sm font-medium text-gray-900">
+                <Wallet className="h-4 w-4 text-green-300" />
+                <span className="hidden sm:inline text-sm font-medium text-white">
                   ₦{demoMerchant.balance.toLocaleString()}
                 </span>
               </Button>
@@ -202,14 +202,14 @@ export function MerchantDashboardShell({
               <Button
                 variant="ghost"
                 size="sm"
-                className="gap-2 hover:bg-gray-100"
+                className="gap-2 hover:bg-blue-800"
               >
                 <Avatar className="h-7 w-7">
                   <AvatarFallback className="bg-blue-600 text-white text-xs">
                     {initials.toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <span className="hidden sm:inline text-sm font-medium text-gray-900">
+                <span className="hidden sm:inline text-sm font-medium text-white">
                   {demoMerchant.firstName}
                 </span>
               </Button>
@@ -218,9 +218,9 @@ export function MerchantDashboardShell({
                 variant="ghost"
                 size="sm"
                 onClick={handleLogout}
-                className="hover:bg-gray-100"
+                className="hover:bg-blue-800"
               >
-                <LogOut className="h-4 w-4 text-gray-600" />
+                <LogOut className="h-4 w-4 text-blue-200" />
               </Button>
             </div>
           </div>

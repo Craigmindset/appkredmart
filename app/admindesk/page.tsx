@@ -24,8 +24,8 @@ export default function MerchantSignInPage() {
     setLoading(true)
     await new Promise((r) => setTimeout(r, 700))
     setLoading(false)
-    // Direct redirect to merchant dashboard
-    router.push("/dashboard/merchant")
+  // Direct redirect to merchant dashboard
+  router.push("/merchant/overview")
   }
 
   return (

@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Sidebar,
   SidebarContent,
@@ -19,12 +19,21 @@ import {
   SidebarInset,
   SidebarProvider,
   SidebarRail,
-} from "@/components/ui/sidebar"
-import { Bell, CreditCard, Home, LayoutList, Package, Settings, Wallet, ShoppingCart } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useCart, cartSelectors } from "@/store/cart-store"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { BrandLogo } from "@/components/brand-logo"
+} from "@/components/ui/sidebar";
+import {
+  Bell,
+  CreditCard,
+  Home,
+  LayoutList,
+  Package,
+  Settings,
+  Wallet,
+  ShoppingCart,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useCart, cartSelectors } from "@/store/cart-store";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { BrandLogo } from "@/components/brand-logo";
 
 const items = [
   { label: "Overview", href: "/dashboard/overview", icon: Home },
@@ -35,20 +44,22 @@ const items = [
   { label: "My Order", href: "/dashboard/my-orders", icon: Package },
   { label: "Track Orders", href: "/dashboard/track-orders", icon: Bell },
   { label: "Account Settings", href: "/dashboard/account", icon: Settings },
-]
+];
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  const cartCount = useCart(cartSelectors.count)
+  const pathname = usePathname();
+  const cartCount = useCart(cartSelectors.count);
 
   // Demo user data since auth is removed
   const demoUser = {
     firstName: "Kred",
     lastName: "User",
     email: "user@kredmart.com",
-  }
+  };
 
-  const initials = (demoUser?.firstName?.[0] ?? "") + (demoUser?.lastName?.[0] ?? (demoUser?.firstName ? "" : "U"))
+  const initials =
+    (demoUser?.firstName?.[0] ?? "") +
+    (demoUser?.lastName?.[0] ?? (demoUser?.firstName ? "" : "U"));
 
   return (
     <SidebarProvider>
@@ -61,7 +72,9 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           </SidebarHeader>
           <SidebarContent className="bg-sidebar">
             <SidebarGroup>
-              <SidebarGroupLabel className="text-sidebar-foreground/70 font-medium">Dashboard</SidebarGroupLabel>
+              <SidebarGroupLabel className="text-sidebar-foreground/70 font-medium">
+                Dashboard
+              </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {items.map((i) => (
@@ -93,7 +106,9 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 <div className="text-xs font-medium text-sidebar-foreground truncate">
                   {demoUser.firstName} {demoUser.lastName}
                 </div>
-                <div className="text-xs text-sidebar-foreground/60 truncate">{demoUser.email}</div>
+                <div className="text-xs text-sidebar-foreground/60 truncate">
+                  {demoUser.email}
+                </div>
               </div>
             </div>
             <Button
@@ -124,15 +139,19 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 <Link
                   href="/"
                   className={`text-sm font-medium transition-colors ${
-                    pathname === "/" ? "text-blue-600" : "text-slate-600 hover:text-slate-900"
+                    pathname === "/"
+                      ? "text-blue-600"
+                      : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
-                  Home
+                  Hom2e
                 </Link>
                 <Link
                   href="/store"
                   className={`text-sm font-medium transition-colors ${
-                    pathname.startsWith("/store") ? "text-blue-600" : "text-slate-600 hover:text-slate-900"
+                    pathname.startsWith("/store")
+                      ? "text-blue-600"
+                      : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
                   Store
@@ -141,7 +160,11 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
               {/* Right: User actions */}
               <div className="flex items-center justify-end gap-2 md:gap-3">
-                <Link href="/dashboard/account" aria-label="User profile" className="inline-flex">
+                <Link
+                  href="/dashboard/account"
+                  aria-label="User profile"
+                  className="inline-flex"
+                >
                   <Avatar className="h-8 w-8 border-2 border-blue-100">
                     <AvatarFallback className="text-xs bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
                       {initials.toUpperCase()}
@@ -185,5 +208,5 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         </SidebarInset>
       </div>
     </SidebarProvider>
-  )
+  );
 }

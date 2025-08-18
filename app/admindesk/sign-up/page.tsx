@@ -291,7 +291,7 @@ export default function MerchantSignUpPage() {
                         <label className="mb-1 block text-sm font-medium">
                           Role
                         </label>
-                        <select 
+                        <select
                           value={role}
                           onChange={(e) => setRole(e.target.value)}
                           required
@@ -302,7 +302,7 @@ export default function MerchantSignUpPage() {
                           <option value="COO">COO</option>
                           <option value="CTO">CTO</option>
                           <option value="Manager">Manager</option>
-                          <option value="Merchant">Merchant</option>
+                          <option value="Merchant">Admin Officer</option>
                         </select>
                       </div>
                       <div>
@@ -338,10 +338,11 @@ export default function MerchantSignUpPage() {
                             if (file && !validateFileSize(file)) {
                               toast({
                                 title: "File too large",
-                                description: "Please upload a file smaller than 5MB",
+                                description:
+                                  "Please upload a file smaller than 5MB",
                                 variant: "destructive",
                               });
-                              e.target.value = '';
+                              e.target.value = "";
                               return;
                             }
                             setSupportingDoc(file);
@@ -351,11 +352,13 @@ export default function MerchantSignUpPage() {
                           className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
                         />
                         <p className="mt-1 text-xs text-muted-foreground">
-                          Upload CAC certificate or other supporting documents (JPG, PDF, DOC - Max 5MB)
+                          Upload CAC certificate or other supporting documents
+                          (JPG, PDF, DOC - Max 5MB)
                         </p>
                         {supportingDoc && (
                           <p className="mt-1 text-xs text-green-600">
-                            Selected file: {supportingDoc.name} ({Math.round(supportingDoc.size / 1024)}KB)
+                            Selected file: {supportingDoc.name} (
+                            {Math.round(supportingDoc.size / 1024)}KB)
                           </p>
                         )}
                       </div>
