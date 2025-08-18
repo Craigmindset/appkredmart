@@ -1,31 +1,31 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
-import LayoutShell from "@/components/layout-shell"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Separator } from "@/components/ui/separator"
-import { Eye, EyeOff } from "lucide-react"
+import type React from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import LayoutShell from "@/components/layout-shell";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function MerchantSignInPage() {
-  const router = useRouter()
+  const router = useRouter();
 
-  const [email, setEmail] = useState("")
-  const [pwd, setPwd] = useState("")
-  const [showPwd, setShowPwd] = useState(false)
-  const [remember, setRemember] = useState(true)
-  const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState("");
+  const [pwd, setPwd] = useState("");
+  const [showPwd, setShowPwd] = useState(false);
+  const [remember, setRemember] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    await new Promise((r) => setTimeout(r, 700))
-    setLoading(false)
-  // Direct redirect to merchant dashboard
-  router.push("/merchant/overview")
+    e.preventDefault();
+    setLoading(true);
+    await new Promise((r) => setTimeout(r, 700));
+    setLoading(false);
+    // Direct redirect to merchant dashboard
+    router.push("/merchant/overview");
   }
 
   return (
@@ -45,7 +45,9 @@ export default function MerchantSignInPage() {
                 <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25">
                   <div className="h-5 w-5 rounded-full bg-white" />
                 </div>
-                <span className="text-2xl font-semibold tracking-tight">KredMart Merchant</span>
+                <span className="text-2xl font-semibold tracking-tight">
+                  KredMart Merchant
+                </span>
               </div>
 
               <h1 className="text-3xl font-semibold leading-tight tracking-tight md:text-5xl">
@@ -58,12 +60,18 @@ export default function MerchantSignInPage() {
 
             <div className="flex w-full items-center justify-center py-10">
               <div className="w-full max-w-md rounded-2xl border bg-card p-6 shadow-lg backdrop-blur-md md:p-8">
-                <div className="text-xs font-medium text-muted-foreground">MERCHANT ACCESS</div>
-                <h2 className="mt-1 text-xl font-semibold tracking-tight md:text-2xl">Sign In</h2>
+                <div className="text-xs font-medium text-muted-foreground">
+                  MERCHANT ACCESS
+                </div>
+                <h2 className="mt-1 text-xl font-semibold tracking-tight md:text-2xl">
+                  Sign In
+                </h2>
 
                 <form onSubmit={onSubmit} className="mt-6 space-y-4">
                   <div>
-                    <label className="mb-1 block text-sm font-medium">Email</label>
+                    <label className="mb-1 block text-sm font-medium">
+                      Email
+                    </label>
                     <Input
                       type="email"
                       value={email}
@@ -74,7 +82,9 @@ export default function MerchantSignInPage() {
                   </div>
                   <div>
                     <div className="mb-1 flex items-center justify-between">
-                      <label className="block text-sm font-medium">Password</label>
+                      <label className="block text-sm font-medium">
+                        Password
+                      </label>
                     </div>
                     <div className="relative">
                       <Input
@@ -91,20 +101,33 @@ export default function MerchantSignInPage() {
                         className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-muted-foreground"
                         aria-label={showPwd ? "Hide password" : "Show password"}
                       >
-                        {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showPwd ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
                       </button>
                     </div>
                   </div>
 
                   <div className="mt-1 flex items-center justify-between">
                     <label className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-                      <Checkbox checked={remember} onCheckedChange={(v) => setRemember(Boolean(v))} />
+                      <Checkbox
+                        checked={remember}
+                        onCheckedChange={(v) => setRemember(Boolean(v))}
+                      />
                       <span>Remember me</span>
                     </label>
-                    <span className="text-sm text-muted-foreground">Forgot password?</span>
+                    <span className="text-sm text-muted-foreground">
+                      Forgot password?
+                    </span>
                   </div>
 
-                  <Button type="submit" className="mt-2 h-11 w-full" disabled={loading}>
+                  <Button
+                    type="submit"
+                    className="mt-2 h-11 w-full"
+                    disabled={loading}
+                  >
                     {loading ? "Signing in..." : "Sign In"}
                   </Button>
 
@@ -114,7 +137,11 @@ export default function MerchantSignInPage() {
                     <Separator className="flex-1" />
                   </div>
 
-                  <Button type="button" variant="outline" className="h-11 w-full bg-transparent">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-11 w-full bg-transparent"
+                  >
                     <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-background text-[10px]">
                       G
                     </span>
@@ -124,7 +151,10 @@ export default function MerchantSignInPage() {
 
                 <div className="mt-6 text-center text-xs text-muted-foreground">
                   {"Don't have an account? "}
-                  <a href="/admindesk/sign-up" className="font-semibold underline hover:text-foreground">
+                  <a
+                    href="/admindesk/sign-up"
+                    className="font-semibold underline hover:text-foreground"
+                  >
                     Sign up
                   </a>
                 </div>
@@ -134,5 +164,5 @@ export default function MerchantSignInPage() {
         </div>
       </section>
     </LayoutShell>
-  )
+  );
 }
