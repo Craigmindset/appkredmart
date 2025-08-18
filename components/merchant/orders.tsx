@@ -159,7 +159,7 @@ export function MerchantOrders() {
   };
 
   return (
-    <div className="space-y-6 w-full max-w-full overflow-hidden mt-10">
+    <div className="space-y-6 w-full max-w-6xl mx-auto overflow-hidden mt-10">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Orders</h1>
         <p className="text-muted-foreground">
@@ -195,16 +195,16 @@ export function MerchantOrders() {
         </div>
       </div>
 
-      <Card className="w-full max-w-full flex flex-col flex-1 min-h-0">
+      <Card className="w-full max-w-6xl mx-auto flex flex-col flex-1 min-h-0">
         <CardHeader>
           <CardTitle>Order Management</CardTitle>
           <CardDescription>
             View and manage all customer orders for your store
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-4 sm:p-6 flex flex-col flex-1 min-h-0">
+        <CardContent className="p-2 sm:p-4 md:p-6 flex flex-col flex-1 min-h-0 ">
           {/* Search and Filter Controls */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mb-4 sm:mb-6 -z[-5] ">
             <div className="relative flex-1 min-w-0">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
@@ -223,34 +223,46 @@ export function MerchantOrders() {
                 <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="processing">Processing</SelectItem>
                 <SelectItem value="ready">Ready</SelectItem>
-                <SelectItem value="shipped">Shipped</SelectItem>
+                <SelectItem value="shipped">Delivered</SelectItem>
                 <SelectItem value="delivered">Delivered</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {/* Orders Table - Only Table Scrolls Horizontally */}
+          {/* Orders Table - Responsive */}
           <div className="rounded-md border w-full">
             <div className="overflow-x-auto w-full">
-              <Table className="min-w-max w-full">
-                <TableHeader className="sticky top-0 bg-background z-10">
+              <Table className="w-full min-w-[800px]">
+                <TableHeader className="sticky top-0 bg-background z-5">
                   <TableRow>
-                    <TableHead className="min-w-[100px]">Date</TableHead>
-                    <TableHead className="min-w-[120px]">Order ID</TableHead>
-                    <TableHead className="min-w-[140px] hidden sm:table-cell">
+                    <TableHead className="w-[80px] text-xs md:text-sm">
+                      Date
+                    </TableHead>
+                    <TableHead className="w-[90px] text-xs md:text-sm">
+                      Order ID
+                    </TableHead>
+                    <TableHead className="hidden md:table-cell w-[120px] text-xs md:text-sm">
                       Transaction ID
                     </TableHead>
-                    <TableHead className="min-w-[140px]">Customer</TableHead>
-                    <TableHead className="min-w-[140px] hidden md:table-cell">
+                    <TableHead className="text-xs md:text-sm">
+                      Customer
+                    </TableHead>
+                    <TableHead className="hidden lg:table-cell w-[120px] text-xs md:text-sm">
                       Contact
                     </TableHead>
-                    <TableHead className="min-w-[160px]">Product</TableHead>
-                    <TableHead className="min-w-[120px]">Amount</TableHead>
-                    <TableHead className="min-w-[100px] hidden lg:table-cell">
+                    <TableHead className="max-w-[120px] md:max-w-[200px] text-xs md:text-sm">
+                      Product
+                    </TableHead>
+                    <TableHead className="w-[110px] text-xs md:text-sm">
+                      Amount
+                    </TableHead>
+                    <TableHead className="hidden xl:table-cell w-[110px] text-xs md:text-sm">
                       Payment
                     </TableHead>
-                    <TableHead className="min-w-[120px]">Status</TableHead>
-                    <TableHead className="min-w-[80px]">Actions</TableHead>
+                    <TableHead className="text-xs md:text-sm">Status</TableHead>
+                    <TableHead className="w-[70px] text-xs md:text-sm">
+                      Actions
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -266,40 +278,40 @@ export function MerchantOrders() {
                   ) : (
                     filteredOrders.map((order) => (
                       <TableRow key={order.id}>
-                        <TableCell className="font-medium text-sm">
+                        <TableCell className="font-medium text-xs md:text-sm">
                           {order.date}
                         </TableCell>
-                        <TableCell className="font-mono text-sm">
+                        <TableCell className="font-mono text-xs md:text-sm">
                           {order.orderId}
                         </TableCell>
-                        <TableCell className="font-mono text-xs hidden sm:table-cell">
+                        <TableCell className="font-mono text-xs hidden md:table-cell">
                           {order.transactionId}
                         </TableCell>
                         <TableCell>
-                          <div className="max-w-[140px]">
-                            <div className="font-medium text-sm truncate">
+                          <div className="max-w-[100px] md:max-w-[140px]">
+                            <div className="font-medium text-xs md:text-sm truncate">
                               {order.customer}
                             </div>
-                            <div className="text-xs text-muted-foreground md:hidden truncate">
+                            <div className="text-xs text-muted-foreground lg:hidden truncate">
                               {order.customerContact}
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell className="font-mono text-xs hidden md:table-cell">
+                        <TableCell className="font-mono text-xs hidden lg:table-cell">
                           {order.customerContact}
                         </TableCell>
                         <TableCell>
                           <div
-                            className="max-w-[160px] truncate text-sm"
+                            className="max-w-[120px] md:max-w-[200px] truncate text-xs md:text-sm"
                             title={order.product}
                           >
                             {order.product}
                           </div>
                         </TableCell>
-                        <TableCell className="font-medium text-sm">
+                        <TableCell className="font-medium text-xs md:text-sm">
                           ₦{order.amount.toLocaleString()}
                         </TableCell>
-                        <TableCell className="hidden lg:table-cell">
+                        <TableCell className="hidden xl:table-cell">
                           <Badge
                             variant="secondary"
                             className={`${getPaymentColor(
@@ -363,8 +375,7 @@ export function MerchantOrders() {
                   )}
                 </TableBody>
               </Table>
-            </div>{" "}
-            {/* close overflow-x-auto */}
+            </div>
           </div>
         </CardContent>
       </Card>

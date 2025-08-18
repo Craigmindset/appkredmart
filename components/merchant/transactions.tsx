@@ -290,8 +290,8 @@ export function Transactions() {
       </div>
 
       {/* Summary Stats - Moved to top */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mx-0">
-        <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-2 rounded border border-blue-200">
+      <div className="flex gap-2 mx-0">
+        <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-2 rounded border border-blue-200 w-[300px]">
           <div className="text-xl font-bold text-blue-800">
             {demoTransactions.length}
           </div>
@@ -299,7 +299,7 @@ export function Transactions() {
             Total Transactions
           </div>
         </div>
-        <div className="bg-gradient-to-r from-green-50 to-green-100 p-2 rounded border border-green-200">
+        <div className="bg-gradient-to-r from-green-50 to-green-100 p-2 rounded border border-green-200 w-[300px]">
           <div className="text-xl font-bold text-green-800">
             {
               demoTransactions.filter((t) => t.paymentStatus === "Completed")
@@ -310,18 +310,7 @@ export function Transactions() {
             Completed Payments
           </div>
         </div>
-        <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 p-2 rounded border border-yellow-200">
-          <div className="text-xl font-bold text-yellow-800">
-            {
-              demoTransactions.filter((t) => t.deliveryStatus === "Pending")
-                .length
-            }
-          </div>
-          <div className="text-xs text-yellow-600 font-medium">
-            Pending Deliveries
-          </div>
-        </div>
-        <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-2 rounded border border-purple-200">
+        <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-2 rounded border border-purple-200 w-[300px]">
           <div className="text-xl font-bold text-purple-800">
             ₦
             {demoTransactions
@@ -330,12 +319,12 @@ export function Transactions() {
               .toLocaleString("en-NG")}
           </div>
           <div className="text-xs text-purple-600 font-medium">
-            Total Revenue
+            Completed Value
           </div>
         </div>
       </div>
 
-      <Card>
+      <Card className="w-[1000px]">
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">Transaction Management</CardTitle>
           <CardDescription className="text-sm">
