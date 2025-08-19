@@ -68,7 +68,44 @@ const demoProducts = Array.from({ length: 50 }, (_, i) => ({
 }));
 
 export default function ProductsAdminPage() {
-  const [products] = useState(demoProducts);
+  const [products, setProducts] = useState(demoProducts);
+  const [editProduct, setEditProduct] = useState<any | null>(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+
+  const handleEditClick = (product: any) => {
+    setEditProduct({ ...product });
+    setEditModalOpen(true);
+  };
+
+  const handleEditChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setEditProduct((prev: any) => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditSave = () => {
+    if (!editProduct) return;
+    setProducts((prev: any[]) =>
+      prev.map((p) =>
+        p.id === editProduct.id
+          ? {
+              ...editProduct,
+              merchantPrice: Number(editProduct.merchantPrice),
+              markup: Number(editProduct.markup),
+              discount: Number(editProduct.discount),
+              stock: Number(editProduct.stock),
+            }
+          : p
+      )
+    );
+    setEditModalOpen(false);
+    setEditProduct(null);
+    toast({
+      title: "Product updated",
+      description: `Product ${editProduct.name} updated successfully.`,
+    });
+  };
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedMerchant, setSelectedMerchant] = useState("all");
@@ -91,9 +128,15 @@ export default function ProductsAdminPage() {
     return matchesSearch && matchesCategory && matchesMerchant;
   });
 
-  // Calculate display price
-  const getDisplayPrice = (merchantPrice: number, markup: number) => {
-    return merchantPrice + (merchantPrice * markup) / 100;
+  // Calculate display price: merchant price - discount + markup
+  const getDisplayPrice = (
+    merchantPrice: number,
+    discount: number,
+    markup: number
+  ) => {
+    const discountAmount = (merchantPrice * discount) / 100;
+    const markupAmount = (merchantPrice * markup) / 100;
+    return merchantPrice - discountAmount + markupAmount;
   };
 
   // Handle individual product selection
@@ -170,49 +213,6 @@ export default function ProductsAdminPage() {
                 <Download className="h-4 w-4 mr-2" />
                 Export
               </Button>
-              <Dialog open={isBulkModalOpen} onOpenChange={setIsBulkModalOpen}>
-                <DialogTrigger asChild>
-                  <Button disabled={selectedProducts.length === 0}>
-                    <Percent className="h-4 w-4 mr-2" />
-                    Bulk Markup ({selectedProducts.length})
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Apply Bulk Markup</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="bulkMarkup">Markup Percentage</Label>
-                      <Input
-                        id="bulkMarkup"
-                        type="number"
-                        placeholder="Enter markup %"
-                        value={bulkMarkup}
-                        onChange={(e) => setBulkMarkup(e.target.value)}
-                      />
-                    </div>
-                    <p className="text-sm text-gray-600">
-                      This will apply {bulkMarkup}% markup to{" "}
-                      {selectedProducts.length} selected products.
-                    </p>
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={handleBulkMarkup}
-                        disabled={isApplyingBulk}
-                      >
-                        {isApplyingBulk ? "Applying..." : "Apply Markup"}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => setIsBulkModalOpen(false)}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
             </div>
           </RBACGuard>
         </div>
@@ -339,6 +339,60 @@ export default function ProductsAdminPage() {
                   onCheckedChange={handleSelectAll}
                 />
                 <span className="text-sm text-gray-600">Select All</span>
+                <RBACGuard permissions={["manage_products"]} requireAll={false}>
+                  <Dialog
+                    open={isBulkModalOpen}
+                    onOpenChange={setIsBulkModalOpen}
+                  >
+                    <DialogTrigger asChild>
+                      <Button
+                        disabled={selectedProducts.length === 0}
+                        className="w-30 min-w-0 px-2 text-xs whitespace-nowrap overflow-hidden text-ellipsis"
+                      >
+                        <Percent className="h-4 w-4 mr-1" />
+                        Bulk Markup
+                        <span className="ml-1">
+                          ({selectedProducts.length})
+                        </span>
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Apply Bulk Markup</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="bulkMarkup">Markup Percentage</Label>
+                          <Input
+                            id="bulkMarkup"
+                            type="number"
+                            placeholder="Enter markup %"
+                            value={bulkMarkup}
+                            onChange={(e) => setBulkMarkup(e.target.value)}
+                          />
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          This will apply {bulkMarkup}% markup to{" "}
+                          {selectedProducts.length} selected products.
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={handleBulkMarkup}
+                            disabled={isApplyingBulk}
+                          >
+                            {isApplyingBulk ? "Applying..." : "Apply Markup"}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() => setIsBulkModalOpen(false)}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </RBACGuard>
               </div>
             </div>
           </CardHeader>
@@ -357,7 +411,6 @@ export default function ProductsAdminPage() {
                     <th className="text-left p-2">Markup %</th>
                     <th className="text-left p-2">Display Price</th>
                     <th className="text-left p-2">Stock</th>
-                    <th className="text-left p-2">Status</th>
                     <th className="text-left p-2">Actions</th>
                   </tr>
                 </thead>
@@ -392,10 +445,12 @@ export default function ProductsAdminPage() {
                           {product.merchant}
                         </Badge>
                       </td>
-                      <td className="p-2 font-medium">
+                      <td className="p-2 font-regular text-sm">
                         ₦{product.merchantPrice.toLocaleString()}
                       </td>
-                      <td className="p-2 font-medium">{product.discount}%</td>
+                      <td className="p-2 font-regular text-sm">
+                        {product.discount}%
+                      </td>
                       <td className="p-2">
                         <RBACGuard
                           permissions={["manage_products"]}
@@ -417,10 +472,11 @@ export default function ProductsAdminPage() {
                           }
                         />
                       </td>
-                      <td className="p-2 font-bold text-green-600">
+                      <td className="p-2 font-medium text-sm text-green-600">
                         ₦
                         {getDisplayPrice(
                           product.merchantPrice,
+                          product.discount,
                           product.markup
                         ).toLocaleString()}
                       </td>
@@ -434,17 +490,6 @@ export default function ProductsAdminPage() {
                         </Badge>
                       </td>
                       <td className="p-2">
-                        <Badge
-                          variant={
-                            product.status === "Active"
-                              ? "default"
-                              : "secondary"
-                          }
-                        >
-                          {product.status}
-                        </Badge>
-                      </td>
-                      <td className="p-2">
                         <div className="flex items-center gap-1">
                           <Button variant="ghost" size="sm">
                             <Eye className="h-4 w-4" />
@@ -453,10 +498,98 @@ export default function ProductsAdminPage() {
                             permissions={["manage_products"]}
                             requireAll={false}
                           >
-                            <Button variant="ghost" size="sm">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEditClick(product)}
+                            >
                               <Edit className="h-4 w-4" />
                             </Button>
                           </RBACGuard>
+                          {/* Edit Product Modal */}
+                          <Dialog
+                            open={editModalOpen}
+                            onOpenChange={setEditModalOpen}
+                          >
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Edit Product</DialogTitle>
+                              </DialogHeader>
+                              {editProduct && (
+                                <form
+                                  className="space-y-4"
+                                  onSubmit={(e) => {
+                                    e.preventDefault();
+                                    handleEditSave();
+                                  }}
+                                >
+                                  <div>
+                                    <Label htmlFor="name">Product Name</Label>
+                                    <Input
+                                      id="name"
+                                      name="name"
+                                      value={editProduct.name}
+                                      onChange={handleEditChange}
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label htmlFor="merchantPrice">
+                                      Merchant Price
+                                    </Label>
+                                    <Input
+                                      id="merchantPrice"
+                                      name="merchantPrice"
+                                      type="number"
+                                      value={editProduct.merchantPrice}
+                                      onChange={handleEditChange}
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label htmlFor="discount">
+                                      Discount (%)
+                                    </Label>
+                                    <Input
+                                      id="discount"
+                                      name="discount"
+                                      type="number"
+                                      value={editProduct.discount}
+                                      onChange={handleEditChange}
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label htmlFor="markup">Markup (%)</Label>
+                                    <Input
+                                      id="markup"
+                                      name="markup"
+                                      type="number"
+                                      value={editProduct.markup}
+                                      onChange={handleEditChange}
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label htmlFor="stock">Stock</Label>
+                                    <Input
+                                      id="stock"
+                                      name="stock"
+                                      type="number"
+                                      value={editProduct.stock}
+                                      onChange={handleEditChange}
+                                    />
+                                  </div>
+                                  <div className="flex gap-2 justify-end">
+                                    <Button type="submit">Save</Button>
+                                    <Button
+                                      variant="outline"
+                                      type="button"
+                                      onClick={() => setEditModalOpen(false)}
+                                    >
+                                      Cancel
+                                    </Button>
+                                  </div>
+                                </form>
+                              )}
+                            </DialogContent>
+                          </Dialog>
                         </div>
                       </td>
                     </tr>
