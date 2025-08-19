@@ -1,366 +1,207 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useMemo, useState } from "react"
-import { ArrowRight, Package, UsersIcon, Wallet } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { DollarSign, Package, ShoppingCart, Users } from "lucide-react";
+import { useAdminRBACStore } from "@/store/admin-rbac-store";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { cn } from "@/lib/utils"
-
-type PaymentStatus = "Paid" | "Pending" | "Refunded" | "Failed"
-type PaymentMethod = "Wallet" | "BNPL" | "Card"
-type DeliveryStatus = "In Progress" | "Arriving Today" | "Delivered" | "Canceled"
-
-type OrderRow = {
-  orderId: string
-  txId: string
-  usernames: string
-  items: number
-  paymentStatus: PaymentStatus
-  paymentMethod: PaymentMethod
-  deliveryStatus: DeliveryStatus
-}
-
-type LoanRow = {
-  loanId: string
-  applicant: string
-  provider: string
-  loanAmount: number
-  repaymentAmount: number
-  interest: number // percent
-  status: "Pending" | "Approved" | "Disbursed" | "Active" | "Rejected"
-}
-
-type MerchantRow = {
-  merchantId: string
-  merchantName: string
-  txId: string
-  date: string // ISO
-  settleStatus: "Paid" | "Unpaid" | "Pending" | "Dispute"
-}
-
-const ordersData: OrderRow[] = [
+// Demo data
+const recentOrders = [
   {
-    orderId: "ADM-ORD-240091",
-    txId: "TX-77A91",
-    usernames: "adeola, joseph",
-    items: 2,
-    paymentStatus: "Paid",
+    id: "ORD-2024-001",
+    customer: "John Doe",
+    date: "2024-01-15",
+    amount: 150000,
     paymentMethod: "Card",
-    deliveryStatus: "In Progress",
+    status: "Delivered",
   },
   {
-    orderId: "ADM-ORD-240088",
-    txId: "TX-77A77",
-    usernames: "sarah",
-    items: 1,
-    paymentStatus: "Paid",
+    id: "ORD-2024-002",
+    customer: "Jane Smith",
+    date: "2024-01-14",
+    amount: 75000,
     paymentMethod: "Wallet",
-    deliveryStatus: "Arriving Today",
+    status: "Shipped",
   },
   {
-    orderId: "ADM-ORD-240073",
-    txId: "TX-77A65",
-    usernames: "kofi",
-    items: 1,
-    paymentStatus: "Paid",
-    paymentMethod: "Card",
-    deliveryStatus: "Delivered",
-  },
-  {
-    orderId: "ADM-ORD-240060",
-    txId: "TX-77A50",
-    usernames: "chioma",
-    items: 2,
-    paymentStatus: "Pending",
+    id: "ORD-2024-003",
+    customer: "Mike Johnson",
+    date: "2024-01-13",
+    amount: 300000,
     paymentMethod: "BNPL",
-    deliveryStatus: "In Progress",
+    status: "Processing",
   },
-  {
-    orderId: "ADM-ORD-240052",
-    txId: "TX-77A41",
-    usernames: "matt",
-    items: 1,
-    paymentStatus: "Refunded",
-    paymentMethod: "Card",
-    deliveryStatus: "Canceled",
-  },
-]
+];
 
-const loansData: LoanRow[] = [
+const topProducts = [
   {
-    loanId: "ADM-LOAN-1000123",
-    applicant: "Adeola K",
-    provider: "CreditDirect",
-    loanAmount: 200000,
-    repaymentAmount: 230000,
-    interest: 15,
-    status: "Active",
+    name: "iPhone 14 Pro Max",
+    sales: 1250,
+    revenue: 85000000,
   },
   {
-    loanId: "ADM-LOAN-1000456",
-    applicant: "Joseph I",
-    provider: "FairMoney",
-    loanAmount: 100000,
-    repaymentAmount: 112000,
-    interest: 12,
-    status: "Pending",
+    name: "Samsung Galaxy S23",
+    sales: 980,
+    revenue: 65000000,
   },
   {
-    loanId: "ADM-LOAN-1000789",
-    applicant: "Sarah W",
-    provider: "Carbon",
-    loanAmount: 350000,
-    repaymentAmount: 392000,
-    interest: 12,
-    status: "Approved",
+    name: "MacBook Air M2",
+    sales: 720,
+    revenue: 90000000,
   },
-]
+];
 
-const merchantsData: MerchantRow[] = [
-  {
-    merchantId: "KM-MER-02341",
-    merchantName: "KredMart Electronics",
-    txId: "TX-M-0097",
-    date: new Date().toISOString(),
-    settleStatus: "Paid",
-  },
-  {
-    merchantId: "KM-MER-01422",
-    merchantName: "Gadget Hub",
-    txId: "TX-M-0096",
-    date: new Date(Date.now() - 86400000).toISOString(),
-    settleStatus: "Pending",
-  },
-  {
-    merchantId: "KM-MER-01111",
-    merchantName: "Smart Home Co.",
-    txId: "TX-M-0095",
-    date: new Date(Date.now() - 2 * 86400000).toISOString(),
-    settleStatus: "Dispute",
-  },
-]
-
-function formatCurrency(amount: number) {
-  try {
-    return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(
-      amount,
-    )
-  } catch {
-    return "₦" + amount.toLocaleString()
-  }
-}
-
-function StatusBadge({ value }: { value: string }) {
-  const map: Record<string, string> = {
-    Paid: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300",
-    Pending: "bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300",
-    Refunded: "bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300",
-    Failed: "bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300",
-    "In Progress": "bg-sky-100 text-sky-700 dark:bg-sky-950/50 dark:text-sky-300",
-    "Arriving Today": "bg-purple-100 text-purple-700 dark:bg-purple-950/50 dark:text-purple-300",
-    Delivered: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300",
-    Canceled: "bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200",
-    Approved: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300",
-    Disbursed: "bg-teal-100 text-teal-700 dark:bg-teal-950/50 dark:text-teal-300",
-    Active: "bg-indigo-100 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300",
-    Rejected: "bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300",
-    Unpaid: "bg-rose-100 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300",
-    Dispute: "bg-orange-100 text-orange-700 dark:bg-orange-950/50 dark:text-orange-300",
-  }
-  return <Badge className={cn("font-medium", map[value] ?? "bg-muted text-foreground")}>{value}</Badge>
-}
-
-export default function OverviewPage() {
-  const [tab, setTab] = useState<"orders" | "loans" | "merchants">("orders")
-
-  const totals = useMemo(() => {
-    return {
-      merchants: merchantsData.length,
-      users: 24_120,
-      revenue: 0, // demo
-    }
-  }, [])
+export default function OverviewAdminPage() {
+  const { currentUser } = useAdminRBACStore();
 
   return (
     <div className="space-y-6">
-      {/* KPI Cards with distinct header colors */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Card className="overflow-hidden">
-          <CardHeader className="bg-emerald-600 text-emerald-50">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-emerald-50">Merchants</CardTitle>
-              <Package className="h-5 w-5 opacity-90" />
-            </div>
-          </CardHeader>
-          <CardContent className="py-6 text-3xl font-semibold">{totals.merchants}</CardContent>
-        </Card>
-
-        <Card className="overflow-hidden">
-          <CardHeader className="bg-violet-600 text-violet-50">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-violet-50">Users</CardTitle>
-              <UsersIcon className="h-5 w-5 opacity-90" />
-            </div>
-          </CardHeader>
-          <CardContent className="py-6 text-3xl font-semibold">{totals.users.toLocaleString()}</CardContent>
-        </Card>
-
-        <Card className="overflow-hidden">
-          <CardHeader className="bg-amber-600 text-amber-50">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-amber-50">Revenue</CardTitle>
-              <Wallet className="h-5 w-5 opacity-90" />
-            </div>
-          </CardHeader>
-          <CardContent className="py-6 text-3xl font-semibold">₦0</CardContent>
-        </Card>
+      {/* Welcome Section */}
+      <div className="rounded-lg p-8 bg-gradient-to-br from-blue-50 to-blue-100">
+        <h1 className="text-3xl font-bold text-gray-900">
+          Welcome, {currentUser?.name || "Admin"}!
+        </h1>
+        <p className="text-gray-600 mt-2">
+          Here's an overview of your platform
+        </p>
       </div>
 
-      {/* Recent Transactions with filter */}
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <a href="/admin/dashboard/revenue" className="block">
+          <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:shadow-lg transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-100">Total Revenue</p>
+                  <p className="text-2xl font-bold">₦1,450,000</p>
+                </div>
+                <DollarSign className="h-8 w-8 text-blue-200" />
+              </div>
+            </CardContent>
+          </Card>
+        </a>
+
+        <a href="/admin/dashboard/all-orders" className="block">
+          <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white hover:shadow-lg transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-green-100">Total Orders</p>
+                  <p className="text-2xl font-bold">1,247</p>
+                </div>
+                <ShoppingCart className="h-8 w-8 text-green-200" />
+              </div>
+            </CardContent>
+          </Card>
+        </a>
+
+        <a href="/admin/dashboard/product" className="block">
+          <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white hover:shadow-lg transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-purple-100">Total Products</p>
+                  <p className="text-2xl font-bold">450</p>
+                </div>
+                <Package className="h-8 w-8 text-purple-200" />
+              </div>
+            </CardContent>
+          </Card>
+        </a>
+
+        <a href="/admin/dashboard/users" className="block">
+          <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:shadow-lg transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-orange-100">Total Users</p>
+                  <p className="text-2xl font-bold">247</p>
+                </div>
+                <Users className="h-8 w-8 text-orange-200" />
+              </div>
+            </CardContent>
+          </Card>
+        </a>
+      </div>
+
+      {/* Recent Orders */}
       <Card>
-        <CardHeader className="pb-2">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <CardTitle>Recent Transactions</CardTitle>
-            <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)} className="w-full md:w-auto">
-              <TabsList className="grid w-full grid-cols-3 md:w-auto">
-                <TabsTrigger value="orders">Orders</TabsTrigger>
-                <TabsTrigger value="loans">Loans</TabsTrigger>
-                <TabsTrigger value="merchants">Merchants</TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
+        <CardHeader>
+          <CardTitle>Recent Orders</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
-            <Tabs value={tab}>
-              {/* Orders Table */}
-              <TabsContent value="orders" className="m-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Order ID</TableHead>
-                      <TableHead>Transaction ID</TableHead>
-                      <TableHead>Usernames</TableHead>
-                      <TableHead className="text-right">Items</TableHead>
-                      <TableHead>Payment Status</TableHead>
-                      <TableHead>Payment Method</TableHead>
-                      <TableHead>Delivery Status</TableHead>
-                      <TableHead className="text-right">Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {ordersData.map((row) => (
-                      <TableRow key={row.txId}>
-                        <TableCell className="font-medium">{row.orderId}</TableCell>
-                        <TableCell>{row.txId}</TableCell>
-                        <TableCell className="capitalize">{row.usernames}</TableCell>
-                        <TableCell className="text-right tabular-nums">{row.items}</TableCell>
-                        <TableCell>
-                          <StatusBadge value={row.paymentStatus} />
-                        </TableCell>
-                        <TableCell>{row.paymentMethod}</TableCell>
-                        <TableCell>
-                          <StatusBadge value={row.deliveryStatus} />
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Link
-                            href={`/admin/dashboard/transactions?type=order&id=${encodeURIComponent(row.txId)}`}
-                            className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-                          >
-                            View Transaction <ArrowRight className="h-4 w-4" />
-                          </Link>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TabsContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Order ID</TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Payment Method</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {recentOrders.map((order) => (
+                  <TableRow key={order.id}>
+                    <TableCell className="font-medium">{order.id}</TableCell>
+                    <TableCell>{order.customer}</TableCell>
+                    <TableCell>{order.date}</TableCell>
+                    <TableCell>₦{order.amount.toLocaleString()}</TableCell>
+                    <TableCell>{order.paymentMethod}</TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">{order.status}</Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
 
-              {/* Loans Table */}
-              <TabsContent value="loans" className="m-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Loan ID</TableHead>
-                      <TableHead>Applicant Name</TableHead>
-                      <TableHead>Provider</TableHead>
-                      <TableHead className="text-right">Loan Amount</TableHead>
-                      <TableHead className="text-right">Repayment Amount</TableHead>
-                      <TableHead className="text-right">Interest</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {loansData.map((row) => (
-                      <TableRow key={row.loanId}>
-                        <TableCell className="font-medium">{row.loanId}</TableCell>
-                        <TableCell>{row.applicant}</TableCell>
-                        <TableCell>{row.provider}</TableCell>
-                        <TableCell className="text-right tabular-nums">{formatCurrency(row.loanAmount)}</TableCell>
-                        <TableCell className="text-right tabular-nums">{formatCurrency(row.repaymentAmount)}</TableCell>
-                        <TableCell className="text-right tabular-nums">{row.interest}%</TableCell>
-                        <TableCell>
-                          <StatusBadge value={row.status} />
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Link
-                            href={`/admin/dashboard/transactions?type=loan&id=${encodeURIComponent(row.loanId)}`}
-                            className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-                          >
-                            View Transaction <ArrowRight className="h-4 w-4" />
-                          </Link>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TabsContent>
-
-              {/* Merchants Table */}
-              <TabsContent value="merchants" className="m-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Merchant ID</TableHead>
-                      <TableHead>Merchant Name</TableHead>
-                      <TableHead>Transaction ID</TableHead>
-                      <TableHead>Transaction Date</TableHead>
-                      <TableHead>Settle Status</TableHead>
-                      <TableHead className="text-right">Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {merchantsData.map((row) => (
-                      <TableRow key={row.txId}>
-                        <TableCell className="font-medium">{row.merchantId}</TableCell>
-                        <TableCell>{row.merchantName}</TableCell>
-                        <TableCell>{row.txId}</TableCell>
-                        <TableCell className="tabular-nums">{new Date(row.date).toLocaleString()}</TableCell>
-                        <TableCell>
-                          <StatusBadge value={row.settleStatus} />
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Link
-                            href={`/admin/dashboard/transactions?type=merchant&id=${encodeURIComponent(row.txId)}`}
-                            className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-                          >
-                            View Transaction <ArrowRight className="h-4 w-4" />
-                          </Link>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TabsContent>
-            </Tabs>
+      {/* Top Products */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Top Performing Products</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Product Name</TableHead>
+                  <TableHead>Sales</TableHead>
+                  <TableHead>Revenue</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {topProducts.map((product) => (
+                  <TableRow key={product.name}>
+                    <TableCell className="font-medium">
+                      {product.name}
+                    </TableCell>
+                    <TableCell>{product.sales.toLocaleString()}</TableCell>
+                    <TableCell>
+                      ₦{(product.revenue / 1000000).toFixed(1)}M
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
