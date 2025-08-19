@@ -13,90 +13,86 @@ import { Search, MoreHorizontal, Eye, UserX, Store, Package, ShoppingCart, Dolla
 const merchantsData = [
   {
     id: "KM001234",
-    name: "TechHub Electronics",
+    firstName: "John",
+    lastName: "Doe",
+    role: "Admin Officer",
     email: "techhub@example.com",
     phone: "+234 801 234 5678",
     totalInventory: 245,
-    totalOrders: 1250,
     totalSold: 980,
     totalMarkup: 125000,
+    totalOrders: 1250,
     status: "Active",
-    joinDate: "2024-01-15",
-    category: "Electronics",
+    cacDocUrl: "/docs/cac-john-doe.pdf",
   },
   {
     id: "KM001235",
-    name: "Fashion Forward",
+    firstName: "Jane",
+    lastName: "Smith",
+    role: "CEO",
     email: "fashion@example.com",
     phone: "+234 802 345 6789",
     totalInventory: 180,
-    totalOrders: 890,
     totalSold: 720,
     totalMarkup: 89000,
+    totalOrders: 890,
     status: "Active",
-    joinDate: "2024-02-20",
-    category: "Fashion",
+    cacDocUrl: "/docs/cac-jane-smith.pdf",
   },
   {
     id: "KM001236",
-    name: "Home Essentials",
+    firstName: "Mike",
+    lastName: "Johnson",
+    role: "CTO",
     email: "home@example.com",
     phone: "+234 803 456 7890",
     totalInventory: 320,
-    totalOrders: 1580,
     totalSold: 1200,
     totalMarkup: 156000,
+    totalOrders: 1580,
     status: "Active",
-    joinDate: "2024-01-08",
-    category: "Home & Kitchen",
+    cacDocUrl: "/docs/cac-mike-johnson.pdf",
   },
   {
     id: "KM001237",
-    name: "Mobile World",
+    firstName: "Sarah",
+    lastName: "Wilson",
+    role: "Manager",
     email: "mobile@example.com",
     phone: "+234 804 567 8901",
     totalInventory: 95,
-    totalOrders: 650,
     totalSold: 520,
     totalMarkup: 78000,
+    totalOrders: 650,
     status: "Inactive",
-    joinDate: "2024-03-12",
-    category: "Phones and Tablets",
+    cacDocUrl: "/docs/cac-sarah-wilson.pdf",
   },
-  {
-    id: "KM001238",
-    name: "Sports Central",
-    email: "sports@example.com",
-    phone: "+234 805 678 9012",
-    totalInventory: 150,
-    totalOrders: 420,
-    totalSold: 380,
-    totalMarkup: 45000,
-    status: "Active",
-    joinDate: "2024-02-28",
-    category: "Lifestyle",
-  },
-]
+];
 
 export default function MerchantAdminPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [merchants, setMerchants] = useState(merchantsData)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [merchants, setMerchants] = useState(merchantsData);
+  const [modalMerchant, setModalMerchant] = useState<null | typeof merchantsData[0]>(null);
 
   const filteredMerchants = merchants.filter(
-    (merchant) =>
-      merchant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      merchant.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      merchant.email.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+    (merchant) => {
+      const fullName = `${merchant.firstName} ${merchant.lastName}`.toLowerCase();
+      return (
+        fullName.includes(searchTerm.toLowerCase()) ||
+        merchant.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (merchant.email && merchant.email.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+    }
+  );
 
   const handleDeactivate = (merchantId: string) => {
     setMerchants((prev) =>
       prev.map((merchant) =>
         merchant.id === merchantId
           ? { ...merchant, status: merchant.status === "Active" ? "Inactive" : "Active" }
-          : merchant,
-      ),
-    )
+          : merchant
+      )
+    );
   }
 
   const handleViewOrders = (merchantId: string) => {
@@ -143,7 +139,7 @@ export default function MerchantAdminPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {merchants.reduce((sum, m) => sum + m.totalOrders, 0).toLocaleString()}
+              {merchants.reduce((sum, m) => sum + (m.totalOrders || 0), 0).toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground">All-time orders processed</p>
           </CardContent>
@@ -184,44 +180,31 @@ export default function MerchantAdminPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>SN</TableHead>
                   <TableHead>Merchant ID</TableHead>
                   <TableHead>Merchant Name</TableHead>
-                  <TableHead>Category</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Contact</TableHead>
                   <TableHead>Total Inventory</TableHead>
-                  <TableHead>Total Orders</TableHead>
                   <TableHead>Total Sold</TableHead>
                   <TableHead>Total Markup</TableHead>
-                  <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredMerchants.map((merchant) => (
+                {filteredMerchants.map((merchant, idx) => (
                   <TableRow key={merchant.id}>
+                    <TableCell>{idx + 1}</TableCell>
                     <TableCell className="font-medium">{merchant.id}</TableCell>
+                    <TableCell>{merchant.firstName} {merchant.lastName}</TableCell>
+                    <TableCell>{merchant.role}</TableCell>
                     <TableCell>
-                      <div>
-                        <div className="font-medium">{merchant.name}</div>
-                        <div className="text-sm text-muted-foreground">{merchant.email}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{merchant.category}</Badge>
+                      <div className="font-medium">{merchant.email}</div>
+                      <div className="text-xs text-muted-foreground">{merchant.phone}</div>
                     </TableCell>
                     <TableCell>{merchant.totalInventory.toLocaleString()}</TableCell>
-                    <TableCell>{merchant.totalOrders.toLocaleString()}</TableCell>
                     <TableCell>{merchant.totalSold.toLocaleString()}</TableCell>
                     <TableCell>₦{merchant.totalMarkup.toLocaleString()}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={merchant.status === "Active" ? "default" : "secondary"}
-                        className={
-                          merchant.status === "Active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                        }
-                      >
-                        {merchant.status}
-                      </Badge>
-                    </TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -231,16 +214,9 @@ export default function MerchantAdminPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleViewOrders(merchant.id)}>
+                          <DropdownMenuItem onClick={() => setModalMerchant(merchant)}>
                             <Eye className="mr-2 h-4 w-4" />
-                            View Orders
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleDeactivate(merchant.id)}
-                            className={merchant.status === "Active" ? "text-red-600" : "text-green-600"}
-                          >
-                            <UserX className="mr-2 h-4 w-4" />
-                            {merchant.status === "Active" ? "Deactivate" : "Activate"}
+                            View Merchant Doc
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -254,6 +230,33 @@ export default function MerchantAdminPage() {
           {filteredMerchants.length === 0 && (
             <div className="text-center py-8">
               <p className="text-muted-foreground">No merchants found matching your search.</p>
+            </div>
+          )}
+
+          {/* Modal for Merchant CAC Doc */}
+          {modalMerchant && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+              <div className="bg-white rounded-lg shadow-lg max-w-lg w-full p-6 relative">
+                <button
+                  className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                  onClick={() => setModalMerchant(null)}
+                >
+                  &times;
+                </button>
+                <h2 className="text-xl font-bold mb-4">Merchant CAC Document</h2>
+                <iframe
+                  src={modalMerchant.cacDocUrl}
+                  title="CAC Document"
+                  className="w-full h-80 border rounded mb-4"
+                />
+                <a
+                  href={modalMerchant.cacDocUrl}
+                  download
+                  className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                >
+                  Download Document
+                </a>
+              </div>
             </div>
           )}
         </CardContent>

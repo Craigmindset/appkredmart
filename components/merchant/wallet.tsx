@@ -46,13 +46,9 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-// Demo wallet data
-const walletData = {
-  balance: 2450000,
-  accountName: "KredMart Merchant - John's Electronics",
-  accountNumber: "1234567890",
-  bankName: "KredMart Bank",
-};
+import { demoMerchant } from "@/lib/merchant-demo";
+// Demo wallet data (shared)
+const walletData = demoMerchant;
 
 // Demo transaction data
 const demoTransactions = [

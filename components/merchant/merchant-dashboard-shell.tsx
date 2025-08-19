@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { demoMerchant } from "@/lib/merchant-demo";
 
 import {
   Sidebar,
@@ -68,14 +69,6 @@ export function MerchantDashboardShell({
 }) {
   const pathname = usePathname();
 
-  // Demo merchant data since auth is removed
-  const demoMerchant = {
-    firstName: "Merchant",
-    lastName: "Store",
-    email: "merchant@kredmart.com",
-    storeName: "Demo Store",
-    balance: 125000,
-  };
 
   const initials =
     (demoMerchant?.firstName?.[0] ?? "") +
@@ -188,16 +181,16 @@ export function MerchantDashboardShell({
                 Store
               </Link>
               {/* Wallet */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 hover:bg-blue-800"
+              <Link
+                href="/admindesk/dashboard/wallet"
+                className="flex items-center gap-2 text-white hover:text-blue-200 text-sm font-medium px-2 py-1 rounded hover:bg-blue-800 transition-colors"
+                prefetch={false}
               >
                 <Wallet className="h-4 w-4 text-green-300" />
                 <span className="hidden sm:inline text-sm font-medium text-white">
                   ₦{demoMerchant.balance.toLocaleString()}
                 </span>
-              </Button>
+              </Link>
               {/* Profile */}
               <Button
                 variant="ghost"
