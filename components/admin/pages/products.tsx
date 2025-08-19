@@ -60,6 +60,7 @@ const demoProducts = Array.from({ length: 50 }, (_, i) => ({
   ],
   merchant: ["Slot", "Gbam Inc."][i % 2],
   merchantPrice: Math.floor(Math.random() * 500000) + 50000,
+  discount: Math.floor(Math.random() * 21),
   markup: Math.floor(Math.random() * 30) + 5,
   stock: Math.floor(Math.random() * 100) + 1,
   status: ["Active", "Inactive"][Math.floor(Math.random() * 2)],
@@ -348,10 +349,11 @@ export default function ProductsAdminPage() {
                   <tr className="border-b text-sm">
                     <th className="text-left p-2">Select</th>
                     <th className="text-left p-2">Product</th>
-                    <th className="text-left p-2">SKU</th>
+                    <th className="text-left p-2">Product ID</th>
                     <th className="text-left p-2">Category</th>
                     <th className="text-left p-2">Merchant</th>
                     <th className="text-left p-2">Merchant Price</th>
+                    <th className="text-left p-2">Discount (%)</th>
                     <th className="text-left p-2">Markup %</th>
                     <th className="text-left p-2">Display Price</th>
                     <th className="text-left p-2">Stock</th>
@@ -371,16 +373,7 @@ export default function ProductsAdminPage() {
                         />
                       </td>
                       <td className="p-2">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={product.image || "/placeholder.svg"}
-                            alt={product.name}
-                            className="w-10 h-10 rounded-lg object-cover"
-                          />
-                          <div>
-                            <p className="font-medium">{product.name}</p>
-                          </div>
-                        </div>
+                        <p className="font-medium">{product.name}</p>
                       </td>
                       <td className="p-2 text-sm text-gray-600">
                         {product.sku}
@@ -402,6 +395,7 @@ export default function ProductsAdminPage() {
                       <td className="p-2 font-medium">
                         ₦{product.merchantPrice.toLocaleString()}
                       </td>
+                      <td className="p-2 font-medium">{product.discount}%</td>
                       <td className="p-2">
                         <RBACGuard
                           permissions={["manage_products"]}
