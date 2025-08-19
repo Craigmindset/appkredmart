@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DollarSign, Package, ShoppingCart, Users } from "lucide-react";
+import Link from "next/link";
 import { useAdminRBACStore } from "@/store/admin-rbac-store";
 
 // Demo data
@@ -76,7 +77,8 @@ export default function OverviewAdminPage() {
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <a href="/admin/dashboard/revenue" className="block">
+        {/* Revenue Card */}
+        <div className="relative group">
           <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -87,10 +89,16 @@ export default function OverviewAdminPage() {
                 <DollarSign className="h-8 w-8 text-blue-200" />
               </div>
             </CardContent>
+            <Link
+              href="/admin/dashboard/revenue"
+              className="absolute inset-0 z-10"
+              aria-label="Go to Revenue page"
+            />
           </Card>
-        </a>
+        </div>
 
-        <a href="/admin/dashboard/all-orders" className="block">
+        {/* Orders Card */}
+        <div className="relative group">
           <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -101,10 +109,16 @@ export default function OverviewAdminPage() {
                 <ShoppingCart className="h-8 w-8 text-green-200" />
               </div>
             </CardContent>
+            <Link
+              href="/admin/dashboard/all-orders"
+              className="absolute inset-0 z-10"
+              aria-label="Go to All Orders page"
+            />
           </Card>
-        </a>
+        </div>
 
-        <a href="/admin/dashboard/product" className="block">
+        {/* Products Card */}
+        <div className="relative group">
           <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -115,10 +129,16 @@ export default function OverviewAdminPage() {
                 <Package className="h-8 w-8 text-purple-200" />
               </div>
             </CardContent>
+            <Link
+              href="/admin/dashboard/product"
+              className="absolute inset-0 z-10"
+              aria-label="Go to Products page"
+            />
           </Card>
-        </a>
+        </div>
 
-        <a href="/admin/dashboard/users" className="block">
+        {/* Users Card */}
+        <div className="relative group">
           <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -129,8 +149,13 @@ export default function OverviewAdminPage() {
                 <Users className="h-8 w-8 text-orange-200" />
               </div>
             </CardContent>
+            <Link
+              href="/admin/dashboard/users"
+              className="absolute inset-0 z-10"
+              aria-label="Go to Users page"
+            />
           </Card>
-        </a>
+        </div>
       </div>
 
       {/* Recent Orders */}
