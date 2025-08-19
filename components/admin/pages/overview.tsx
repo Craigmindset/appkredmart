@@ -130,7 +130,7 @@ export default function OverviewAdminPage() {
               </div>
             </CardContent>
             <Link
-              href="/admin/dashboard/product"
+              href="/admin/dashboard/products"
               className="absolute inset-0 z-10"
               aria-label="Go to Products page"
             />

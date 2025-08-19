@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import type * as React from "react"
+import type * as React from "react";
 import {
   BarChart3,
   Users,
@@ -17,7 +17,7 @@ import {
   Radio,
   DollarSign,
   HeadphonesIcon,
-} from "lucide-react"
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -33,20 +33,20 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
-} from "@/components/ui/sidebar"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Separator } from "@/components/ui/separator"
-import { Badge } from "@/components/ui/badge"
-import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
-import { useAdminRBACStore, type Permission } from "@/store/admin-rbac-store"
+} from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useAdminRBACStore, type Permission } from "@/store/admin-rbac-store";
 
 interface AdminNavItem {
-  title: string
-  url: string
-  icon: React.ComponentType<{ className?: string }>
-  permissions: Permission[]
+  title: string;
+  url: string;
+  icon: React.ComponentType<{ className?: string }>;
+  permissions: Permission[];
 }
 
 const adminNavItems: AdminNavItem[] = [
@@ -128,40 +128,42 @@ const adminNavItems: AdminNavItem[] = [
     icon: User,
     permissions: ["manage_accounts"],
   },
-]
+];
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  const router = useRouter()
-  const { currentUser, hasAnyPermission, signOut } = useAdminRBACStore()
+  const pathname = usePathname();
+  const router = useRouter();
+  const { currentUser, hasAnyPermission, signOut } = useAdminRBACStore();
 
   const handleLogout = () => {
-    signOut()
-    router.push("/admin")
-  }
+    signOut();
+    router.push("/admin");
+  };
 
   // Filter navigation items based on user permissions
-  const visibleNavItems = adminNavItems.filter((item) => hasAnyPermission(item.permissions))
+  const visibleNavItems = adminNavItems.filter((item) =>
+    hasAnyPermission(item.permissions)
+  );
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
       case "super-admin":
-        return "bg-red-100 text-red-800 border-red-200"
+        return "bg-red-100 text-red-800 border-red-200";
       case "manager":
-        return "bg-blue-100 text-blue-800 border-blue-200"
+        return "bg-blue-100 text-blue-800 border-blue-200";
       case "marketer":
-        return "bg-green-100 text-green-800 border-green-200"
+        return "bg-green-100 text-green-800 border-green-200";
       case "finance":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200"
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200"
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
-  }
+  };
 
   return (
     <SidebarProvider>
-      <Sidebar className="border-r border-gray-200 bg-blue-900">
-        <SidebarHeader className="border-b border-blue-700 bg-blue-900">
+      <Sidebar className="border-r border-gray-200 bg-blue-900 z-[60]">
+        <SidebarHeader className="border-b border-blue-700 bg-blue-900 z-[60]">
           <div className="flex items-center gap-3 px-3 py-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white">
               <Settings className="h-5 w-5" />
@@ -211,10 +213,19 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">{currentUser?.name || "Admin User"}</p>
-              <p className="text-xs text-blue-300 truncate">{currentUser?.email || "admin@kredmart.com"}</p>
+              <p className="text-sm font-medium text-white truncate">
+                {currentUser?.name || "Admin User"}
+              </p>
+              <p className="text-xs text-blue-300 truncate">
+                {currentUser?.email || "admin@kredmart.com"}
+              </p>
               {currentUser && (
-                <Badge variant="outline" className={`text-xs mt-1 ${getRoleBadgeColor(currentUser.role)}`}>
+                <Badge
+                  variant="outline"
+                  className={`text-xs mt-1 ${getRoleBadgeColor(
+                    currentUser.role
+                  )}`}
+                >
                   {currentUser.role.replace("-", " ").toUpperCase()}
                 </Badge>
               )}
@@ -236,24 +247,34 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
       <SidebarInset className="flex-1 bg-gray-50">
         {/* Static Header */}
-        <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/75">
+        <header className="sticky top-0 z-40 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/75">
           <div className="flex h-16 items-center justify-between px-6">
             <div className="flex items-center gap-4">
               <SidebarTrigger className="h-8 w-8 p-0 hover:bg-gray-100 rounded-md transition-colors" />
               <Separator orientation="vertical" className="h-6" />
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Admin Dashboard</h1>
+                <h1 className="text-xl font-bold text-gray-900">
+                  Admin Dashboard
+                </h1>
                 <p className="text-sm text-gray-500">
-                  {currentUser ? `Welcome, ${currentUser.name}` : "Manage your platform"}
+                  {currentUser
+                    ? `Welcome, ${currentUser.name}`
+                    : "Manage your platform"}
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
               {/* System Wallet */}
-              <Button variant="ghost" size="sm" className="gap-2 hover:bg-gray-100">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2 hover:bg-gray-100"
+              >
                 <Wallet className="h-4 w-4 text-green-600" />
-                <span className="hidden sm:inline text-sm font-medium text-gray-900">₦2,450,000</span>
+                <span className="hidden sm:inline text-sm font-medium text-gray-900">
+                  ₦2,450,000
+                </span>
               </Button>
 
               {/* Broadcast */}
@@ -262,7 +283,11 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               </Button>
 
               {/* Profile */}
-              <Button variant="ghost" size="sm" className="gap-2 hover:bg-gray-100">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2 hover:bg-gray-100"
+              >
                 <Avatar className="h-7 w-7">
                   <AvatarImage src="/placeholder.svg?height=28&width=28" />
                   <AvatarFallback className="bg-blue-600 text-white text-xs">
@@ -278,7 +303,12 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               </Button>
 
               {/* Logout */}
-              <Button variant="ghost" size="sm" onClick={handleLogout} className="hover:bg-gray-100">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogout}
+                className="hover:bg-gray-100"
+              >
                 <LogOut className="h-4 w-4 text-gray-600" />
               </Button>
             </div>
@@ -295,5 +325,5 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </main>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
