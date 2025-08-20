@@ -126,7 +126,7 @@ export default function SiteHeader() {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full border-b bg-blue-800 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75 ${appFontClass}`}
+      className={`sticky top-0 z-50 w-full border-b bg-blue-800 bg-background/55 backdrop-blur supports-[backdrop-filter]:bg-background/75 ${appFontClass}`}
     >
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">

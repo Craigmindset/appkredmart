@@ -40,7 +40,7 @@ export default function Welcome({ username = "User" }: WelcomeProps) {
             </span>
           </div>
 
-          <h1 className="text-4xl md:text-6xl font-bold mb-4">
+          <h1 className="text-4xl md:text-4xl font-bold mb-4">
             <span className="bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent">
               Welcome back,
             </span>
@@ -158,32 +158,7 @@ export default function Welcome({ username = "User" }: WelcomeProps) {
           </Card>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm border border-white/20">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 mb-3">
-              <TrendingUp className="h-6 w-6 text-white" />
-            </div>
-            <div className="text-2xl font-bold text-gray-900 mb-1">2.5K+</div>
-            <div className="text-sm text-gray-600">Happy Customers</div>
-          </div>
-
-          <div className="text-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm border border-white/20">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-green-600 mb-3">
-              <Users className="h-6 w-6 text-white" />
-            </div>
-            <div className="text-2xl font-bold text-gray-900 mb-1">98%</div>
-            <div className="text-sm text-gray-600">Satisfaction Rate</div>
-          </div>
-
-          <div className="text-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm border border-white/20">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 mb-3">
-              <Package className="h-6 w-6 text-white" />
-            </div>
-            <div className="text-2xl font-bold text-gray-900 mb-1">10K+</div>
-            <div className="text-sm text-gray-600">Products Available</div>
-          </div>
-        </div>
+        {/* Quick Stats removed as requested */}
       </div>
     </div>
   );
