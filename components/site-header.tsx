@@ -122,8 +122,6 @@ export default function SiteHeader() {
     }
   };
 
-  console.log({ user });
-
   return (
     <header
       className={`sticky top-0 z-50 w-full border-b bg-blue-800 bg-background/55 backdrop-blur supports-[backdrop-filter]:bg-background/75 ${appFontClass}`}
