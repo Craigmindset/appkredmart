@@ -69,7 +69,7 @@ export default function VerifyPage() {
                     inputMode="numeric"
                     pattern="[0-9]*"
                     maxLength={6}
-                    placeholder="Enter 111111"
+                    placeholder="Enter code sent to your email"
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                     required

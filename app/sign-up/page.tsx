@@ -59,8 +59,13 @@ export default function SignUpPage() {
     },
   });
 
+  // Format phone number before submit
   const onStart = async (data: registerSchemaType) => {
-    await mutateAsync(data).then(() => {
+    let phone = data.phone.replace(/\D/g, ""); // Remove non-digits
+    if (phone.length === 11 && phone.startsWith("0")) {
+      phone = "+234" + phone.slice(1);
+    }
+    await mutateAsync({ ...data, phone }).then(() => {
       router.push("/sign-up/verify");
     });
   };
@@ -299,21 +304,36 @@ export default function SignUpPage() {
                         <FormField
                           control={registerForm.control}
                           name="phone"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="block text-sm font-medium">
-                                Phone number
-                              </FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="tel"
-                                  placeholder="+234 800 000 0000"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
+                          render={({ field }) => {
+                            return (
+                              <FormItem>
+                                <FormLabel className="block text-sm font-medium">
+                                  Phone number
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="tel"
+                                    inputMode="numeric"
+                                    maxLength={11}
+                                    pattern="[0-9]{11}"
+                                    placeholder="09000000000"
+                                    {...field}
+                                    value={field.value
+                                      .replace(/\D/g, "")
+                                      .slice(0, 11)}
+                                    onChange={(e) => {
+                                      // Only allow digits, max 11
+                                      const val = e.target.value
+                                        .replace(/\D/g, "")
+                                        .slice(0, 11);
+                                      field.onChange(val);
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            );
+                          }}
                         />
 
                         <Button
@@ -321,7 +341,7 @@ export default function SignUpPage() {
                           type="submit"
                           disabled={loading}
                         >
-                          {loading ? "Redirecting..." : "Verify Email & Phone"}
+                          {loading ? "Redirecting..." : "Continue"}
                         </Button>
 
                         <div className="mt-4 flex items-center gap-3">
