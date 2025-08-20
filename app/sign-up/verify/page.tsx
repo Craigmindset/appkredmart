@@ -6,12 +6,15 @@ import LayoutShell from "@/components/layout-shell";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/store/auth-store";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { StepProgress } from "@/components/step-progress";
 import { useVerifyEmailOtp } from "@/lib/services/auth/use-verify-email-otp";
 
 export default function VerifyPage() {
+  const [resendIsBlue, setResendIsBlue] = useState(true);
+  const [resendPressed, setResendPressed] = useState(false);
+  const resendTimeout = useRef<NodeJS.Timeout | null>(null);
   const [code, setCode] = useState("");
   const { setVerified } = useAuth();
   const router = useRouter();
@@ -21,6 +24,7 @@ export default function VerifyPage() {
     e.preventDefault();
     await verifyOtp({ token: code }).then(() => {
       setVerified(true);
+      setResendIsBlue(false); // Reset resend color after successful verify
       router.push("/sign-up?step=password");
     });
   };
@@ -81,6 +85,37 @@ export default function VerifyPage() {
                   >
                     {loading ? "Verifying..." : "Verify"}
                   </Button>
+                  <div className="mt-2 text-left text-sm text-muted-foreground">
+                    {"Didn't receive a code? "}
+                    <button
+                      type="button"
+                      className={`underline ml-1 transition-colors duration-150 ${
+                        resendIsBlue ? "text-blue-600" : "text-primary"
+                      } ${resendPressed ? "opacity-60" : "opacity-100"}`}
+                      style={{ padding: 0, background: "none", border: "none" }}
+                      onMouseDown={() => {
+                        setResendPressed(true);
+                        if (resendTimeout.current)
+                          clearTimeout(resendTimeout.current);
+                        resendTimeout.current = setTimeout(
+                          () => setResendPressed(false),
+                          200
+                        );
+                      }}
+                      onMouseUp={() => {
+                        setResendPressed(false);
+                        if (resendTimeout.current)
+                          clearTimeout(resendTimeout.current);
+                      }}
+                      onMouseLeave={() => {
+                        setResendPressed(false);
+                        if (resendTimeout.current)
+                          clearTimeout(resendTimeout.current);
+                      }}
+                    >
+                      Resend
+                    </button>
+                  </div>
                 </form>
               </div>
             </div>
