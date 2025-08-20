@@ -1,10 +1,22 @@
-"use client";
-
 import { backendAxios } from "@/lib/backendaxios";
 import { useQuery } from "@tanstack/react-query";
+import { AxiosResponse } from "axios";
+
+interface UserResponse {
+  id: string;
+  email: string;
+  firstname: string;
+  lastname: string;
+  phone: string;
+  picture?: string;
+  emailVerified?: Date;
+}
 
 export const fetchUser = async () => {
-  const response = await backendAxios.get("/user/me");
+  const response = await backendAxios.get<
+    UserResponse,
+    AxiosResponse<UserResponse>
+  >("/user/me");
   return response.data;
 };
 

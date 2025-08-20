@@ -31,7 +31,6 @@ export default function SignInPage() {
 
   async function onSubmit(data: loginSchemaType) {
     await mutateAsync(data).then(() => {
-      // Redirect to welcome screen instead of dashboard
       router.push("/welcome");
     });
   }

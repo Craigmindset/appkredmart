@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   CreditCard,
   DollarSign,
@@ -12,8 +12,9 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Eye,
-} from "lucide-react"
-import Link from "next/link"
+} from "lucide-react";
+import Link from "next/link";
+import { useUser } from "@/lib/services/user/user";
 
 export default function OverviewPage() {
   const stats = [
@@ -57,7 +58,7 @@ export default function OverviewPage() {
       bgGradient: "from-orange-50 to-red-50",
       description: "Awaiting delivery",
     },
-  ]
+  ];
 
   const recentTransactions = [
     {
@@ -96,7 +97,9 @@ export default function OverviewPage() {
       date: "2024-01-12",
       method: "Card",
     },
-  ]
+  ];
+
+  const { user } = useUser();
 
   return (
     <div className="space-y-6">
@@ -104,8 +107,12 @@ export default function OverviewPage() {
       <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl p-6 text-white">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold mb-2">Welcome back, Kred! 👋</h1>
-            <p className="text-blue-100">Here's what's happening with your account today.</p>
+            <h1 className="text-2xl font-bold mb-2">
+              Welcome back, {user?.firstname || "Kred"}! 👋
+            </h1>
+            <p className="text-blue-100">
+              Here's what's happening with your account today.
+            </p>
           </div>
           <div className="hidden md:block">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
@@ -122,9 +129,13 @@ export default function OverviewPage() {
             key={index}
             className="relative overflow-hidden border-0 shadow-sm hover:shadow-md transition-all duration-300"
           >
-            <div className={`absolute inset-0 bg-gradient-to-br ${stat.bgGradient} opacity-50`} />
+            <div
+              className={`absolute inset-0 bg-gradient-to-br ${stat.bgGradient} opacity-50`}
+            />
             <CardHeader className="relative z-10 flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-slate-700">{stat.title}</CardTitle>
+              <CardTitle className="text-sm font-medium text-slate-700">
+                {stat.title}
+              </CardTitle>
               <div
                 className={`h-10 w-10 rounded-full bg-gradient-to-br ${stat.gradient} flex items-center justify-center`}
               >
@@ -132,15 +143,23 @@ export default function OverviewPage() {
               </div>
             </CardHeader>
             <CardContent className="relative z-10">
-              <div className="text-2xl font-bold text-slate-900 mb-1">{stat.value}</div>
+              <div className="text-2xl font-bold text-slate-900 mb-1">
+                {stat.value}
+              </div>
               <div className="flex items-center gap-2">
                 <div
                   className={`flex items-center gap-1 text-xs ${
-                    stat.trend === "up" ? "text-emerald-600" : stat.trend === "down" ? "text-red-600" : "text-slate-600"
+                    stat.trend === "up"
+                      ? "text-emerald-600"
+                      : stat.trend === "down"
+                      ? "text-red-600"
+                      : "text-slate-600"
                   }`}
                 >
                   {stat.trend === "up" && <ArrowUpRight className="h-3 w-3" />}
-                  {stat.trend === "down" && <ArrowDownRight className="h-3 w-3" />}
+                  {stat.trend === "down" && (
+                    <ArrowDownRight className="h-3 w-3" />
+                  )}
                   {stat.change}
                 </div>
               </div>
@@ -155,8 +174,12 @@ export default function OverviewPage() {
         <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-lg font-semibold text-slate-900">Recent Transactions</CardTitle>
-              <p className="text-sm text-slate-600 mt-1">Your latest account activity</p>
+              <CardTitle className="text-lg font-semibold text-slate-900">
+                Recent Transactions
+              </CardTitle>
+              <p className="text-sm text-slate-600 mt-1">
+                Your latest account activity
+              </p>
             </div>
             <Link href="/dashboard/transactions">
               <Button
@@ -173,7 +196,10 @@ export default function OverviewPage() {
         <CardContent className="p-0">
           <div className="divide-y divide-slate-100">
             {recentTransactions.map((transaction, index) => (
-              <div key={index} className="p-4 hover:bg-slate-50 transition-colors">
+              <div
+                key={index}
+                className="p-4 hover:bg-slate-50 transition-colors"
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
@@ -183,13 +209,15 @@ export default function OverviewPage() {
                           transaction.type === "Purchase"
                             ? "bg-purple-100 text-purple-700"
                             : transaction.type === "Loan"
-                              ? "bg-blue-100 text-blue-700"
-                              : "bg-emerald-100 text-emerald-700"
+                            ? "bg-blue-100 text-blue-700"
+                            : "bg-emerald-100 text-emerald-700"
                         }`}
                       >
                         {transaction.type}
                       </Badge>
-                      <span className="text-sm font-medium text-slate-900">{transaction.description}</span>
+                      <span className="text-sm font-medium text-slate-900">
+                        {transaction.description}
+                      </span>
                     </div>
                     <div className="flex items-center gap-4 text-xs text-slate-600">
                       <span>{transaction.id}</span>
@@ -200,13 +228,19 @@ export default function OverviewPage() {
                   <div className="text-right">
                     <div
                       className={`font-semibold ${
-                        transaction.amount.startsWith("+") ? "text-emerald-600" : "text-slate-900"
+                        transaction.amount.startsWith("+")
+                          ? "text-emerald-600"
+                          : "text-slate-900"
                       }`}
                     >
                       {transaction.amount}
                     </div>
                     <Badge
-                      variant={transaction.status === "Completed" ? "default" : "secondary"}
+                      variant={
+                        transaction.status === "Completed"
+                          ? "default"
+                          : "secondary"
+                      }
                       className={`text-xs mt-1 ${
                         transaction.status === "Completed"
                           ? "bg-emerald-100 text-emerald-700"
@@ -234,7 +268,9 @@ export default function OverviewPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900">Request Loan</h3>
-                  <p className="text-sm text-slate-600">Quick access to credit</p>
+                  <p className="text-sm text-slate-600">
+                    Quick access to credit
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -265,7 +301,9 @@ export default function OverviewPage() {
                   <DollarSign className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900">Manage Wallet</h3>
+                  <h3 className="font-semibold text-slate-900">
+                    Manage Wallet
+                  </h3>
                   <p className="text-sm text-slate-600">Top up or withdraw</p>
                 </div>
               </div>
@@ -274,5 +312,5 @@ export default function OverviewPage() {
         </Link>
       </div>
     </div>
-  )
+  );
 }

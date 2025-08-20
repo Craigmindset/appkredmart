@@ -2,19 +2,9 @@
 
 import Link from "next/link";
 
-import type React from "react";
-
 import LayoutShell from "@/components/layout-shell";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
-import { Separator } from "@/components/ui/separator";
-import { Eye, EyeOff } from "lucide-react";
 import { StepProgress } from "@/components/step-progress";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema, registerSchemaType } from "@/lib/validations/auth";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -23,18 +13,33 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { useAddPassword } from "@/lib/services/auth/use-add-password";
+import { useRegister } from "@/lib/services/auth/use-register";
+import {
+  registerPasswordSchema,
+  registerPasswordSchemaType,
+  registerSchema,
+  registerSchemaType,
+} from "@/lib/validations/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 export default function SignUpPage() {
   const params = useSearchParams();
   const step = params.get("step");
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
 
   // Password step state
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const { mutateAsync, loading } = useRegister();
+  const { loading: passwordLoading, mutateAsync: addPasswordSync } =
+    useAddPassword();
 
   const registerForm = useForm({
     resolver: zodResolver(registerSchema),
@@ -46,21 +51,25 @@ export default function SignUpPage() {
     },
   });
 
+  const passwordForm = useForm({
+    resolver: zodResolver(registerPasswordSchema),
+    defaultValues: {
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
   const onStart = async (data: registerSchemaType) => {
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 500));
-    setLoading(false);
-    router.push("/sign-up/verify");
+    await mutateAsync(data).then(() => {
+      router.push("/sign-up/verify");
+    });
   };
 
-  const onCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password !== confirm) return;
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 600));
-    setLoading(false);
-    // After account creation, send user to /login (alias to /sign-in)
-    router.push("/login");
+  const onCreate = async (data: registerPasswordSchemaType) => {
+    await addPasswordSync(data).then(() => {
+      // After account creation, send user to /login (alias to /sign-in)
+      router.push("/login");
+    });
   };
 
   return (
@@ -115,74 +124,102 @@ export default function SignUpPage() {
                       {"Create your password"}
                     </h2>
 
-                    <form onSubmit={onCreate} className="mt-6 space-y-4">
-                      <div>
-                        <label className="mb-1 block text-sm font-medium">
-                          {"Password"}
-                        </label>
-                        <div className="relative">
-                          <Input
-                            type={showPwd ? "text" : "password"}
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            placeholder="Enter a strong password"
-                            className="pr-10"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowPwd((v) => !v)}
-                            className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-muted-foreground"
-                            aria-label={
-                              showPwd ? "Hide password" : "Show password"
-                            }
-                          >
-                            {showPwd ? (
-                              <EyeOff className="h-4 w-4" />
-                            ) : (
-                              <Eye className="h-4 w-4" />
-                            )}
-                          </button>
-                        </div>
-                      </div>
-                      <div>
-                        <label className="mb-1 block text-sm font-medium">
-                          {"Confirm Password"}
-                        </label>
-                        <div className="relative">
-                          <Input
-                            type={showConfirm ? "text" : "password"}
-                            value={confirm}
-                            onChange={(e) => setConfirm(e.target.value)}
-                            required
-                            placeholder="Re-enter your password"
-                            className="pr-10"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowConfirm((v) => !v)}
-                            className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-muted-foreground"
-                            aria-label={
-                              showConfirm ? "Hide password" : "Show password"
-                            }
-                          >
-                            {showConfirm ? (
-                              <EyeOff className="h-4 w-4" />
-                            ) : (
-                              <Eye className="h-4 w-4" />
-                            )}
-                          </button>
-                        </div>
-                      </div>
-
-                      <Button
-                        type="submit"
-                        className="mt-2 h-11 w-full"
-                        disabled={loading || password !== confirm}
+                    <Form {...passwordForm}>
+                      <form
+                        onSubmit={passwordForm.handleSubmit(onCreate)}
+                        className="mt-6 space-y-4"
                       >
-                        {loading ? "Creating..." : "CREATE ACCOUNT"}
-                      </Button>
-                    </form>
+                        <FormField
+                          control={passwordForm.control}
+                          name="password"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="block text-sm font-medium">
+                                Password
+                              </FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <Input
+                                    {...field}
+                                    type={showPwd ? "text" : "password"}
+                                    placeholder="Enter a strong password"
+                                    className="pr-10"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => setShowPwd((v) => !v)}
+                                    className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-muted-foreground"
+                                    aria-label={
+                                      showPwd
+                                        ? "Hide password"
+                                        : "Show password"
+                                    }
+                                  >
+                                    {showPwd ? (
+                                      <EyeOff className="h-4 w-4" />
+                                    ) : (
+                                      <Eye className="h-4 w-4" />
+                                    )}
+                                  </button>
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={passwordForm.control}
+                          name="confirmPassword"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="block text-sm font-medium">
+                                Confirm Password
+                              </FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <Input
+                                    {...field}
+                                    type={showConfirm ? "text" : "password"}
+                                    placeholder="Re-enter your password"
+                                    className="pr-10"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => setShowConfirm((v) => !v)}
+                                    className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-muted-foreground"
+                                    aria-label={
+                                      showPwd
+                                        ? "Hide password"
+                                        : "Show password"
+                                    }
+                                  >
+                                    {showConfirm ? (
+                                      <EyeOff className="h-4 w-4" />
+                                    ) : (
+                                      <Eye className="h-4 w-4" />
+                                    )}
+                                  </button>
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <Button
+                          type="submit"
+                          className="mt-2 h-11 w-full"
+                          disabled={
+                            passwordLoading ||
+                            passwordForm.watch("password") !==
+                              passwordForm.watch("confirmPassword")
+                          }
+                        >
+                          {passwordLoading ? "Creating..." : "CREATE ACCOUNT"}
+                        </Button>
+                      </form>
+                    </Form>
 
                     <div className="mt-6 text-center text-xs text-muted-foreground">
                       {"Already have an account? "}

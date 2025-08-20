@@ -14,6 +14,7 @@ import {
   Tag,
   Info,
   Lock,
+  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -38,6 +39,7 @@ import { appFontClass } from "@/lib/fonts";
 import { useEffect, useMemo, useState } from "react";
 import { allCategories } from "@/lib/products";
 import { slugifyCategory } from "@/lib/categories";
+import { useUser } from "@/lib/services/user/user";
 
 const MENU = [
   { href: "/", label: "Home" },
@@ -60,7 +62,11 @@ function CountrySelector() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="flex items-center gap-2 px-2">
-          <img src={selected.flag} alt={selected.label + ' flag'} className="w-5 h-5 rounded-full object-cover" />
+          <img
+            src={selected.flag}
+            alt={selected.label + " flag"}
+            className="w-5 h-5 rounded-full object-cover"
+          />
           <span className="text-xs font-medium">{selected.label}</span>
         </Button>
       </DropdownMenuTrigger>
@@ -73,7 +79,11 @@ function CountrySelector() {
             onClick={() => setSelected(country)}
             className="flex items-center gap-2"
           >
-            <img src={country.flag} alt={country.label + ' flag'} className="w-5 h-5 rounded-full object-cover" />
+            <img
+              src={country.flag}
+              alt={country.label + " flag"}
+              className="w-5 h-5 rounded-full object-cover"
+            />
             <span className="text-xs font-medium">{country.label}</span>
           </DropdownMenuItem>
         ))}
@@ -96,6 +106,7 @@ export default function SiteHeader() {
   const initialQ = (searchParams?.get("search") ?? "").toString();
   const [term, setTerm] = useState(initialQ);
   const itemCount = useCart(cartSelectors.count);
+  const { user } = useUser();
 
   const submitSearch = (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -110,6 +121,8 @@ export default function SiteHeader() {
       router.push(url);
     }
   };
+
+  console.log({ user });
 
   return (
     <header
@@ -200,22 +213,32 @@ export default function SiteHeader() {
             <div className="flex items-center gap-1 md:hidden">
               <CountrySelector />
 
-              {/* Login icon for mobile - only show when not logged in */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => router.push("/sign-in")}
-              >
-                <Lock className="h-4 w-4" />
-                <span className="sr-only">Login</span>
-              </Button>
-
-              {/* User profile icon for mobile - only show when logged in */}
-              {/* TODO: Add condition to check if user is logged in */}
-              {/* <Button variant="ghost" size="icon" onClick={() => router.push("/dashboard")}>
-                <User className="h-4 w-4" />
-                <span className="sr-only">Profile</span>
-              </Button> */}
+              {!user ? (
+                <>
+                  {/* Login icon for mobile - only show when not logged in */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => router.push("/sign-in")}
+                  >
+                    <Lock className="h-4 w-4" />
+                    <span className="sr-only">Login</span>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  {/* User profile icon for mobile - only show when logged in */}
+                  {/* TODO: Add condition to check if user is logged in */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => router.push("/dashboard")}
+                  >
+                    <User className="h-4 w-4" />
+                    <span className="sr-only">Profile</span>
+                  </Button>
+                </>
+              )}
             </div>
 
             {/* Desktop country selector */}
@@ -238,19 +261,35 @@ export default function SiteHeader() {
               )}
             </Button>
 
-            {/* Desktop auth links */}
-            <Link
-              href="/sign-in"
-              className="hidden md:inline text-sm hover:underline"
-            >
-              Login
-            </Link>
-            <Link
-              href="/sign-up"
-              className="hidden md:inline-flex h-8 items-center justify-center rounded-md border border-input bg-background px-3 text-sm"
-            >
-              Sign Up
-            </Link>
+            {!user ? (
+              <>
+                {/* Desktop auth links */}
+                <Link
+                  href="/sign-in"
+                  className="hidden md:inline text-sm hover:underline"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/sign-up"
+                  className="hidden md:inline-flex h-8 items-center justify-center rounded-md border border-input bg-background px-3 text-sm"
+                >
+                  Sign Up
+                </Link>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="ghost"
+                  className="hidden md:inline"
+                  size="icon"
+                  onClick={() => router.push("/dashboard")}
+                >
+                  <User className="h-4 w-4" />
+                  <span className="sr-only">Profile</span>
+                </Button>
+              </>
+            )}
           </div>
         </div>
 
