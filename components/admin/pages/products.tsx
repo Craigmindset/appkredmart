@@ -410,7 +410,7 @@ export default function ProductsAdminPage() {
                     <th className="text-left p-2">Discount (%)</th>
                     <th className="text-left p-2">Markup %</th>
                     <th className="text-left p-2">Display Price</th>
-                    <th className="text-left p-2">Stock</th>
+                    <th className="text-left p-2">Quantity</th>
                     <th className="text-left p-2">Actions</th>
                   </tr>
                 </thead>

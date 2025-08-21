@@ -1,31 +1,57 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { Search, Package, AlertTriangle, TrendingUp, TrendingDown } from "lucide-react"
+import { useState, useMemo } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import {
+  Search,
+  Package,
+  AlertTriangle,
+  TrendingUp,
+  TrendingDown,
+} from "lucide-react";
 
 // Demo inventory data with Slot and Gbam Inc. merchants
 const mockInventoryData = Array.from({ length: 50 }, (_, i) => {
-  const currentStock = Math.max(0, 100 - i * 3)
-  const minStock = 10
-  const maxStock = 100
+  const currentStock = Math.max(0, 100 - i * 3);
+  const minStock = 10;
+  const maxStock = 100;
 
   // Calculate status based on stock levels
-  let status = "Normal"
+  let status = "Normal";
   if (currentStock === 0) {
-    status = "Out of Stock"
+    status = "Out of Stock";
   } else if (currentStock <= minStock) {
-    status = "Low Stock"
+    status = "Low Stock";
   } else if (currentStock >= maxStock * 0.8) {
-    status = "Well Stocked"
+    status = "Well Stocked";
   }
 
   // Calculate stock level percentage
-  const stockLevel = currentStock === 0 ? 0 : Math.max(20, (currentStock / maxStock) * 100)
+  const stockLevel =
+    currentStock === 0 ? 0 : Math.max(20, (currentStock / maxStock) * 100);
 
   return {
     id: `INV${1000 + i}`,
@@ -43,9 +69,14 @@ const mockInventoryData = Array.from({ length: 50 }, (_, i) => {
       "4K Monitor",
       "Wireless Mouse",
     ][i % 12],
-    category: ["Phones and Tablets", "Computing", "Electronics", "Accessories", "Home & Kitchen", "Premium Devices"][
-      i % 6
-    ],
+    category: [
+      "Phones and Tablets",
+      "Computing",
+      "Electronics",
+      "Accessories",
+      "Home & Kitchen",
+      "Premium Devices",
+    ][i % 6],
     merchant: i % 2 === 0 ? "Slot" : "Gbam Inc.",
     currentStock,
     minStock,
@@ -53,13 +84,15 @@ const mockInventoryData = Array.from({ length: 50 }, (_, i) => {
     price: 50000 + i * 5000,
     deals: i % 4 === 0 ? "Kredmart deals" : i % 5 === 0 ? "Flash Sale" : null,
     bestPrice: i % 3 === 0,
-    lastRestocked: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toLocaleDateString(),
+    lastRestocked: new Date(
+      Date.now() - i * 24 * 60 * 60 * 1000
+    ).toLocaleDateString(),
     status,
     stockLevel: Math.round(stockLevel),
-  }
-})
+  };
+});
 
-const merchants = ["All", "Slot", "Gbam Inc."]
+const merchants = ["All", "Slot", "Gbam Inc."];
 const categories = [
   "All",
   "Phones and Tablets",
@@ -68,9 +101,9 @@ const categories = [
   "Accessories",
   "Home & Kitchen",
   "Premium Devices",
-]
-const dealTypes = ["All", "Kredmart deals", "Flash Sale", "No Deals"]
-const priceTypes = ["All", "Best Price", "Regular Price"]
+];
+const dealTypes = ["All", "Kredmart deals", "Flash Sale", "No Deals"];
+const priceTypes = ["All", "Best Price", "Regular Price"];
 
 // Currency formatter for Naira
 const formatNaira = (amount: number) => {
@@ -78,43 +111,57 @@ const formatNaira = (amount: number) => {
     style: "currency",
     currency: "NGN",
     minimumFractionDigits: 0,
-  }).format(amount)
-}
+  }).format(amount);
+};
 
 export default function InventoryAdminPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [merchantFilter, setMerchantFilter] = useState("All")
-  const [categoryFilter, setCategoryFilter] = useState("All")
-  const [dealFilter, setDealFilter] = useState("All")
-  const [priceFilter, setPriceFilter] = useState("All")
+  const [searchQuery, setSearchQuery] = useState("");
+  const [merchantFilter, setMerchantFilter] = useState("All");
+  const [categoryFilter, setCategoryFilter] = useState("All");
+  const [dealFilter, setDealFilter] = useState("All");
+  const [priceFilter, setPriceFilter] = useState("All");
 
   const filteredData = useMemo(() => {
     return mockInventoryData.filter((item) => {
       const matchesSearch =
         item.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.merchant.toLowerCase().includes(searchQuery.toLowerCase())
+        item.merchant.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesMerchant = merchantFilter === "All" || item.merchant === merchantFilter
-      const matchesCategory = categoryFilter === "All" || item.category === categoryFilter
+      const matchesMerchant =
+        merchantFilter === "All" || item.merchant === merchantFilter;
+      const matchesCategory =
+        categoryFilter === "All" || item.category === categoryFilter;
       const matchesDeals =
         dealFilter === "All" ||
         (dealFilter === "No Deals" && !item.deals) ||
-        (dealFilter !== "No Deals" && item.deals === dealFilter)
+        (dealFilter !== "No Deals" && item.deals === dealFilter);
       const matchesPrice =
         priceFilter === "All" ||
         (priceFilter === "Best Price" && item.bestPrice) ||
-        (priceFilter === "Regular Price" && !item.bestPrice)
+        (priceFilter === "Regular Price" && !item.bestPrice);
 
-      return matchesSearch && matchesMerchant && matchesCategory && matchesDeals && matchesPrice
-    })
-  }, [searchQuery, merchantFilter, categoryFilter, dealFilter, priceFilter])
+      return (
+        matchesSearch &&
+        matchesMerchant &&
+        matchesCategory &&
+        matchesDeals &&
+        matchesPrice
+      );
+    });
+  }, [searchQuery, merchantFilter, categoryFilter, dealFilter, priceFilter]);
 
   // Calculate summary stats
-  const totalProducts = filteredData.length
-  const outOfStock = filteredData.filter((item) => item.status === "Out of Stock").length
-  const lowStock = filteredData.filter((item) => item.status === "Low Stock").length
-  const wellStocked = filteredData.filter((item) => item.status === "Well Stocked").length
+  const totalProducts = filteredData.length;
+  const outOfStock = filteredData.filter(
+    (item) => item.status === "Out of Stock"
+  ).length;
+  const lowStock = filteredData.filter(
+    (item) => item.status === "Low Stock"
+  ).length;
+  const wellStocked = filteredData.filter(
+    (item) => item.status === "Well Stocked"
+  ).length;
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -123,30 +170,30 @@ export default function InventoryAdminPage() {
           <Badge variant="destructive" className="bg-red-100 text-red-800">
             {status}
           </Badge>
-        )
+        );
       case "Low Stock":
         return (
           <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
             {status}
           </Badge>
-        )
+        );
       case "Well Stocked":
         return (
           <Badge variant="default" className="bg-green-100 text-green-800">
             {status}
           </Badge>
-        )
+        );
       default:
-        return <Badge variant="outline">{status}</Badge>
+        return <Badge variant="outline">{status}</Badge>;
     }
-  }
+  };
 
   const getStockLevelColor = (level: number) => {
-    if (level === 0) return "bg-red-500"
-    if (level <= 20) return "bg-red-400"
-    if (level <= 50) return "bg-yellow-400"
-    return "bg-green-500"
-  }
+    if (level === 0) return "bg-red-500";
+    if (level <= 20) return "bg-red-400";
+    if (level <= 50) return "bg-yellow-400";
+    return "bg-green-500";
+  };
 
   return (
     <div className="space-y-6">
@@ -154,17 +201,23 @@ export default function InventoryAdminPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-blue-50">
-            <CardTitle className="text-sm font-medium text-blue-700">Total Products</CardTitle>
+            <CardTitle className="text-sm font-medium text-blue-700">
+              Total Products
+            </CardTitle>
             <Package className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-900">{totalProducts}</div>
+            <div className="text-2xl font-bold text-blue-900">
+              {totalProducts}
+            </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-red-50">
-            <CardTitle className="text-sm font-medium text-red-700">Out of Stock</CardTitle>
+            <CardTitle className="text-sm font-medium text-red-700">
+              Out of Stock
+            </CardTitle>
             <AlertTriangle className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
@@ -174,7 +227,9 @@ export default function InventoryAdminPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-yellow-50">
-            <CardTitle className="text-sm font-medium text-yellow-700">Low Stock</CardTitle>
+            <CardTitle className="text-sm font-medium text-yellow-700">
+              Low Stock
+            </CardTitle>
             <TrendingDown className="h-4 w-4 text-yellow-600" />
           </CardHeader>
           <CardContent>
@@ -184,11 +239,15 @@ export default function InventoryAdminPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-green-50">
-            <CardTitle className="text-sm font-medium text-green-700">Well Stocked</CardTitle>
+            <CardTitle className="text-sm font-medium text-green-700">
+              Well Stocked
+            </CardTitle>
             <TrendingUp className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-900">{wellStocked}</div>
+            <div className="text-2xl font-bold text-green-900">
+              {wellStocked}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -197,7 +256,9 @@ export default function InventoryAdminPage() {
       <Card>
         <CardHeader>
           <CardTitle>Inventory Management</CardTitle>
-          <CardDescription>Monitor stock levels across all merchants and categories.</CardDescription>
+          <CardDescription>
+            Monitor stock levels across all merchants and categories.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4">
@@ -280,10 +341,8 @@ export default function InventoryAdminPage() {
                 <TableHead>Product Name</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>Merchant</TableHead>
-                <TableHead>Current Stock</TableHead>
-                <TableHead>Stock Level</TableHead>
+                <TableHead>Quantity</TableHead>
                 <TableHead>Price</TableHead>
-                <TableHead>Status</TableHead>
                 <TableHead>Deals</TableHead>
                 <TableHead>Last Restocked</TableHead>
               </TableRow>
@@ -296,7 +355,10 @@ export default function InventoryAdminPage() {
                     <div className="flex items-center gap-2">
                       {item.productName}
                       {item.bestPrice && (
-                        <Badge variant="outline" className="bg-blue-50 text-blue-700 text-xs">
+                        <Badge
+                          variant="outline"
+                          className="bg-blue-50 text-blue-700 text-xs"
+                        >
                           Best Price
                         </Badge>
                       )}
@@ -309,24 +371,11 @@ export default function InventoryAdminPage() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">{item.currentStock}</span>
-                      <span className="text-sm text-muted-foreground">/ {item.maxStock}</span>
-                    </div>
+                    <span className="font-medium">{item.currentStock}</span>
                   </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full ${getStockLevelColor(item.stockLevel)} transition-all duration-300`}
-                          style={{ width: `${item.stockLevel}%` }}
-                        />
-                      </div>
-                      <span className="text-xs text-muted-foreground">{item.stockLevel}%</span>
-                    </div>
+                  <TableCell className="font-medium">
+                    {formatNaira(item.price)}
                   </TableCell>
-                  <TableCell className="font-medium">{formatNaira(item.price)}</TableCell>
-                  <TableCell>{getStatusBadge(item.status)}</TableCell>
                   <TableCell>
                     {item.deals ? (
                       <Badge
@@ -340,10 +389,14 @@ export default function InventoryAdminPage() {
                         {item.deals}
                       </Badge>
                     ) : (
-                      <span className="text-muted-foreground text-sm">No deals</span>
+                      <span className="text-muted-foreground text-sm">
+                        No deals
+                      </span>
                     )}
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{item.lastRestocked}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    {item.lastRestocked}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -351,5 +404,5 @@ export default function InventoryAdminPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
