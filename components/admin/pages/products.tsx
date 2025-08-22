@@ -458,6 +458,7 @@ export default function ProductsAdminPage() {
                     <th className="text-left p-2">Product</th>
                     <th className="text-left p-2">Product ID</th>
                     <th className="text-left p-2">Category</th>
+                    <th className="text-left p-2">Brand</th>
                     <th className="text-left p-2">Merchant</th>
                     <th className="text-left p-2">Merchant Price</th>
                     <th className="text-left p-2">Discount (%)</th>
@@ -512,6 +513,9 @@ export default function ProductsAdminPage() {
                         </td>
                         <td className="p-2">
                           <Badge variant="outline">{product.category}</Badge>
+                        </td>
+                        <td className="p-2">
+                          <Badge variant="secondary">{product.brand || "-"}</Badge>
                         </td>
                         <td className="p-2">
                           <Badge

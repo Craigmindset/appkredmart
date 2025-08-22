@@ -238,9 +238,7 @@ export function AdminWallet() {
               <div>
                 <div className="flex items-center gap-3">
                   <div className="text-2xl font-bold">
-                    {showBalance
-                      ? `₦${balance.toLocaleString()}`
-                      : "₦****"}
+                    {showBalance ? `₦${balance.toLocaleString()}` : "₦****"}
                   </div>
                   <Button
                     variant="ghost"
@@ -293,9 +291,7 @@ export function AdminWallet() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() =>
-                    copyToClipboard(accountName, "Account name")
-                  }
+                  onClick={() => copyToClipboard(accountName, "Account name")}
                   className="h-6 w-6 p-0 ml-2"
                 >
                   <Copy className="h-3 w-3" />
@@ -329,9 +325,7 @@ export function AdminWallet() {
                 Bank Name
               </Label>
               <div className="mt-1 p-2 bg-muted rounded-md">
-                <span className="text-sm font-medium">
-                  {bankName}
-                </span>
+                <span className="text-sm font-medium">{bankName}</span>
               </div>
             </div>
           </CardContent>

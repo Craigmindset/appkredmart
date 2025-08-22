@@ -232,6 +232,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               <p className="text-xs text-blue-300 truncate">
                 {currentUser?.email || "admin@kredmart.com"}
               </p>
+              {/* Only show the role badge, remove any duplicate role text */}
               {currentUser && (
                 <Badge
                   variant="outline"

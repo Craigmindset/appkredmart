@@ -5,6 +5,7 @@ export interface GetProductDto {
   name: string;
   sku: string;
   category: string;
+  brand?: string; // Added brand field (optional for now)
   seller: {
     shopName: string;
   };
