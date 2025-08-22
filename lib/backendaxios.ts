@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.kredmart.com';
+const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000';
 // console.log('Environment check:', {
 //   NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
 //   finalBaseURL: baseURL,
