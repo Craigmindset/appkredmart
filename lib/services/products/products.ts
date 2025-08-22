@@ -45,14 +45,16 @@ export interface ProductsQueryParams {
   page?: number;
 }
 class ProductsService {
-  private baseUrl = "/api/products";
+  private baseUrl = "/products";
 
-  async getProducts(params: ProductsQueryParams = {}): Promise<ProductsResponse> {
+  async getProducts(
+    params: ProductsQueryParams = {}
+  ): Promise<ProductsResponse> {
     const queryParams = new URLSearchParams();
 
     if (params.search) queryParams.append("search", params.search);
     if (params.sortBy) queryParams.append("sortBy", params.sortBy);
-    if (params.limit) queryParams.append("pageSize", params.limit.toString()); 
+    if (params.limit) queryParams.append("pageSize", params.limit.toString());
     if (params.page) queryParams.append("page", params.page.toString());
 
     const fullUrl = `${this.baseUrl}?${queryParams.toString()}`;
@@ -70,7 +72,10 @@ class ProductsService {
     return response.data;
   }
 
-  async updateProduct(id: string, data: Partial<GetProductDto>): Promise<GetProductDto> {
+  async updateProduct(
+    id: string,
+    data: Partial<GetProductDto>
+  ): Promise<GetProductDto> {
     const response = await backendAxios.put(`${this.baseUrl}/${id}`, data);
     return response.data;
   }
@@ -82,8 +87,6 @@ class ProductsService {
     });
     return response.data;
   }
-
-  
 }
 
 export const productsService = new ProductsService();
