@@ -39,6 +39,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { useWallet } from "@/store/wallet-store";
 import { usePathname, useRouter } from "next/navigation";
 import { useAdminRBACStore, type Permission } from "@/store/admin-rbac-store";
 
@@ -99,6 +100,12 @@ const adminNavItems: AdminNavItem[] = [
     permissions: ["view_transactions"],
   },
   {
+    title: "Wallet",
+    url: "/admin/dashboard/wallet",
+    icon: Wallet,
+    permissions: ["view_wallet"],
+  },
+  {
     title: "All Orders",
     url: "/admin/dashboard/all-orders",
     icon: ShoppingCart,
@@ -140,10 +147,13 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     router.push("/admin");
   };
 
-  // Filter navigation items based on user permissions
-  const visibleNavItems = adminNavItems.filter((item) =>
-    hasAnyPermission(item.permissions)
-  );
+  // Show Wallet tab always for super-admin, permission-based for others
+  const visibleNavItems = adminNavItems.filter((item) => {
+    if (item.title === "Wallet" && currentUser?.role === "super-admin") {
+      return true;
+    }
+    return hasAnyPermission(item.permissions);
+  });
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
@@ -162,7 +172,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      <Sidebar className="border-r border-gray-200 bg-blue-900 z-[60]" suppressHydrationWarning>
+      <Sidebar
+        className="border-r border-gray-200 bg-blue-900 z-[60]"
+        suppressHydrationWarning
+      >
         <SidebarHeader className="border-b border-blue-700 bg-blue-900 z-[60]">
           <div className="flex items-center gap-3 px-3 py-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white">
@@ -266,16 +279,23 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
             <div className="flex items-center gap-3">
               {/* System Wallet */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 hover:bg-gray-100"
-              >
-                <Wallet className="h-4 w-4 text-green-600" />
-                <span className="hidden sm:inline text-sm font-medium text-gray-900">
-                  ₦2,450,000
-                </span>
-              </Button>
+              {(() => {
+                const { balance } = useWallet();
+                return (
+                  <Link href="/admin/dashboard/wallet" passHref legacyBehavior>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="gap-2 hover:bg-gray-100"
+                    >
+                      <Wallet className="h-4 w-4 text-green-600" />
+                      <span className="hidden sm:inline text-sm font-medium text-gray-900">
+                        ₦{balance.toLocaleString()}
+                      </span>
+                    </Button>
+                  </Link>
+                );
+              })()}
 
               {/* Broadcast */}
               <Button variant="ghost" size="sm" className="hover:bg-gray-100">
