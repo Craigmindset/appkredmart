@@ -59,16 +59,27 @@ const brands = [
   "Other",
 ];
 
-export default function ProductUploadMerchant() {
+export default function ProductUploadAdminPage() {
   const [activeTab, setActiveTab] = useState("form");
   const [isLoading, setIsLoading] = useState(false);
   const [mainImage, setMainImage] = useState<string | null>(null);
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
   const [csvFile, setCsvFile] = useState<File | null>(null);
 
+  // Color options and their hex codes
+  const colorOptions = [
+    { name: "Black", hex: "#000000" },
+    { name: "White", hex: "#FFFFFF" },
+    { name: "Grey", hex: "#808080" },
+    { name: "Red", hex: "#FF0000" },
+    { name: "Silver", hex: "#C0C0C0" },
+    { name: "Gold", hex: "#FFD700" },
+  ];
+
   const [formData, setFormData] = useState({
     name: "",
     category: "",
+    color: "",
     brand: "",
     description: "",
     price: "",
@@ -129,6 +140,7 @@ export default function ProductUploadMerchant() {
     setFormData({
       name: "",
       category: "",
+      color: "",
       brand: "",
       description: "",
       price: "",
@@ -165,6 +177,16 @@ export default function ProductUploadMerchant() {
           <p className="text-gray-600 mt-1">
             Add new products to your inventory
           </p>
+        </div>
+        <div className="flex gap-2">
+          <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+            <FileText className="h-3 w-3 mr-1" />
+            Draft: 12
+          </Badge>
+          <Badge variant="secondary" className="bg-green-100 text-green-800">
+            <Eye className="h-3 w-3 mr-1" />
+            Published: 1,247
+          </Badge>
         </div>
       </div>
 
@@ -246,6 +268,38 @@ export default function ProductUploadMerchant() {
                         {categories.map((category) => (
                           <SelectItem key={category} value={category}>
                             {category}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Color Dropdown */}
+                  <div className="space-y-2">
+                    <Label htmlFor="color">Color</Label>
+                    <Select
+                      value={formData.color}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, color: value }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select color" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {colorOptions.map((color) => (
+                          <SelectItem key={color.name} value={color.name}>
+                            <span className="flex items-center gap-2">
+                              <span
+                                className="inline-block w-4 h-4 rounded-full border"
+                                style={{
+                                  backgroundColor: color.hex,
+                                  borderColor:
+                                    color.name === "White" ? "#ccc" : color.hex,
+                                }}
+                              />
+                              {color.name}
+                            </span>
                           </SelectItem>
                         ))}
                       </SelectContent>

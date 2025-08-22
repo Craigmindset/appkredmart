@@ -1,19 +1,25 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { Upload, X, Plus, FileText, ImageIcon, Save, Eye } from "lucide-react"
-import { toast } from "sonner"
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Upload, X, Plus, FileText, ImageIcon, Save, Eye } from "lucide-react";
+import { toast } from "sonner";
 
 const categories = [
   "Phones and Tablets",
@@ -25,7 +31,7 @@ const categories = [
   "Lifestyle",
   "Watches",
   "Premium Devices",
-]
+];
 
 const brands = [
   "Apple",
@@ -51,97 +57,116 @@ const brands = [
   "Under Armour",
   "Generic",
   "Other",
-]
+];
 
 export default function ProductUploadAdminPage() {
-  const [activeTab, setActiveTab] = useState("form")
-  const [isLoading, setIsLoading] = useState(false)
-  const [mainImage, setMainImage] = useState<string | null>(null)
-  const [galleryImages, setGalleryImages] = useState<string[]>([])
-  const [csvFile, setCsvFile] = useState<File | null>(null)
+  const [activeTab, setActiveTab] = useState("form");
+  const [isLoading, setIsLoading] = useState(false);
+  const [mainImage, setMainImage] = useState<string | null>(null);
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
+  const [csvFile, setCsvFile] = useState<File | null>(null);
+
+  // Color options and their hex codes
+  const colorOptions = [
+    { name: "Black", hex: "#000000" },
+    { name: "White", hex: "#FFFFFF" },
+    { name: "Grey", hex: "#808080" },
+    { name: "Red", hex: "#FF0000" },
+    { name: "Silver", hex: "#C0C0C0" },
+    { name: "Gold", hex: "#FFD700" },
+  ];
 
   const [formData, setFormData] = useState({
     name: "",
     category: "",
+    color: "",
     brand: "",
     description: "",
     price: "",
     discountPrice: "",
     isDeal: false,
-  })
+  });
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, type: "main" | "gallery") => {
-    const file = e.target.files?.[0]
+  const handleImageUpload = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    type: "main" | "gallery"
+  ) => {
+    const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onload = (e) => {
-        const result = e.target?.result as string
+        const result = e.target?.result as string;
         if (type === "main") {
-          setMainImage(result)
+          setMainImage(result);
         } else {
-          setGalleryImages((prev) => [...prev, result])
+          setGalleryImages((prev) => [...prev, result]);
         }
-      }
-      reader.readAsDataURL(file)
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   const removeGalleryImage = (index: number) => {
-    setGalleryImages((prev) => prev.filter((_, i) => i !== index))
-  }
+    setGalleryImages((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file && file.type === "text/csv") {
-      setCsvFile(file)
+      setCsvFile(file);
     } else {
-      toast.error("Please select a valid CSV file")
+      toast.error("Please select a valid CSV file");
     }
-  }
+  };
 
   const handleFormSubmit = async (action: "save" | "publish") => {
     if (!formData.name || !formData.category || !formData.price) {
-      toast.error("Please fill in all required fields")
-      return
+      toast.error("Please fill in all required fields");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    toast.success(`Product ${action === "save" ? "saved as draft" : "published"} successfully!`)
+    toast.success(
+      `Product ${
+        action === "save" ? "saved as draft" : "published"
+      } successfully!`
+    );
 
     // Reset form
     setFormData({
       name: "",
       category: "",
+      color: "",
       brand: "",
       description: "",
       price: "",
       discountPrice: "",
       isDeal: false,
-    })
-    setMainImage(null)
-    setGalleryImages([])
-    setIsLoading(false)
-  }
+    });
+    setMainImage(null);
+    setGalleryImages([]);
+    setIsLoading(false);
+  };
 
   const handleCsvSubmit = async () => {
     if (!csvFile) {
-      toast.error("Please select a CSV file")
-      return
+      toast.error("Please select a CSV file");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     // Simulate CSV processing
-    await new Promise((resolve) => setTimeout(resolve, 3000))
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
-    toast.success("CSV file processed successfully! 25 products uploaded.")
-    setCsvFile(null)
-    setIsLoading(false)
-  }
+    toast.success("CSV file processed successfully! 25 products uploaded.");
+    setCsvFile(null);
+    setIsLoading(false);
+  };
 
   return (
     <div className="space-y-6">
@@ -149,7 +174,9 @@ export default function ProductUploadAdminPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Product Upload</h1>
-          <p className="text-gray-600 mt-1">Add new products to your inventory</p>
+          <p className="text-gray-600 mt-1">
+            Add new products to your inventory
+          </p>
         </div>
         <div className="flex gap-2">
           <Badge variant="secondary" className="bg-blue-100 text-blue-800">
@@ -196,14 +223,21 @@ export default function ProductUploadAdminPage() {
                         id="name"
                         placeholder="Enter product name"
                         value={formData.name}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            name: e.target.value,
+                          }))
+                        }
                       />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="brand">Brand</Label>
                       <Select
                         value={formData.brand}
-                        onValueChange={(value) => setFormData((prev) => ({ ...prev, brand: value }))}
+                        onValueChange={(value) =>
+                          setFormData((prev) => ({ ...prev, brand: value }))
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select brand" />
@@ -223,7 +257,9 @@ export default function ProductUploadAdminPage() {
                     <Label htmlFor="category">Category *</Label>
                     <Select
                       value={formData.category}
-                      onValueChange={(value) => setFormData((prev) => ({ ...prev, category: value }))}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, category: value }))
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
@@ -238,6 +274,38 @@ export default function ProductUploadAdminPage() {
                     </Select>
                   </div>
 
+                  {/* Color Dropdown */}
+                  <div className="space-y-2">
+                    <Label htmlFor="color">Color</Label>
+                    <Select
+                      value={formData.color}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, color: value }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select color" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {colorOptions.map((color) => (
+                          <SelectItem key={color.name} value={color.name}>
+                            <span className="flex items-center gap-2">
+                              <span
+                                className="inline-block w-4 h-4 rounded-full border"
+                                style={{
+                                  backgroundColor: color.hex,
+                                  borderColor:
+                                    color.name === "White" ? "#ccc" : color.hex,
+                                }}
+                              />
+                              {color.name}
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="description">Product Description</Label>
                     <Textarea
@@ -245,7 +313,12 @@ export default function ProductUploadAdminPage() {
                       placeholder="Enter detailed product description"
                       rows={4}
                       value={formData.description}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          description: e.target.value,
+                        }))
+                      }
                     />
                   </div>
 
@@ -257,7 +330,12 @@ export default function ProductUploadAdminPage() {
                         type="number"
                         placeholder="0.00"
                         value={formData.price}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, price: e.target.value }))}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            price: e.target.value,
+                          }))
+                        }
                       />
                     </div>
                     <div className="space-y-2">
@@ -267,7 +345,12 @@ export default function ProductUploadAdminPage() {
                         type="number"
                         placeholder="0.00"
                         value={formData.discountPrice}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, discountPrice: e.target.value }))}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            discountPrice: e.target.value,
+                          }))
+                        }
                       />
                     </div>
                   </div>
@@ -276,7 +359,12 @@ export default function ProductUploadAdminPage() {
                     <Checkbox
                       id="isDeal"
                       checked={formData.isDeal}
-                      onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, isDeal: checked as boolean }))}
+                      onCheckedChange={(checked) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          isDeal: checked as boolean,
+                        }))
+                      }
                     />
                     <Label htmlFor="isDeal" className="text-sm font-medium">
                       Mark as Kredmart Deal
@@ -316,7 +404,9 @@ export default function ProductUploadAdminPage() {
                       ) : (
                         <div>
                           <Upload className="h-8 w-8 mx-auto text-gray-400 mb-2" />
-                          <p className="text-sm text-gray-600">Upload main image</p>
+                          <p className="text-sm text-gray-600">
+                            Upload main image
+                          </p>
                           <Input
                             type="file"
                             accept="image/*"
@@ -401,7 +491,9 @@ export default function ProductUploadAdminPage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h3 className="font-medium text-blue-900 mb-2">CSV Format Requirements:</h3>
+                  <h3 className="font-medium text-blue-900 mb-2">
+                    CSV Format Requirements:
+                  </h3>
                   <ul className="text-sm text-blue-800 space-y-1">
                     <li>• Product Name, Category, Brand, Description</li>
                     <li>• Price, Discount Price, Main Image URL</li>
@@ -421,7 +513,10 @@ export default function ProductUploadAdminPage() {
                         <p className="font-medium">{csvFile.name}</p>
                         <p className="text-sm text-gray-600">Ready to upload</p>
                       </div>
-                      <Button variant="outline" onClick={() => setCsvFile(null)}>
+                      <Button
+                        variant="outline"
+                        onClick={() => setCsvFile(null)}
+                      >
                         Remove File
                       </Button>
                     </div>
@@ -430,9 +525,16 @@ export default function ProductUploadAdminPage() {
                       <Upload className="h-12 w-12 mx-auto text-gray-400" />
                       <div>
                         <p className="text-lg font-medium">Upload CSV File</p>
-                        <p className="text-gray-600">Drag and drop or click to select</p>
+                        <p className="text-gray-600">
+                          Drag and drop or click to select
+                        </p>
                       </div>
-                      <Input type="file" accept=".csv" onChange={handleCsvUpload} className="max-w-xs mx-auto" />
+                      <Input
+                        type="file"
+                        accept=".csv"
+                        onChange={handleCsvUpload}
+                        className="max-w-xs mx-auto"
+                      />
                     </div>
                   )}
                 </div>
@@ -451,5 +553,5 @@ export default function ProductUploadAdminPage() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
