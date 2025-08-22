@@ -1,10 +1,15 @@
-
 // lib/services/products/use-products.ts
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { productsService, GetProductDto, ProductsQueryParams } from "./products";
+import {
+  productsService,
+  GetProductDto,
+  ProductsQueryParams,
+} from "./products";
 import { useToast } from "@/hooks/use-toast";
 
-export function useProducts(initialParams: ProductsQueryParams = { limit: 10, page: 1 }) {
+export function useProducts(
+  initialParams: ProductsQueryParams = { limit: 10, page: 1 }
+) {
   const [products, setProducts] = useState<GetProductDto[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -13,52 +18,61 @@ export function useProducts(initialParams: ProductsQueryParams = { limit: 10, pa
   const [currentPage, setCurrentPage] = useState(initialParams.page || 1);
   const { toast } = useToast();
 
+  const stableInitialParams = useMemo(
+    () => initialParams,
+    [
+      initialParams.limit,
+      initialParams.page,
+      initialParams.search,
+      initialParams.sortBy,
+    ]
+  );
 
-  const stableInitialParams = useMemo(() => initialParams, [
-    initialParams.limit,
-    initialParams.page,
-    initialParams.search,
-    initialParams.sortBy
-  ]);
+  const fetchProducts = useCallback(
+    async (params: ProductsQueryParams = {}) => {
+      try {
+        setLoading(true);
+        setError(null);
+        const mergedParams = { ...stableInitialParams, ...params };
 
-  const fetchProducts = useCallback(async (params: ProductsQueryParams = {}) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const mergedParams = { ...stableInitialParams, ...params };
-      
-      const response = await productsService.getProducts(mergedParams);
-      
-      setProducts(response.data);
-      setTotalPages(response.totalPages);
-      setTotal(response.total);
-      setCurrentPage(response.page);
-    } catch (err: any) {
-      const errorMessage = err?.response?.data?.message || "Failed to fetch products";
-      setError(errorMessage);
-      console.error("🚨 Full error object:", err);
-      console.error("🚨 Error response:", err?.response);
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [stableInitialParams, toast]);
+        const response = await productsService.getProducts(mergedParams);
+
+        setProducts(response.data);
+        setTotalPages(response.totalPages);
+        setTotal(response.total);
+        setCurrentPage(response.page);
+      } catch (err: any) {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to fetch products";
+        setError(errorMessage);
+        console.error("🚨 Full error object:", err);
+        console.error("🚨 Error response:", err?.response);
+        toast({
+          title: "Error",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    },
+    [stableInitialParams, toast]
+  );
 
   const updateProduct = async (id: string, data: Partial<GetProductDto>) => {
     try {
       const updatedProduct = await productsService.updateProduct(id, data);
-      setProducts(prev => prev.map(p => p.id === id ? updatedProduct : p));
+      setProducts((prev) =>
+        prev.map((p) => (p.id === id ? updatedProduct : p))
+      );
       toast({
         title: "Success",
         description: "Product updated successfully",
       });
       return updatedProduct;
     } catch (err: any) {
-      const errorMessage = err?.response?.data?.message || "Failed to update product";
+      const errorMessage =
+        err?.response?.data?.message || "Failed to update product";
       toast({
         title: "Error",
         description: errorMessage,
@@ -78,7 +92,8 @@ export function useProducts(initialParams: ProductsQueryParams = { limit: 10, pa
         description: `Applied ${markup}% markup to ${productIds.length} products`,
       });
     } catch (err: any) {
-      const errorMessage = err?.response?.data?.message || "Failed to apply bulk markup";
+      const errorMessage =
+        err?.response?.data?.message || "Failed to apply bulk markup";
       toast({
         title: "Error",
         description: errorMessage,
@@ -114,14 +129,15 @@ export function useProduct(id: string) {
 
   const fetchProduct = useCallback(async () => {
     if (!id) return;
-    
+
     try {
       setLoading(true);
       setError(null);
       const data = await productsService.getProductById(id);
       setProduct(data);
     } catch (err: any) {
-      const errorMessage = err?.response?.data?.message || "Failed to fetch product";
+      const errorMessage =
+        err?.response?.data?.message || "Failed to fetch product";
       setError(errorMessage);
       toast({
         title: "Error",

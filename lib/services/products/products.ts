@@ -5,11 +5,13 @@ export interface GetProductDto {
   name: string;
   sku: string;
   category: string;
-  merchant: string;
-  merchantPrice: number;
+  seller: {
+    shopName: string;
+  };
+  price: number;
   discount: number;
   markup: number;
-  stock: number;
+  quantity: number;
   status: "Active" | "Inactive";
   image?: string;
   createdAt?: string;
