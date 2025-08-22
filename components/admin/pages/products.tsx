@@ -1,5 +1,6 @@
+
 "use client";
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,81 +32,13 @@ import {
   Eye,
   Download,
   Percent,
+  Loader2,
 } from "lucide-react";
-
-// Demo data
-const demoProducts = Array.from({ length: 50 }, (_, i) => ({
-  id: `PRD${String(i + 1).padStart(3, "0")}`,
-  name: [
-    "iPhone 14 Pro Max",
-    "Samsung Galaxy S23",
-    "MacBook Air M2",
-    "Dell XPS 13",
-    "Sony WH-1000XM4",
-    "AirPods Pro",
-    'iPad Pro 12.9"',
-    "Surface Pro 9",
-    "Canon EOS R5",
-    "Nintendo Switch OLED",
-    "PlayStation 5",
-    "Xbox Series X",
-    "Apple Watch Series 8",
-    "Fitbit Versa 4",
-    "Kindle Paperwhite",
-    "Echo Dot 5th Gen",
-  ][i % 16],
-  sku: `SKU${String(i + 1).padStart(6, "0")}`,
-  category: ["Phones and Tablets", "Computing", "Electronics", "Accessories"][
-    i % 4
-  ],
-  merchant: ["Slot", "Gbam Inc."][i % 2],
-  merchantPrice: Math.floor(Math.random() * 500000) + 50000,
-  discount: Math.floor(Math.random() * 21),
-  markup: Math.floor(Math.random() * 30) + 5,
-  stock: Math.floor(Math.random() * 100) + 1,
-  status: ["Active", "Inactive"][Math.floor(Math.random() * 2)],
-  image: `/placeholder.svg?height=60&width=60&text=Product${i + 1}`,
-}));
+import { useProducts } from "@/lib/services/products/use-products";
+import { GetProductDto } from "@/lib/services/products/products";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ProductsAdminPage() {
-  const [products, setProducts] = useState(demoProducts);
-  const [editProduct, setEditProduct] = useState<any | null>(null);
-  const [editModalOpen, setEditModalOpen] = useState(false);
-
-  const handleEditClick = (product: any) => {
-    setEditProduct({ ...product });
-    setEditModalOpen(true);
-  };
-
-  const handleEditChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setEditProduct((prev: any) => ({ ...prev, [name]: value }));
-  };
-
-  const handleEditSave = () => {
-    if (!editProduct) return;
-    setProducts((prev: any[]) =>
-      prev.map((p) =>
-        p.id === editProduct.id
-          ? {
-              ...editProduct,
-              merchantPrice: Number(editProduct.merchantPrice),
-              markup: Number(editProduct.markup),
-              discount: Number(editProduct.discount),
-              stock: Number(editProduct.stock),
-            }
-          : p
-      )
-    );
-    setEditModalOpen(false);
-    setEditProduct(null);
-    toast({
-      title: "Product updated",
-      description: `Product ${editProduct.name} updated successfully.`,
-    });
-  };
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedMerchant, setSelectedMerchant] = useState("all");
@@ -113,20 +46,58 @@ export default function ProductsAdminPage() {
   const [bulkMarkup, setBulkMarkup] = useState("");
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [isApplyingBulk, setIsApplyingBulk] = useState(false);
+  const [editProduct, setEditProduct] = useState<GetProductDto | null>(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Filter products
-  const filteredProducts = products.filter((product) => {
-    const matchesSearch =
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.merchant.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory =
-      selectedCategory === "all" || product.category === selectedCategory;
-    const matchesMerchant =
-      selectedMerchant === "all" || product.merchant === selectedMerchant;
+  const {
+    products,
+    loading,
+    error,
+    totalPages,
+    total,
+    fetchProducts,
+    updateProduct,
+    bulkUpdateMarkup,
+  } = useProducts({ limit: 50, page: currentPage });
 
-    return matchesSearch && matchesCategory && matchesMerchant;
-  });
+  // Debounced search effect
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      fetchProducts({
+        search: searchTerm || undefined,
+        page: 1,
+        limit: 50,
+      });
+      setCurrentPage(1);
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, fetchProducts]);
+
+  // Filter products client-side for category and merchant
+  const filteredProducts = useMemo(() => {
+    if (!products || !Array.isArray(products)) return [];
+    return products.filter((product) => {
+      const matchesCategory =
+        selectedCategory === "all" || product.category === selectedCategory;
+      const matchesMerchant =
+        selectedMerchant === "all" || product.merchant === selectedMerchant;
+
+      return matchesCategory && matchesMerchant;
+    });
+  }, [products, selectedCategory, selectedMerchant]);
+
+  // Get unique categories and merchants from current products
+  const categories = useMemo(() => {
+    if (!products || !Array.isArray(products)) return [];
+    return Array.from(new Set(products.map(p => p.category))).filter(Boolean);
+  }, [products]);
+
+  const merchants = useMemo(() => {
+    if (!products || !Array.isArray(products)) return [];
+    return Array.from(new Set(products.map(p => p.merchant))).filter(Boolean);
+  }, [products]);
 
   // Calculate display price: merchant price - discount + markup
   const getDisplayPrice = (
@@ -170,29 +141,83 @@ export default function ProductsAdminPage() {
 
     setIsApplyingBulk(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      await bulkUpdateMarkup(selectedProducts, Number(bulkMarkup));
+      setIsBulkModalOpen(false);
+      setBulkMarkup("");
+      setSelectedProducts([]);
+    } catch (error) {
+      console.error("Bulk markup failed:", error);
+    } finally {
+      setIsApplyingBulk(false);
+    }
+  };
 
-    toast({
-      title: "Markup Applied",
-      description: `Applied ${bulkMarkup}% markup to ${selectedProducts.length} products.`,
-    });
+  const handleEditClick = (product: GetProductDto) => {
+    setEditProduct({ ...product });
+    setEditModalOpen(true);
+  };
 
-    setIsBulkModalOpen(false);
-    setBulkMarkup("");
-    setSelectedProducts([]);
-    setIsApplyingBulk(false);
+  const handleEditChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setEditProduct((prev: any) => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditSave = async () => {
+    if (!editProduct) return;
+    
+    try {
+      await updateProduct(editProduct.id, {
+        name: editProduct.name,
+        merchantPrice: Number(editProduct.merchantPrice),
+        markup: Number(editProduct.markup),
+        discount: Number(editProduct.discount),
+        stock: Number(editProduct.stock),
+      });
+      setEditModalOpen(false);
+      setEditProduct(null);
+    } catch (error) {
+      console.error("Update failed:", error);
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    fetchProducts({ page, limit: 50 });
   };
 
   // Calculate summary stats
-  const totalProducts = products.length;
-  const activeProducts = products.filter((p) => p.status === "Active").length;
-  const totalInventoryValue = products.reduce(
-    (sum, p) => sum + p.merchantPrice * p.stock,
+  const totalProducts = total || 0;
+  const activeProducts = products?.filter((p) => p.status === "Active").length || 0;
+  const totalInventoryValue = products?.reduce(
+    (sum, p) => sum + (p.merchantPrice || 0) * (p.stock || 0),
     0
-  );
-  const averageMarkup =
-    products.reduce((sum, p) => sum + p.markup, 0) / products.length;
+  ) || 0;
+  const averageMarkup = products?.length > 0 
+    ? products.reduce((sum, p) => sum + (p.markup || 0), 0) / products.length 
+    : 0;
+
+  if (error) {
+    return (
+      <RBACGuard permissions={["view_products"]}>
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center">
+            <h2 className="text-xl font-semibold text-red-600">Error Loading Products</h2>
+            <p className="text-gray-600 mt-2">{error}</p>
+            <Button 
+              onClick={() => fetchProducts()} 
+              className="mt-4"
+              variant="outline"
+            >
+              Try Again
+            </Button>
+          </div>
+        </div>
+      </RBACGuard>
+    );
+  }
 
   return (
     <RBACGuard permissions={["view_products"]}>
@@ -225,7 +250,7 @@ export default function ProductsAdminPage() {
                 <div>
                   <p className="text-blue-100">Total Products</p>
                   <p className="text-2xl font-bold">
-                    {totalProducts.toLocaleString()}
+                    {loading ? <Skeleton className="h-8 w-16 bg-blue-400" /> : (totalProducts || 0).toLocaleString()}
                   </p>
                 </div>
                 <Package className="h-8 w-8 text-blue-200" />
@@ -239,7 +264,7 @@ export default function ProductsAdminPage() {
                 <div>
                   <p className="text-green-100">Active Products</p>
                   <p className="text-2xl font-bold">
-                    {activeProducts.toLocaleString()}
+                    {loading ? <Skeleton className="h-8 w-16 bg-green-400" /> : (activeProducts || 0).toLocaleString()}
                   </p>
                 </div>
                 <TrendingUp className="h-8 w-8 text-green-200" />
@@ -253,7 +278,7 @@ export default function ProductsAdminPage() {
                 <div>
                   <p className="text-purple-100">Inventory Value</p>
                   <p className="text-2xl font-bold">
-                    ₦{(totalInventoryValue / 1000000).toFixed(1)}M
+                    {loading ? <Skeleton className="h-8 w-16 bg-purple-400" /> : `₦${((totalInventoryValue || 0) / 1000000).toFixed(1)}M`}
                   </p>
                 </div>
                 <DollarSign className="h-8 w-8 text-purple-200" />
@@ -267,7 +292,7 @@ export default function ProductsAdminPage() {
                 <div>
                   <p className="text-orange-100">Avg. Markup</p>
                   <p className="text-2xl font-bold">
-                    {averageMarkup.toFixed(1)}%
+                    {loading ? <Skeleton className="h-8 w-16 bg-orange-400" /> : `${(averageMarkup || 0).toFixed(1)}%`}
                   </p>
                 </div>
                 <Percent className="h-8 w-8 text-orange-200" />
@@ -300,12 +325,11 @@ export default function ProductsAdminPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="Phones and Tablets">
-                    Phones and Tablets
-                  </SelectItem>
-                  <SelectItem value="Computing">Computing</SelectItem>
-                  <SelectItem value="Electronics">Electronics</SelectItem>
-                  <SelectItem value="Accessories">Accessories</SelectItem>
+                  {categories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <Select
@@ -317,8 +341,11 @@ export default function ProductsAdminPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Merchants</SelectItem>
-                  <SelectItem value="Slot">Slot</SelectItem>
-                  <SelectItem value="Gbam Inc.">Gbam Inc.</SelectItem>
+                  {merchants.map((merchant) => (
+                    <SelectItem key={merchant} value={merchant}>
+                      {merchant}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -329,7 +356,10 @@ export default function ProductsAdminPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Products ({filteredProducts.length})</CardTitle>
+              <CardTitle>
+                Products ({filteredProducts.length})
+                {loading && <Loader2 className="inline ml-2 h-4 w-4 animate-spin" />}
+              </CardTitle>
               <div className="flex items-center gap-2">
                 <Checkbox
                   checked={
@@ -415,190 +445,233 @@ export default function ProductsAdminPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredProducts.map((product) => (
-                    <tr key={product.id} className="border-b hover:bg-gray-50">
-                      <td className="p-2">
-                        <Checkbox
-                          checked={selectedProducts.includes(product.id)}
-                          onCheckedChange={(checked) =>
-                            handleProductSelect(product.id, checked as boolean)
-                          }
-                        />
+                  {loading ? (
+                    Array.from({ length: 5 }).map((_, i) => (
+                      <tr key={i} className="border-b">
+                        {Array.from({ length: 11 }).map((_, j) => (
+                          <td key={j} className="p-2">
+                            <Skeleton className="h-4 w-full" />
+                          </td>
+                        ))}
+                      </tr>
+                    ))
+                  ) : filteredProducts.length === 0 ? (
+                    <tr>
+                      <td colSpan={11} className="text-center py-8 text-gray-500">
+                        No products found
                       </td>
-                      <td className="p-2">
-                        <p className="font-medium">{product.name}</p>
-                      </td>
-                      <td className="p-2 text-sm text-gray-600">
-                        {product.sku}
-                      </td>
-                      <td className="p-2">
-                        <Badge variant="outline">{product.category}</Badge>
-                      </td>
-                      <td className="p-2">
-                        <Badge
-                          variant={
-                            product.merchant === "Slot"
-                              ? "default"
-                              : "secondary"
-                          }
-                        >
-                          {product.merchant}
-                        </Badge>
-                      </td>
-                      <td className="p-2 font-regular text-sm">
-                        ₦{product.merchantPrice.toLocaleString()}
-                      </td>
-                      <td className="p-2 font-regular text-sm">
-                        {product.discount}%
-                      </td>
-                      <td className="p-2">
-                        <RBACGuard
-                          permissions={["manage_products"]}
-                          requireAll={false}
-                        >
-                          <Input
-                            type="number"
-                            value={product.markup}
-                            className="w-20 h-8"
-                            min="0"
-                            max="100"
+                    </tr>
+                  ) : (
+                    filteredProducts.map((product) => (
+                      <tr key={product.id} className="border-b hover:bg-gray-50">
+                        <td className="p-2">
+                          <Checkbox
+                            checked={selectedProducts.includes(product.id)}
+                            onCheckedChange={(checked) =>
+                              handleProductSelect(product.id, checked as boolean)
+                            }
                           />
-                        </RBACGuard>
-                        <RBACGuard
-                          permissions={["manage_products"]}
-                          requireAll={false}
-                          fallback={
-                            <span className="text-sm">{product.markup}%</span>
-                          }
-                        />
-                      </td>
-                      <td className="p-2 font-medium text-sm text-green-600">
-                        ₦
-                        {getDisplayPrice(
-                          product.merchantPrice,
-                          product.discount,
-                          product.markup
-                        ).toLocaleString()}
-                      </td>
-                      <td className="p-2">
-                        <Badge
-                          variant={
-                            product.stock > 10 ? "default" : "destructive"
-                          }
-                        >
-                          {product.stock}
-                        </Badge>
-                      </td>
-                      <td className="p-2">
-                        <div className="flex items-center gap-1">
-                          <Button variant="ghost" size="sm">
-                            <Eye className="h-4 w-4" />
-                          </Button>
+                        </td>
+                        <td className="p-2">
+                          <p className="font-medium">{product.name}</p>
+                        </td>
+                        <td className="p-2 text-sm text-gray-600">
+                          {product.sku}
+                        </td>
+                        <td className="p-2">
+                          <Badge variant="outline">{product.category}</Badge>
+                        </td>
+                        <td className="p-2">
+                          <Badge
+                            variant={
+                              product.merchant === "Slot"
+                                ? "default"
+                                : "secondary"
+                            }
+                          >
+                            {product.merchant}
+                          </Badge>
+                        </td>
+                        <td className="p-2 font-regular text-sm">
+                          ₦{(product.merchantPrice || 0).toLocaleString()}
+                        </td>
+                        <td className="p-2 font-regular text-sm">
+                          {product.discount}%
+                        </td>
+                        <td className="p-2">
                           <RBACGuard
                             permissions={["manage_products"]}
                             requireAll={false}
                           >
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditClick(product)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
+                            <Input
+                              type="number"
+                              value={product.markup}
+                              className="w-20 h-8"
+                              min="0"
+                              max="100"
+                              onChange={(e) => {
+                                const newMarkup = Number(e.target.value);
+                                updateProduct(product.id, { markup: newMarkup });
+                              }}
+                            />
                           </RBACGuard>
-                          {/* Edit Product Modal */}
-                          <Dialog
-                            open={editModalOpen}
-                            onOpenChange={setEditModalOpen}
+                          <RBACGuard
+                            permissions={["manage_products"]}
+                            requireAll={false}
+                            fallback={
+                              <span className="text-sm">{product.markup}%</span>
+                            }
                           >
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>Edit Product</DialogTitle>
-                              </DialogHeader>
-                              {editProduct && (
-                                <form
-                                  className="space-y-4"
-                                  onSubmit={(e) => {
-                                    e.preventDefault();
-                                    handleEditSave();
-                                  }}
-                                >
-                                  <div>
-                                    <Label htmlFor="name">Product Name</Label>
-                                    <Input
-                                      id="name"
-                                      name="name"
-                                      value={editProduct.name}
-                                      onChange={handleEditChange}
-                                    />
-                                  </div>
-                                  <div>
-                                    <Label htmlFor="merchantPrice">
-                                      Merchant Price
-                                    </Label>
-                                    <Input
-                                      id="merchantPrice"
-                                      name="merchantPrice"
-                                      type="number"
-                                      value={editProduct.merchantPrice}
-                                      onChange={handleEditChange}
-                                    />
-                                  </div>
-                                  <div>
-                                    <Label htmlFor="discount">
-                                      Discount (%)
-                                    </Label>
-                                    <Input
-                                      id="discount"
-                                      name="discount"
-                                      type="number"
-                                      value={editProduct.discount}
-                                      onChange={handleEditChange}
-                                    />
-                                  </div>
-                                  <div>
-                                    <Label htmlFor="markup">Markup (%)</Label>
-                                    <Input
-                                      id="markup"
-                                      name="markup"
-                                      type="number"
-                                      value={editProduct.markup}
-                                      onChange={handleEditChange}
-                                    />
-                                  </div>
-                                  <div>
-                                    <Label htmlFor="stock">Stock</Label>
-                                    <Input
-                                      id="stock"
-                                      name="stock"
-                                      type="number"
-                                      value={editProduct.stock}
-                                      onChange={handleEditChange}
-                                    />
-                                  </div>
-                                  <div className="flex gap-2 justify-end">
-                                    <Button type="submit">Save</Button>
-                                    <Button
-                                      variant="outline"
-                                      type="button"
-                                      onClick={() => setEditModalOpen(false)}
-                                    >
-                                      Cancel
-                                    </Button>
-                                  </div>
-                                </form>
-                              )}
-                            </DialogContent>
-                          </Dialog>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                            <span className="text-sm">{product.markup}%</span>
+                          </RBACGuard>
+                        </td>
+                        <td className="p-2 font-medium text-sm text-green-600">
+                          ₦
+                          {getDisplayPrice(
+                            product.merchantPrice || 0,
+                            product.discount || 0,
+                            product.markup || 0
+                          ).toLocaleString()}
+                        </td>
+                        <td className="p-2">
+                          <Badge
+                            variant={
+                              product.stock > 10 ? "default" : "destructive"
+                            }
+                          >
+                            {product.stock}
+                          </Badge>
+                        </td>
+                        <td className="p-2">
+                          <div className="flex items-center gap-1">
+                            <Button variant="ghost" size="sm">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <RBACGuard
+                              permissions={["manage_products"]}
+                              requireAll={false}
+                            >
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEditClick(product)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            </RBACGuard>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1 || loading}
+                >
+                  Previous
+                </Button>
+                <span className="text-sm text-gray-600">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages || loading}
+                >
+                  Next
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
+
+        {/* Edit Product Modal */}
+        <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Product</DialogTitle>
+            </DialogHeader>
+            {editProduct && (
+              <form
+                className="space-y-4"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleEditSave();
+                }}
+              >
+                <div>
+                  <Label htmlFor="name">Product Name</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={editProduct.name}
+                    onChange={handleEditChange}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="merchantPrice">Merchant Price</Label>
+                  <Input
+                    id="merchantPrice"
+                    name="merchantPrice"
+                    type="number"
+                    value={editProduct.merchantPrice}
+                    onChange={handleEditChange}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="discount">Discount (%)</Label>
+                  <Input
+                    id="discount"
+                    name="discount"
+                    type="number"
+                    value={editProduct.discount}
+                    onChange={handleEditChange}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="markup">Markup (%)</Label>
+                  <Input
+                    id="markup"
+                    name="markup"
+                    type="number"
+                    value={editProduct.markup}
+                    onChange={handleEditChange}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="stock">Stock</Label>
+                  <Input
+                    id="stock"
+                    name="stock"
+                    type="number"
+                    value={editProduct.stock}
+                    onChange={handleEditChange}
+                  />
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <Button type="submit">Save</Button>
+                  <Button
+                    variant="outline"
+                    type="button"
+                    onClick={() => setEditModalOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </RBACGuard>
   );
