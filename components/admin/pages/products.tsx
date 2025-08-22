@@ -82,7 +82,7 @@ export default function ProductsAdminPage() {
         selectedCategory === "all" || product.category === selectedCategory;
       const matchesMerchant =
         selectedMerchant === "all" ||
-        product.seller.shopname === selectedMerchant;
+        product.seller.shopName === selectedMerchant;
 
       return matchesCategory && matchesMerchant;
     });
@@ -96,7 +96,7 @@ export default function ProductsAdminPage() {
 
   const merchants = useMemo(() => {
     if (!products || !Array.isArray(products)) return [];
-    return Array.from(new Set(products.map((p) => p.seller.shopname))).filter(
+    return Array.from(new Set(products.map((p) => p.seller.shopName))).filter(
       Boolean
     );
   }, [products]);
