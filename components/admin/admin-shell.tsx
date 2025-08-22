@@ -162,7 +162,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      <Sidebar className="border-r border-gray-200 bg-blue-900 z-[60]" suppressHydrationWarning>
+      <Sidebar className="border-r border-gray-200 bg-blue-900 z-[60]">
         <SidebarHeader className="border-b border-blue-700 bg-blue-900 z-[60]">
           <div className="flex items-center gap-3 px-3 py-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white">

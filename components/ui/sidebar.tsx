@@ -72,15 +72,14 @@ const SidebarProvider = React.forwardRef<
     },
     ref
   ) => {
-    const isMobile = useIsMobile()
-    const [openMobile, setOpenMobile] = React.useState(false)
     const [isHydrated, setIsHydrated] = React.useState(false)
-
-    // This is the internal state of the sidebar.
-    // We use openProp and setOpenProp for control from outside the component.
+    const [openMobile, setOpenMobile] = React.useState(false)
     const [_open, _setOpen] = React.useState(defaultOpen)
     
-    // Handle hydration to prevent mismatch
+    // Get mobile state but only use it after hydration
+    const isMobile = useIsMobile()
+    
+    // Handle hydration
     React.useEffect(() => {
       setIsHydrated(true)
       
@@ -97,9 +96,13 @@ const SidebarProvider = React.forwardRef<
       }
     }, [openProp])
     
-    const open = openProp ?? _open
+    // Always use defaultOpen during SSR and before hydration
+    const open = isHydrated ? (openProp ?? _open) : defaultOpen
+    
     const setOpen = React.useCallback(
       (value: boolean | ((value: boolean) => boolean)) => {
+        if (!isHydrated) return
+        
         const openState = typeof value === "function" ? value(open) : value
         if (setOpenProp) {
           setOpenProp(openState)
@@ -107,23 +110,24 @@ const SidebarProvider = React.forwardRef<
           _setOpen(openState)
         }
 
-        // This sets the cookie to keep the sidebar state.
         if (typeof document !== 'undefined') {
           document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
         }
       },
-      [setOpenProp, open]
+      [setOpenProp, open, isHydrated]
     )
 
-    // Helper to toggle the sidebar.
     const toggleSidebar = React.useCallback(() => {
-      return isMobile
+      if (!isHydrated) return
+      
+      return (isHydrated && isMobile)
         ? setOpenMobile((open) => !open)
         : setOpen((open) => !open)
-    }, [isMobile, setOpen, setOpenMobile])
+    }, [isMobile, setOpen, setOpenMobile, isHydrated])
 
-    // Adds a keyboard shortcut to toggle the sidebar.
     React.useEffect(() => {
+      if (!isHydrated) return
+      
       const handleKeyDown = (event: KeyboardEvent) => {
         if (
           event.key === SIDEBAR_KEYBOARD_SHORTCUT &&
@@ -136,24 +140,23 @@ const SidebarProvider = React.forwardRef<
 
       window.addEventListener("keydown", handleKeyDown)
       return () => window.removeEventListener("keydown", handleKeyDown)
-    }, [toggleSidebar])
+    }, [toggleSidebar, isHydrated])
 
-    // We add a state so that we can do data-state="expanded" or "collapsed".
-    // This makes it easier to style the sidebar with Tailwind classes.
-    // Use consistent state during hydration to prevent mismatch
-    const state = (isHydrated ? open : defaultOpen) ? "expanded" : "collapsed"
+    // Always use consistent values for SSR
+    const state = defaultOpen ? "expanded" : "collapsed"
+    const contextIsMobile = isHydrated ? isMobile : false
 
     const contextValue = React.useMemo<SidebarContext>(
       () => ({
         state,
-        open: isHydrated ? open : defaultOpen,
+        open,
         setOpen,
-        isMobile,
+        isMobile: contextIsMobile,
         openMobile,
         setOpenMobile,
         toggleSidebar,
       }),
-      [state, open, defaultOpen, isHydrated, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]
+      [state, open, setOpen, contextIsMobile, openMobile, setOpenMobile, toggleSidebar]
     )
 
     return (

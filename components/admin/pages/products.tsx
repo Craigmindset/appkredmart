@@ -1,4 +1,3 @@
-
 "use client";
 import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -91,23 +90,60 @@ export default function ProductsAdminPage() {
   // Get unique categories and merchants from current products
   const categories = useMemo(() => {
     if (!products || !Array.isArray(products)) return [];
-    return Array.from(new Set(products.map(p => p.category))).filter(Boolean);
+    return Array.from(new Set(
+      products
+        .map(p => p.category)
+        .filter((cat): cat is string => 
+          cat !== null && 
+          cat !== undefined && 
+          typeof cat === 'string' && 
+          cat.trim() !== ''
+        )
+    ));
   }, [products]);
 
   const merchants = useMemo(() => {
     if (!products || !Array.isArray(products)) return [];
-    return Array.from(new Set(products.map(p => p.merchant))).filter(Boolean);
+    return Array.from(new Set(
+      products
+        .map(p => p.merchant)
+        .filter((merchant): merchant is string => 
+          merchant !== null && 
+          merchant !== undefined && 
+          typeof merchant === 'string' && 
+          merchant.trim() !== ''
+        )
+    ));
   }, [products]);
 
   // Calculate display price: merchant price - discount + markup
   const getDisplayPrice = (
-    merchantPrice: number,
-    discount: number,
-    markup: number
+    merchantPrice: number | null | undefined,
+    discount: number | undefined,
+    markup: number | undefined
   ) => {
-    const discountAmount = (merchantPrice * discount) / 100;
-    const markupAmount = (merchantPrice * markup) / 100;
-    return merchantPrice - discountAmount + markupAmount;
+    if (!merchantPrice) return 0;
+    const discountAmount = ((merchantPrice || 0) * (discount || 0)) / 100;
+    const markupAmount = ((merchantPrice || 0) * (markup || 0)) / 100;
+    return (merchantPrice || 0) - discountAmount + markupAmount;
+  };
+
+  // Helper function to safely format currency
+  const formatCurrency = (value: number | null | undefined) => {
+    if (value === null || value === undefined || isNaN(value)) {
+      return "N/A";
+    }
+    return `₦${value.toLocaleString()}`;
+  };
+
+  // Helper function to safely display category
+  const getCategory = (category: string | null | undefined) => {
+    return category || "Uncategorized";
+  };
+
+  // Helper function to safely display merchant
+  const getMerchant = (merchant: string | null | undefined): string => {
+    return merchant || "Unknown";
   };
 
   // Handle individual product selection
@@ -167,7 +203,7 @@ export default function ProductsAdminPage() {
 
   const handleEditSave = async () => {
     if (!editProduct) return;
-    
+
     try {
       await updateProduct(editProduct.id, {
         name: editProduct.name,
@@ -192,7 +228,11 @@ export default function ProductsAdminPage() {
   const totalProducts = total || 0;
   const activeProducts = products?.filter((p) => p.status === "Active").length || 0;
   const totalInventoryValue = products?.reduce(
-    (sum, p) => sum + (p.merchantPrice || 0) * (p.stock || 0),
+    (sum, p) => {
+      const price = p.merchantPrice || p.price || 0;
+      const stock = p.stock || p.quantity || 0;
+      return sum + price * stock;
+    },
     0
   ) || 0;
   const averageMarkup = products?.length > 0 
@@ -249,9 +289,9 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-blue-100">Total Products</p>
-                  <p className="text-2xl font-bold">
+                  <div className="text-2xl font-bold">
                     {loading ? <Skeleton className="h-8 w-16 bg-blue-400" /> : (totalProducts || 0).toLocaleString()}
-                  </p>
+                  </div>
                 </div>
                 <Package className="h-8 w-8 text-blue-200" />
               </div>
@@ -263,9 +303,9 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-green-100">Active Products</p>
-                  <p className="text-2xl font-bold">
+                  <div className="text-2xl font-bold">
                     {loading ? <Skeleton className="h-8 w-16 bg-green-400" /> : (activeProducts || 0).toLocaleString()}
-                  </p>
+                  </div>
                 </div>
                 <TrendingUp className="h-8 w-8 text-green-200" />
               </div>
@@ -277,9 +317,9 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-purple-100">Inventory Value</p>
-                  <p className="text-2xl font-bold">
+                  <div className="text-2xl font-bold">
                     {loading ? <Skeleton className="h-8 w-16 bg-purple-400" /> : `₦${((totalInventoryValue || 0) / 1000000).toFixed(1)}M`}
-                  </p>
+                  </div>
                 </div>
                 <DollarSign className="h-8 w-8 text-purple-200" />
               </div>
@@ -291,9 +331,9 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-orange-100">Avg. Markup</p>
-                  <p className="text-2xl font-bold">
+                  <div className="text-2xl font-bold">
                     {loading ? <Skeleton className="h-8 w-16 bg-orange-400" /> : `${(averageMarkup || 0).toFixed(1)}%`}
-                  </p>
+                  </div>
                 </div>
                 <Percent className="h-8 w-8 text-orange-200" />
               </div>
@@ -325,8 +365,8 @@ export default function ProductsAdminPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
+                  {categories.map((category, index) => (
+                    <SelectItem key={`category-${category}-${index}`} value={category}>
                       {category}
                     </SelectItem>
                   ))}
@@ -341,8 +381,8 @@ export default function ProductsAdminPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Merchants</SelectItem>
-                  {merchants.map((merchant) => (
-                    <SelectItem key={merchant} value={merchant}>
+                  {merchants.map((merchant, index) => (
+                    <SelectItem key={`merchant-${merchant}-${index}`} value={merchant}>
                       {merchant}
                     </SelectItem>
                   ))}
@@ -479,24 +519,24 @@ export default function ProductsAdminPage() {
                           {product.sku}
                         </td>
                         <td className="p-2">
-                          <Badge variant="outline">{product.category}</Badge>
+                          <Badge variant="outline">{getCategory(product.category)}</Badge>
                         </td>
                         <td className="p-2">
                           <Badge
                             variant={
-                              product.merchant === "Slot"
+                              getMerchant(product.merchant) === "Slot"
                                 ? "default"
                                 : "secondary"
                             }
                           >
-                            {product.merchant}
+                            {getMerchant(product.merchant)}
                           </Badge>
                         </td>
                         <td className="p-2 font-regular text-sm">
-                          ₦{(product.merchantPrice || 0).toLocaleString()}
+                          {formatCurrency(product.merchantPrice || product.price)}
                         </td>
                         <td className="p-2 font-regular text-sm">
-                          {product.discount}%
+                          {product.discount || 0}%
                         </td>
                         <td className="p-2">
                           <RBACGuard
@@ -505,7 +545,7 @@ export default function ProductsAdminPage() {
                           >
                             <Input
                               type="number"
-                              value={product.markup}
+                              value={product.markup || 0}
                               className="w-20 h-8"
                               min="0"
                               max="100"
@@ -519,27 +559,26 @@ export default function ProductsAdminPage() {
                             permissions={["manage_products"]}
                             requireAll={false}
                             fallback={
-                              <span className="text-sm">{product.markup}%</span>
+                              <span className="text-sm">{product.markup || 0}%</span>
                             }
                           >
-                            <span className="text-sm">{product.markup}%</span>
+                            <span className="text-sm">{product.markup || 0}%</span>
                           </RBACGuard>
                         </td>
                         <td className="p-2 font-medium text-sm text-green-600">
-                          ₦
-                          {getDisplayPrice(
-                            product.merchantPrice || 0,
-                            product.discount || 0,
-                            product.markup || 0
-                          ).toLocaleString()}
+                          {formatCurrency(getDisplayPrice(
+                            product.merchantPrice || product.price,
+                            product.discount,
+                            product.markup
+                          ))}
                         </td>
                         <td className="p-2">
                           <Badge
                             variant={
-                              product.stock > 10 ? "default" : "destructive"
+                              (product.stock || product.quantity || 0) > 10 ? "default" : "destructive"
                             }
                           >
-                            {product.stock}
+                            {product.stock || product.quantity || 0}
                           </Badge>
                         </td>
                         <td className="p-2">
@@ -624,7 +663,7 @@ export default function ProductsAdminPage() {
                     id="merchantPrice"
                     name="merchantPrice"
                     type="number"
-                    value={editProduct.merchantPrice}
+                    value={editProduct.merchantPrice || editProduct.price || 0}
                     onChange={handleEditChange}
                   />
                 </div>
@@ -634,7 +673,7 @@ export default function ProductsAdminPage() {
                     id="discount"
                     name="discount"
                     type="number"
-                    value={editProduct.discount}
+                    value={editProduct.discount || 0}
                     onChange={handleEditChange}
                   />
                 </div>
@@ -644,7 +683,7 @@ export default function ProductsAdminPage() {
                     id="markup"
                     name="markup"
                     type="number"
-                    value={editProduct.markup}
+                    value={editProduct.markup || 0}
                     onChange={handleEditChange}
                   />
                 </div>
@@ -654,7 +693,7 @@ export default function ProductsAdminPage() {
                     id="stock"
                     name="stock"
                     type="number"
-                    value={editProduct.stock}
+                    value={editProduct.stock || editProduct.quantity || 0}
                     onChange={handleEditChange}
                   />
                 </div>
