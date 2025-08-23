@@ -50,16 +50,30 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const cartCount = useCart(cartSelectors.count);
 
-  // Demo user data since auth is removed
-  const demoUser = {
-    firstName: "Kred",
-    lastName: "User",
-    email: "user@kredmart.com",
-  };
-
+  // Get user and logout from auth store, fallback to demo if not logged in
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { useAuth } = require("@/store/auth-store");
+  const user = useAuth((s: any) => s.user);
+  const logout = useAuth((s: any) => s.logout);
+  const firstName = user?.firstName || "Kred";
+  const lastName = user?.lastName || "User";
+  const email = user?.email || "user@kredmart.com";
   const initials =
-    (demoUser?.firstName?.[0] ?? "") +
-    (demoUser?.lastName?.[0] ?? (demoUser?.firstName ? "" : "U"));
+    (firstName?.[0] ?? "") + (lastName?.[0] ?? (firstName ? "" : "U"));
+  const router = require("next/navigation").useRouter();
+  const handleLogout = async () => {
+    logout();
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("token");
+    }
+    // Invalidate user query if react-query is used
+    try {
+      const { getQueryClient } = require("@/lib/query-client");
+      const queryClient = getQueryClient();
+      await queryClient.invalidateQueries({ queryKey: ["USER"] });
+    } catch (e) {}
+    router.push("/");
+  };
 
   return (
     <SidebarProvider>
@@ -104,10 +118,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               </Avatar>
               <div className="flex-1 min-w-0">
                 <div className="text-xs font-medium text-sidebar-foreground truncate">
-                  {demoUser.firstName} {demoUser.lastName}
+                  {firstName} {lastName}
                 </div>
                 <div className="text-xs text-sidebar-foreground/60 truncate">
-                  {demoUser.email}
+                  {email}
                 </div>
               </div>
             </div>
@@ -115,6 +129,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               variant="outline"
               size="sm"
               className="mt-2 bg-transparent border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent"
+              onClick={handleLogout}
             >
               Logout
             </Button>
