@@ -96,8 +96,8 @@ const SidebarProvider = React.forwardRef<
       }
     }, [openProp])
     
-    // Always use defaultOpen during SSR and before hydration
-    const open = isHydrated ? (openProp ?? _open) : defaultOpen
+    // Use consistent values for SSR and client
+    const open = openProp ?? _open
     
     const setOpen = React.useCallback(
       (value: boolean | ((value: boolean) => boolean)) => {
@@ -142,8 +142,8 @@ const SidebarProvider = React.forwardRef<
       return () => window.removeEventListener("keydown", handleKeyDown)
     }, [toggleSidebar, isHydrated])
 
-    // Always use consistent values for SSR
-    const state = defaultOpen ? "expanded" : "collapsed"
+    // Calculate state based on actual open value
+    const state = open ? "expanded" : "collapsed"
     const contextIsMobile = isHydrated ? isMobile : false
 
     const contextValue = React.useMemo<SidebarContext>(

@@ -13,6 +13,9 @@ import {
 import { DollarSign, Package, ShoppingCart, Users } from "lucide-react";
 import Link from "next/link";
 import { useAdminRBACStore } from "@/store/admin-rbac-store";
+import { useUser } from "@/lib/services/user/user";
+import { useAdminUserStats } from "@/lib/services/admin/users";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Demo data
 const recentOrders = [
@@ -62,18 +65,69 @@ const topProducts = [
 
 export default function OverviewAdminPage() {
   const { currentUser } = useAdminRBACStore();
+  const { user, loading: userLoading, error: userError } = useUser();
+  const { stats: userStats, loading: statsLoading } = useAdminUserStats();
 
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
       <div className="rounded-lg p-8 bg-gradient-to-br from-blue-50 to-blue-100">
-        <h1 className="text-3xl font-bold text-gray-900">
-          Welcome, {currentUser?.name || "Admin"}!
-        </h1>
-        <p className="text-gray-600 mt-2">
-          Here's an overview of your platform
-        </p>
+        {userLoading ? (
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-4 w-48" />
+          </div>
+        ) : (
+          <>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Welcome, {user?.firstname ? `${user.firstname} ${user.lastname}` : currentUser?.name || "Admin"}!
+            </h1>
+            <p className="text-gray-600 mt-2">
+              Here's an overview of your platform
+              {user?.email && ` - ${user.email}`}
+            </p>
+          </>
+        )}
       </div>
+
+      {/* User Info Card */}
+      {user && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Admin User Information</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <p className="text-sm font-medium text-gray-500">Name</p>
+                <p className="text-lg font-semibold">{user.firstname} {user.lastname}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500">Email</p>
+                <p className="text-lg font-semibold">{user.email}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500">Phone</p>
+                <p className="text-lg font-semibold">{user.phone || "Not provided"}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500">Email Verified</p>
+                <Badge variant={user.emailVerified ? "default" : "secondary"}>
+                  {user.emailVerified ? "Verified" : "Not Verified"}
+                </Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {userError && (
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="pt-6">
+            <p className="text-red-600">Failed to load user data: {userError.message}</p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -144,10 +198,21 @@ export default function OverviewAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-orange-100">Total Users</p>
-                  <p className="text-2xl font-bold">247</p>
+                  {statsLoading ? (
+                    <Skeleton className="h-8 w-16 bg-orange-400" />
+                  ) : (
+                    <p className="text-2xl font-bold">
+                      {userStats?.totalUsers?.toLocaleString() || "247"}
+                    </p>
+                  )}
                 </div>
                 <Users className="h-8 w-8 text-orange-200" />
               </div>
+              {userStats && (
+                <div className="mt-2 text-xs text-orange-100">
+                  {userStats.activeUsers} active • {userStats.verifiedUsers} verified
+                </div>
+              )}
             </CardContent>
             <Link
               href="/admin/dashboard/users"

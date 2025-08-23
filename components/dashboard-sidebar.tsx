@@ -34,6 +34,7 @@ import { Button } from "@/components/ui/button";
 import { useCart, cartSelectors } from "@/store/cart-store";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { BrandLogo } from "@/components/brand-logo";
+import { useUser } from "@/lib/services/user/user";
 
 const items = [
   { label: "Overview", href: "/dashboard/overview", icon: Home },
@@ -49,17 +50,10 @@ const items = [
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const cartCount = useCart(cartSelectors.count);
-
-  // Demo user data since auth is removed
-  const demoUser = {
-    firstName: "Kred",
-    lastName: "User",
-    email: "user@kredmart.com",
-  };
+  const { user, loading } = useUser();
 
   const initials =
-    (demoUser?.firstName?.[0] ?? "") +
-    (demoUser?.lastName?.[0] ?? (demoUser?.firstName ? "" : "U"));
+    (user?.firstname?.[0] ?? "") + (user?.lastname?.[0] ?? "U");
 
   return (
     <SidebarProvider>
@@ -103,12 +97,12 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <div className="text-xs font-medium text-sidebar-foreground truncate">
-                  {demoUser.firstName} {demoUser.lastName}
-                </div>
-                <div className="text-xs text-sidebar-foreground/60 truncate">
-                  {demoUser.email}
-                </div>
+                <p className="text-sm font-medium text-white truncate">
+                  {loading ? "Loading..." : `${user?.firstname || ""} ${user?.lastname || ""}`.trim() || "User"}
+                </p>
+                <p className="text-xs text-blue-300 truncate">
+                  {user?.email || "user@example.com"}
+                </p>
               </div>
             </div>
             <Button
@@ -170,6 +164,9 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                       {initials.toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
+                  <span className="hidden sm:inline text-sm font-medium text-white">
+                  {user?.firstname || "User"}
+                </span>
                 </Link>
 
                 <Link

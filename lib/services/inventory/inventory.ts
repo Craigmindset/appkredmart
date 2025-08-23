@@ -4,7 +4,7 @@ export interface InventoryItem {
   id: string;
   productName: string;
   category: string;
-  merchant: string;
+  merchant: { company: string };
   currentStock: number;
   minStock: number;
   maxStock: number;
@@ -15,6 +15,7 @@ export interface InventoryItem {
   status: "Out of Stock" | "Low Stock" | "Normal" | "Well Stocked";
   stockLevel: number;
 }
+
 
 export interface InventoryResponse {
   data: InventoryItem[];

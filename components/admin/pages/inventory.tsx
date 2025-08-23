@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useMemo } from "react";
@@ -81,10 +80,10 @@ export default function InventoryAdminPage() {
       const matchesSearch =
         item.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.merchant.toLowerCase().includes(searchQuery.toLowerCase());
+        (item.merchant?.company || "").toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchesMerchant =
-        merchantFilter === "All" || item.merchant === merchantFilter;
+        merchantFilter === "All" || (item.merchant?.company || "") === merchantFilter;
       const matchesCategory =
         categoryFilter === "All" || item.category === categoryFilter;
       const matchesDeals =
@@ -378,7 +377,7 @@ export default function InventoryAdminPage() {
                     <TableCell>{item.category}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className="bg-gray-50">
-                        {item.merchant}
+                        {item.merchant?.company || "Unknown"}
                       </Badge>
                     </TableCell>
                     <TableCell>

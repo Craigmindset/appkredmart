@@ -9,6 +9,7 @@ const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000';
 
 const backendAxios = axios.create({
   baseURL,
+  withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
 });
 

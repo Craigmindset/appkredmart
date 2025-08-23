@@ -1,3 +1,4 @@
+
 "use client";
 import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -74,93 +75,157 @@ export default function ProductsAdminPage() {
     return () => clearTimeout(timeoutId);
   }, [searchTerm, fetchProducts]);
 
-  // Filter products client-side for category and merchant
-  const filteredProducts = useMemo(() => {
-    if (!products || !Array.isArray(products)) return [];
-    return products.filter((product) => {
-      const matchesCategory =
-        selectedCategory === "all" || product.category === selectedCategory;
-      const matchesMerchant =
-        selectedMerchant === "all" ||
-        product.seller.shopName === selectedMerchant;
+  // Helper function to safely extract string value from any type
+  const safeStringValue = (value: any): string => {
+    if (value === null || value === undefined) return "";
+    if (typeof value === "string") return value.trim();
+    if (typeof value === "object") {
+      // Try to extract meaningful string from object
+      if (value.company) return String(value.company).trim();
+      if (value.name) return String(value.name).trim();
+      if (value.storeName) return String(value.storeName).trim();
+      if (value.title) return String(value.title).trim();
+      return "";
+    }
+    return String(value).trim();
+  };
 
-      return matchesCategory && matchesMerchant;
-    });
-  }, [products, selectedCategory, selectedMerchant]);
-
-  // Get unique categories and merchants from current products
-  const categories = useMemo(() => {
-    if (!products || !Array.isArray(products)) return [];
-<<<<<<< HEAD
-    return Array.from(new Set(products.map((p) => p.category))).filter(Boolean);
-=======
-    return Array.from(new Set(
-      products
-        .map(p => p.category)
-        .filter((cat): cat is string => 
-          cat !== null && 
-          cat !== undefined && 
-          typeof cat === 'string' && 
-          cat.trim() !== ''
-        )
-    ));
->>>>>>> origin/feature/fix-null-hydration
-  }, [products]);
-
-  const merchants = useMemo(() => {
-    if (!products || !Array.isArray(products)) return [];
-<<<<<<< HEAD
-    return Array.from(new Set(products.map((p) => p.seller.shopName))).filter(
-      Boolean
-    );
-=======
-    return Array.from(new Set(
-      products
-        .map(p => p.merchant)
-        .filter((merchant): merchant is string => 
-          merchant !== null && 
-          merchant !== undefined && 
-          typeof merchant === 'string' && 
-          merchant.trim() !== ''
-        )
-    ));
->>>>>>> origin/feature/fix-null-hydration
-  }, [products]);
-
-  // Calculate display price: merchant price - discount + markup
-  const getDisplayPrice = (
-    merchantPrice: number | null | undefined,
-    discount: number | undefined,
-    markup: number | undefined
-  ) => {
-    if (!merchantPrice) return 0;
-    const discountAmount = ((merchantPrice || 0) * (discount || 0)) / 100;
-    const markupAmount = ((merchantPrice || 0) * (markup || 0)) / 100;
-    return (merchantPrice || 0) - discountAmount + markupAmount;
+  // Helper function to safely extract number value
+  const safeNumberValue = (value: any): number => {
+    if (value === null || value === undefined) return 0;
+    if (typeof value === "number" && !isNaN(value)) return value;
+    if (typeof value === "string") {
+      const parsed = parseFloat(value);
+      return isNaN(parsed) ? 0 : parsed;
+    }
+    return 0;
   };
 
   // Helper function to safely format currency
-  const formatCurrency = (value: number | null | undefined) => {
-    if (value === null || value === undefined || isNaN(value)) {
-      return "N/A";
-    }
-    return `₦${value.toLocaleString()}`;
+  const formatCurrency = (value: any): string => {
+    const numValue = safeNumberValue(value);
+    if (numValue === 0) return "₦0";
+    return `₦${numValue.toLocaleString()}`;
   };
 
   // Helper function to safely display category
-  const getCategory = (category: string | null | undefined) => {
-    return category || "Uncategorized";
+  const getCategory = (category: any): string => {
+    const cat = safeStringValue(category);
+    return cat || "Uncategorized";
   };
 
   // Helper function to safely display merchant
-  const getMerchant = (merchant: string | null | undefined): string => {
-    return merchant || "Unknown";
+  const getMerchant = (merchant: any): string => {
+    const merchantName = safeStringValue(merchant);
+    return merchantName || "Unknown";
+  };
+
+  // Helper function to safely get product ID
+  const getProductId = (product: any): string => {
+    return safeStringValue(product?.id) || `product-${Date.now()}`;
+  };
+
+  // Helper function to safely get product name
+  const getProductName = (product: any): string => {
+    return safeStringValue(product?.name) || "Unnamed Product";
+  };
+
+  // Helper function to safely get SKU
+  const getProductSku = (product: any): string => {
+    return safeStringValue(product?.sku) || "N/A";
+  };
+
+  // Helper function to safely get stock/quantity
+  const getStock = (product: any): number => {
+    return Math.max(0, safeNumberValue(product?.stock || product?.quantity));
+  };
+
+  // Helper function to safely get price
+  const getPrice = (product: any): number => {
+    return Math.max(0, safeNumberValue(product?.merchantPrice || product?.price));
+  };
+
+  // Helper function to safely get discount
+  const getDiscount = (product: any): number => {
+    return Math.max(0, Math.min(100, safeNumberValue(product?.discount)));
+  };
+
+  // Helper function to safely get markup
+  const getMarkup = (product: any): number => {
+    return Math.max(0, Math.min(100, safeNumberValue(product?.markup)));
+  };
+
+  // Safe products array
+  const safeProducts = useMemo(() => {
+    if (!products || !Array.isArray(products)) return [];
+    return products.filter(product => product && typeof product === 'object');
+  }, [products]);
+
+  // Filter products client-side for category and merchant
+  const filteredProducts = useMemo(() => {
+    return safeProducts.filter((product) => {
+      const productCategory = getCategory(product.category);
+      const productMerchant = getMerchant(product.merchant);
+      
+      const matchesCategory =
+        selectedCategory === "all" || 
+        productCategory.toLowerCase().includes(selectedCategory.toLowerCase());
+      
+      const matchesMerchant =
+        selectedMerchant === "all" || 
+        productMerchant.toLowerCase().includes(selectedMerchant.toLowerCase());
+
+      return matchesCategory && matchesMerchant;
+    });
+  }, [safeProducts, selectedCategory, selectedMerchant]);
+
+  // Get unique categories and merchants from current products
+  const categories = useMemo(() => {
+    const categorySet = new Set<string>();
+    safeProducts.forEach(product => {
+      const category = getCategory(product.category);
+      if (category && category !== "Uncategorized") {
+        categorySet.add(category);
+      }
+    });
+    return Array.from(categorySet).sort();
+  }, [safeProducts]);
+
+  const merchants = useMemo(() => {
+    const merchantSet = new Set<string>();
+    safeProducts.forEach(product => {
+      const merchant = getMerchant(product.merchant);
+      if (merchant && merchant !== "Unknown") {
+        merchantSet.add(merchant);
+      }
+    });
+    return Array.from(merchantSet).sort();
+  }, [safeProducts]);
+
+  // Calculate display price: merchant price - discount + markup
+  const getDisplayPrice = (product: any) => {
+    const merchantPrice = getPrice(product);
+    const discount = getDiscount(product);
+    const markup = getMarkup(product);
+    
+    if (merchantPrice === 0) return 0;
+    
+    const discountAmount = (merchantPrice * discount) / 100;
+    const markupAmount = (merchantPrice * markup) / 100;
+    return Math.max(0, merchantPrice - discountAmount + markupAmount);
   };
 
   // Handle individual product selection
   const handleProductSelect = (productId: string, checked: boolean) => {
+    if (!productId) return;
+    
     if (checked) {
-      setSelectedProducts((prev) => [...prev, productId]);
+      setSelectedProducts((prev) => {
+        if (!prev.includes(productId)) {
+          return [...prev, productId];
+        }
+        return prev;
+      });
     } else {
       setSelectedProducts((prev) => prev.filter((id) => id !== productId));
     }
@@ -169,7 +234,10 @@ export default function ProductsAdminPage() {
   // Handle select all
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedProducts(filteredProducts.map((p) => p.id));
+      const validIds = filteredProducts
+        .map(p => getProductId(p))
+        .filter(id => id && id !== `product-${Date.now()}`);
+      setSelectedProducts(validIds);
     } else {
       setSelectedProducts([]);
     }
@@ -177,10 +245,12 @@ export default function ProductsAdminPage() {
 
   // Handle bulk markup application
   const handleBulkMarkup = async () => {
-    if (!bulkMarkup || selectedProducts.length === 0) {
+    const markupValue = safeNumberValue(bulkMarkup);
+    
+    if (markupValue <= 0 || selectedProducts.length === 0) {
       toast({
         title: "Error",
-        description: "Please enter markup percentage and select products.",
+        description: "Please enter a valid markup percentage and select products.",
         variant: "destructive",
       });
       return;
@@ -189,18 +259,27 @@ export default function ProductsAdminPage() {
     setIsApplyingBulk(true);
 
     try {
-      await bulkUpdateMarkup(selectedProducts, Number(bulkMarkup));
+      await bulkUpdateMarkup(selectedProducts, markupValue);
       setIsBulkModalOpen(false);
       setBulkMarkup("");
       setSelectedProducts([]);
+      toast({
+        title: "Success",
+        description: `Applied ${markupValue}% markup to ${selectedProducts.length} products.`,
+      });
     } catch (error) {
-      console.error("Bulk markup failed:", error);
+      toast({
+        title: "Error",
+        description: "Failed to apply bulk markup. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsApplyingBulk(false);
     }
   };
 
   const handleEditClick = (product: GetProductDto) => {
+    if (!product) return;
     setEditProduct({ ...product });
     setEditModalOpen(true);
   };
@@ -209,70 +288,86 @@ export default function ProductsAdminPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setEditProduct((prev: any) => ({ ...prev, [name]: value }));
+    setEditProduct((prev: any) => {
+      if (!prev) return null;
+      return { ...prev, [name]: value };
+    });
   };
 
   const handleEditSave = async () => {
     if (!editProduct) return;
 
     try {
-      await updateProduct(editProduct.id, {
-        name: editProduct.name,
-        price: Number(editProduct.price),
-        markup: Number(editProduct.markup),
-        discount: Number(editProduct.discount),
-        quantity: Number(editProduct.quantity),
-      });
+      const updateData = {
+        name: safeStringValue(editProduct.name) || "Unnamed Product",
+        merchantPrice: safeNumberValue(editProduct.merchantPrice || editProduct.price),
+        markup: safeNumberValue(editProduct.markup),
+        discount: safeNumberValue(editProduct.discount),
+        stock: safeNumberValue(editProduct.stock || editProduct.quantity),
+      };
+
+      await updateProduct(editProduct.id, updateData);
       setEditModalOpen(false);
       setEditProduct(null);
+      toast({
+        title: "Success",
+        description: "Product updated successfully.",
+      });
     } catch (error) {
-      console.error("Update failed:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update product. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
   const handlePageChange = (page: number) => {
+    if (page < 1 || (totalPages && page > totalPages)) return;
     setCurrentPage(page);
     fetchProducts({ page, limit: 50 });
   };
 
+  const handleMarkupChange = async (product: any, newMarkup: string) => {
+    const markupValue = safeNumberValue(newMarkup);
+    if (markupValue < 0 || markupValue > 100) return;
+
+    try {
+      await updateProduct(getProductId(product), { markup: markupValue });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update markup.",
+        variant: "destructive",
+      });
+    }
+  };
+
   // Calculate summary stats
-  const totalProducts = total || 0;
-<<<<<<< HEAD
-  const activeProducts =
-    products?.filter((p) => p.status === "Active").length || 0;
-  const totalInventoryValue =
-    products?.reduce((sum, p) => sum + (p.price || 0) * (p.quantity || 0), 0) ||
-    0;
-  const averageMarkup =
-    products?.length > 0
-      ? products.reduce((sum, p) => sum + (p.markup || 0), 0) / products.length
-      : 0;
-=======
-  const activeProducts = products?.filter((p) => p.status === "Active").length || 0;
-  const totalInventoryValue = products?.reduce(
-    (sum, p) => {
-      const price = p.merchantPrice || p.price || 0;
-      const stock = p.stock || p.quantity || 0;
-      return sum + price * stock;
-    },
-    0
-  ) || 0;
-  const averageMarkup = products?.length > 0 
-    ? products.reduce((sum, p) => sum + (p.markup || 0), 0) / products.length 
+  const totalProducts = safeNumberValue(total);
+  const activeProducts = safeProducts.filter((p) => 
+    safeStringValue(p.status).toLowerCase() === "active"
+  ).length;
+  
+  const totalInventoryValue = safeProducts.reduce((sum, p) => {
+    const price = getPrice(p);
+    const stock = getStock(p);
+    return sum + (price * stock);
+  }, 0);
+  
+  const averageMarkup = safeProducts.length > 0 
+    ? safeProducts.reduce((sum, p) => sum + getMarkup(p), 0) / safeProducts.length 
     : 0;
->>>>>>> origin/feature/fix-null-hydration
 
   if (error) {
     return (
       <RBACGuard permissions={["view_products"]}>
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
-            <h2 className="text-xl font-semibold text-red-600">
-              Error Loading Products
-            </h2>
-            <p className="text-gray-600 mt-2">{error}</p>
-            <Button
-              onClick={() => fetchProducts()}
+            <h2 className="text-xl font-semibold text-red-600">Error Loading Products</h2>
+            <p className="text-gray-600 mt-2">{String(error)}</p>
+            <Button 
+              onClick={() => fetchProducts()} 
               className="mt-4"
               variant="outline"
             >
@@ -314,19 +409,9 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-blue-100">Total Products</p>
-<<<<<<< HEAD
-                  <p className="text-2xl font-bold">
-                    {loading ? (
-                      <Skeleton className="h-8 w-16 bg-blue-400" />
-                    ) : (
-                      (totalProducts || 0).toLocaleString()
-                    )}
-                  </p>
-=======
                   <div className="text-2xl font-bold">
-                    {loading ? <Skeleton className="h-8 w-16 bg-blue-400" /> : (totalProducts || 0).toLocaleString()}
+                    {loading ? <Skeleton className="h-8 w-16 bg-blue-400" /> : totalProducts.toLocaleString()}
                   </div>
->>>>>>> origin/feature/fix-null-hydration
                 </div>
                 <Package className="h-8 w-8 text-blue-200" />
               </div>
@@ -338,19 +423,9 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-green-100">Active Products</p>
-<<<<<<< HEAD
-                  <p className="text-2xl font-bold">
-                    {loading ? (
-                      <Skeleton className="h-8 w-16 bg-green-400" />
-                    ) : (
-                      (activeProducts || 0).toLocaleString()
-                    )}
-                  </p>
-=======
                   <div className="text-2xl font-bold">
-                    {loading ? <Skeleton className="h-8 w-16 bg-green-400" /> : (activeProducts || 0).toLocaleString()}
+                    {loading ? <Skeleton className="h-8 w-16 bg-green-400" /> : activeProducts.toLocaleString()}
                   </div>
->>>>>>> origin/feature/fix-null-hydration
                 </div>
                 <TrendingUp className="h-8 w-8 text-green-200" />
               </div>
@@ -362,19 +437,9 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-purple-100">Inventory Value</p>
-<<<<<<< HEAD
-                  <p className="text-2xl font-bold">
-                    {loading ? (
-                      <Skeleton className="h-8 w-16 bg-purple-400" />
-                    ) : (
-                      `₦${((totalInventoryValue || 0) / 1000000).toFixed(1)}M`
-                    )}
-                  </p>
-=======
                   <div className="text-2xl font-bold">
-                    {loading ? <Skeleton className="h-8 w-16 bg-purple-400" /> : `₦${((totalInventoryValue || 0) / 1000000).toFixed(1)}M`}
+                    {loading ? <Skeleton className="h-8 w-16 bg-purple-400" /> : `₦${((totalInventoryValue) / 1000000).toFixed(1)}M`}
                   </div>
->>>>>>> origin/feature/fix-null-hydration
                 </div>
                 <DollarSign className="h-8 w-8 text-purple-200" />
               </div>
@@ -386,19 +451,9 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-orange-100">Avg. Markup</p>
-<<<<<<< HEAD
-                  <p className="text-2xl font-bold">
-                    {loading ? (
-                      <Skeleton className="h-8 w-16 bg-orange-400" />
-                    ) : (
-                      `${(averageMarkup || 0).toFixed(1)}%`
-                    )}
-                  </p>
-=======
                   <div className="text-2xl font-bold">
-                    {loading ? <Skeleton className="h-8 w-16 bg-orange-400" /> : `${(averageMarkup || 0).toFixed(1)}%`}
+                    {loading ? <Skeleton className="h-8 w-16 bg-orange-400" /> : `${averageMarkup.toFixed(1)}%`}
                   </div>
->>>>>>> origin/feature/fix-null-hydration
                 </div>
                 <Percent className="h-8 w-8 text-orange-200" />
               </div>
@@ -431,11 +486,7 @@ export default function ProductsAdminPage() {
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
                   {categories.map((category, index) => (
-<<<<<<< HEAD
-                    <SelectItem key={`${category}-${index}`} value={category}>
-=======
-                    <SelectItem key={`category-${category}-${index}`} value={category}>
->>>>>>> origin/feature/fix-null-hydration
+                    <SelectItem key={`category-${index}`} value={category}>
                       {category}
                     </SelectItem>
                   ))}
@@ -451,7 +502,7 @@ export default function ProductsAdminPage() {
                 <SelectContent>
                   <SelectItem value="all">All Merchants</SelectItem>
                   {merchants.map((merchant, index) => (
-                    <SelectItem key={`merchant-${merchant}-${index}`} value={merchant}>
+                    <SelectItem key={`merchant-${index}`} value={merchant}>
                       {merchant}
                     </SelectItem>
                   ))}
@@ -467,9 +518,7 @@ export default function ProductsAdminPage() {
             <div className="flex items-center justify-between">
               <CardTitle>
                 Products ({filteredProducts.length})
-                {loading && (
-                  <Loader2 className="inline ml-2 h-4 w-4 animate-spin" />
-                )}
+                {loading && <Loader2 className="inline ml-2 h-4 w-4 animate-spin" />}
               </CardTitle>
               <div className="flex items-center gap-2">
                 <Checkbox
@@ -510,10 +559,12 @@ export default function ProductsAdminPage() {
                             placeholder="Enter markup %"
                             value={bulkMarkup}
                             onChange={(e) => setBulkMarkup(e.target.value)}
+                            min="0"
+                            max="100"
                           />
                         </div>
                         <p className="text-sm text-gray-600">
-                          This will apply {bulkMarkup}% markup to{" "}
+                          This will apply {safeNumberValue(bulkMarkup)}% markup to{" "}
                           {selectedProducts.length} selected products.
                         </p>
                         <div className="flex gap-2">
@@ -568,157 +619,120 @@ export default function ProductsAdminPage() {
                     ))
                   ) : filteredProducts.length === 0 ? (
                     <tr>
-                      <td
-                        colSpan={11}
-                        className="text-center py-8 text-gray-500"
-                      >
+                      <td colSpan={11} className="text-center py-8 text-gray-500">
                         No products found
                       </td>
                     </tr>
                   ) : (
-                    filteredProducts.map((product) => (
-                      <tr
-                        key={product.id}
-                        className="border-b hover:bg-gray-50"
-                      >
-                        <td className="p-2">
-                          <Checkbox
-                            checked={selectedProducts.includes(product.id)}
-                            onCheckedChange={(checked) =>
-                              handleProductSelect(
-                                product.id,
-                                checked as boolean
-                              )
-                            }
-                          />
-                        </td>
-                        <td className="p-2">
-                          <p className="font-medium">{product.name}</p>
-                        </td>
-                        <td className="p-2 text-sm text-gray-600">
-                          {product.id.slice(0, 5)}...
-                        </td>
-                        <td className="p-2">
-                          <Badge variant="outline">{getCategory(product.category)}</Badge>
-                        </td>
-                        <td className="p-2">
-                          <Badge
-                            variant={
-<<<<<<< HEAD
-                              product.seller.shopName === "Slot"
-=======
-                              getMerchant(product.merchant) === "Slot"
->>>>>>> origin/feature/fix-null-hydration
-                                ? "default"
-                                : "secondary"
-                            }
-                          >
-<<<<<<< HEAD
-                            {product.seller.shopName}
-                          </Badge>
-                        </td>
-                        <td className="p-2 font-regular text-sm">
-                          ₦{(product.price || 0).toLocaleString()}
-=======
-                            {getMerchant(product.merchant)}
-                          </Badge>
-                        </td>
-                        <td className="p-2 font-regular text-sm">
-                          {formatCurrency(product.merchantPrice || product.price)}
->>>>>>> origin/feature/fix-null-hydration
-                        </td>
-                        <td className="p-2 font-regular text-sm">
-                          {product.discount || 0}%
-                        </td>
-                        <td className="p-2">
-                          <RBACGuard
-                            permissions={["manage_products"]}
-                            requireAll={false}
-                          >
-                            <Input
-                              type="number"
-                              value={product.markup || 0}
-                              className="w-20 h-8"
-                              min="0"
-                              max="100"
-                              onChange={(e) => {
-                                const newMarkup = Number(e.target.value);
-                                updateProduct(product.id, {
-                                  markup: newMarkup,
-                                });
-                              }}
+                    filteredProducts.map((product, index) => {
+                      const productId = getProductId(product);
+                      const productName = getProductName(product);
+                      const productSku = getProductSku(product);
+                      const category = getCategory(product.category);
+                      const merchant = getMerchant(product.merchant);
+                      const merchantPrice = getPrice(product);
+                      const discount = getDiscount(product);
+                      const markup = getMarkup(product);
+                      const stock = getStock(product);
+                      const displayPrice = getDisplayPrice(product);
+
+                      return (
+                        <tr key={`${productId}-${index}`} className="border-b hover:bg-gray-50">
+                          <td className="p-2">
+                            <Checkbox
+                              checked={selectedProducts.includes(productId)}
+                              onCheckedChange={(checked) =>
+                                handleProductSelect(productId, checked as boolean)
+                              }
                             />
-                          </RBACGuard>
-                          <RBACGuard
-                            permissions={["manage_products"]}
-                            requireAll={false}
-                            fallback={
-                              <span className="text-sm">{product.markup || 0}%</span>
-                            }
-                          >
-                            <span className="text-sm">{product.markup || 0}%</span>
-                          </RBACGuard>
-                        </td>
-                        <td className="p-2 font-medium text-sm text-green-600">
-<<<<<<< HEAD
-                          ₦
-                          {getDisplayPrice(
-                            product.price || 0,
-                            product.discount || 0,
-                            product.markup || 0
-                          ).toLocaleString()}
-=======
-                          {formatCurrency(getDisplayPrice(
-                            product.merchantPrice || product.price,
-                            product.discount,
-                            product.markup
-                          ))}
->>>>>>> origin/feature/fix-null-hydration
-                        </td>
-                        <td className="p-2">
-                          <Badge
-                            variant={
-<<<<<<< HEAD
-                              product.quantity > 10 ? "default" : "destructive"
-                            }
-                          >
-                            {product.quantity}
-=======
-                              (product.stock || product.quantity || 0) > 10 ? "default" : "destructive"
-                            }
-                          >
-                            {product.stock || product.quantity || 0}
->>>>>>> origin/feature/fix-null-hydration
-                          </Badge>
-                        </td>
-                        <td className="p-2">
-                          <div className="flex items-center gap-1">
-                            <Button variant="ghost" size="sm">
-                              <Eye className="h-4 w-4" />
-                            </Button>
+                          </td>
+                          <td className="p-2">
+                            <p className="font-medium">{productName}</p>
+                          </td>
+                          <td className="p-2 text-sm text-gray-600">
+                            {productSku}
+                          </td>
+                          <td className="p-2">
+                            <Badge variant="outline">{category}</Badge>
+                          </td>
+                          <td className="p-2">
+                            <Badge
+                              variant={
+                                merchant === "Slot" ? "default" : "secondary"
+                              }
+                            >
+                              {merchant}
+                            </Badge>
+                          </td>
+                          <td className="p-2 font-regular text-sm">
+                            {formatCurrency(merchantPrice)}
+                          </td>
+                          <td className="p-2 font-regular text-sm">
+                            {discount.toFixed(1)}%
+                          </td>
+                          <td className="p-2">
                             <RBACGuard
                               permissions={["manage_products"]}
                               requireAll={false}
                             >
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleEditClick(product)}
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
+                              <Input
+                                type="number"
+                                value={markup}
+                                className="w-20 h-8"
+                                min="0"
+                                max="100"
+                                onChange={(e) => handleMarkupChange(product, e.target.value)}
+                              />
                             </RBACGuard>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
+                            <RBACGuard
+                              permissions={["manage_products"]}
+                              requireAll={false}
+                              fallback={
+                                <span className="text-sm">{markup.toFixed(1)}%</span>
+                              }
+                            >
+                              <span className="text-sm">{markup.toFixed(1)}%</span>
+                            </RBACGuard>
+                          </td>
+                          <td className="p-2 font-medium text-sm text-green-600">
+                            {formatCurrency(displayPrice)}
+                          </td>
+                          <td className="p-2">
+                            <Badge
+                              variant={stock > 10 ? "default" : "destructive"}
+                            >
+                              {stock}
+                            </Badge>
+                          </td>
+                          <td className="p-2">
+                            <div className="flex items-center gap-1">
+                              <Button variant="ghost" size="sm">
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                              <RBACGuard
+                                permissions={["manage_products"]}
+                                requireAll={false}
+                              >
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleEditClick(product)}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                              </RBACGuard>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>
             </div>
 
             {/* Pagination */}
-            {totalPages > 1 && (
+            {totalPages && totalPages > 1 && (
               <div className="flex items-center justify-center gap-2 mt-4">
                 <Button
                   variant="outline"
@@ -763,7 +777,7 @@ export default function ProductsAdminPage() {
                   <Input
                     id="name"
                     name="name"
-                    value={editProduct.name}
+                    value={safeStringValue(editProduct.name)}
                     onChange={handleEditChange}
                   />
                 </div>
@@ -773,12 +787,9 @@ export default function ProductsAdminPage() {
                     id="merchantPrice"
                     name="merchantPrice"
                     type="number"
-<<<<<<< HEAD
-                    value={editProduct.price}
-=======
-                    value={editProduct.merchantPrice || editProduct.price || 0}
->>>>>>> origin/feature/fix-null-hydration
+                    value={safeNumberValue(editProduct.merchantPrice || editProduct.price)}
                     onChange={handleEditChange}
+                    min="0"
                   />
                 </div>
                 <div>
@@ -787,8 +798,10 @@ export default function ProductsAdminPage() {
                     id="discount"
                     name="discount"
                     type="number"
-                    value={editProduct.discount || 0}
+                    value={safeNumberValue(editProduct.discount)}
                     onChange={handleEditChange}
+                    min="0"
+                    max="100"
                   />
                 </div>
                 <div>
@@ -797,8 +810,10 @@ export default function ProductsAdminPage() {
                     id="markup"
                     name="markup"
                     type="number"
-                    value={editProduct.markup || 0}
+                    value={safeNumberValue(editProduct.markup)}
                     onChange={handleEditChange}
+                    min="0"
+                    max="100"
                   />
                 </div>
                 <div>
@@ -807,12 +822,9 @@ export default function ProductsAdminPage() {
                     id="stock"
                     name="stock"
                     type="number"
-<<<<<<< HEAD
-                    value={editProduct.quantity}
-=======
-                    value={editProduct.stock || editProduct.quantity || 0}
->>>>>>> origin/feature/fix-null-hydration
+                    value={safeNumberValue(editProduct.stock || editProduct.quantity)}
                     onChange={handleEditChange}
+                    min="0"
                   />
                 </div>
                 <div className="flex gap-2 justify-end">

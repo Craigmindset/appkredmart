@@ -55,7 +55,7 @@ export interface ProductsQueryParams {
   page?: number;
 }
 class ProductsService {
-  private baseUrl = "/products";
+  private baseUrl = "/api/products";
 
   async getProducts(
     params: ProductsQueryParams = {}
