@@ -31,6 +31,7 @@ import {
   ShoppingCart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/lib/services/user/user";
 import { useCart, cartSelectors } from "@/store/cart-store";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { BrandLogo } from "@/components/brand-logo";
@@ -50,23 +51,19 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const cartCount = useCart(cartSelectors.count);
 
-  // Get user and logout from auth store, fallback to demo if not logged in
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { useAuth } = require("@/store/auth-store");
-  const user = useAuth((s: any) => s.user);
-  const logout = useAuth((s: any) => s.logout);
-  const firstName = user?.firstName || "Kred";
-  const lastName = user?.lastName || "User";
+  // Use user from useUser (React Query)
+  const { user } = useUser();
+  const firstName = user?.firstname || "Kred";
+  const lastName = user?.lastname || "User";
   const email = user?.email || "user@kredmart.com";
   const initials =
     (firstName?.[0] ?? "") + (lastName?.[0] ?? (firstName ? "" : "U"));
   const router = require("next/navigation").useRouter();
+  // Logout: clear token, invalidate user query, redirect
   const handleLogout = async () => {
-    logout();
     if (typeof window !== "undefined") {
       localStorage.removeItem("token");
     }
-    // Invalidate user query if react-query is used
     try {
       const { getQueryClient } = require("@/lib/query-client");
       const queryClient = getQueryClient();
@@ -75,6 +72,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     router.push("/");
   };
 
+  // removed duplicate useUser
   return (
     <SidebarProvider>
       <div className="flex min-h-svh w-full bg-slate-50">
@@ -159,7 +157,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                       : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
-                  Hom2e
+                  Home
                 </Link>
                 <Link
                   href="/store"
