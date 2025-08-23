@@ -91,25 +91,70 @@ export default function ProductsAdminPage() {
   // Get unique categories and merchants from current products
   const categories = useMemo(() => {
     if (!products || !Array.isArray(products)) return [];
+<<<<<<< HEAD
     return Array.from(new Set(products.map((p) => p.category))).filter(Boolean);
+=======
+    return Array.from(new Set(
+      products
+        .map(p => p.category)
+        .filter((cat): cat is string => 
+          cat !== null && 
+          cat !== undefined && 
+          typeof cat === 'string' && 
+          cat.trim() !== ''
+        )
+    ));
+>>>>>>> origin/feature/fix-null-hydration
   }, [products]);
 
   const merchants = useMemo(() => {
     if (!products || !Array.isArray(products)) return [];
+<<<<<<< HEAD
     return Array.from(new Set(products.map((p) => p.seller.shopName))).filter(
       Boolean
     );
+=======
+    return Array.from(new Set(
+      products
+        .map(p => p.merchant)
+        .filter((merchant): merchant is string => 
+          merchant !== null && 
+          merchant !== undefined && 
+          typeof merchant === 'string' && 
+          merchant.trim() !== ''
+        )
+    ));
+>>>>>>> origin/feature/fix-null-hydration
   }, [products]);
 
   // Calculate display price: merchant price - discount + markup
   const getDisplayPrice = (
-    merchantPrice: number,
-    discount: number,
-    markup: number
+    merchantPrice: number | null | undefined,
+    discount: number | undefined,
+    markup: number | undefined
   ) => {
-    const discountAmount = (merchantPrice * discount) / 100;
-    const markupAmount = (merchantPrice * markup) / 100;
-    return merchantPrice - discountAmount + markupAmount;
+    if (!merchantPrice) return 0;
+    const discountAmount = ((merchantPrice || 0) * (discount || 0)) / 100;
+    const markupAmount = ((merchantPrice || 0) * (markup || 0)) / 100;
+    return (merchantPrice || 0) - discountAmount + markupAmount;
+  };
+
+  // Helper function to safely format currency
+  const formatCurrency = (value: number | null | undefined) => {
+    if (value === null || value === undefined || isNaN(value)) {
+      return "N/A";
+    }
+    return `₦${value.toLocaleString()}`;
+  };
+
+  // Helper function to safely display category
+  const getCategory = (category: string | null | undefined) => {
+    return category || "Uncategorized";
+  };
+
+  // Helper function to safely display merchant
+  const getMerchant = (merchant: string | null | undefined): string => {
+    return merchant || "Unknown";
   };
 
   // Handle individual product selection
@@ -192,6 +237,7 @@ export default function ProductsAdminPage() {
 
   // Calculate summary stats
   const totalProducts = total || 0;
+<<<<<<< HEAD
   const activeProducts =
     products?.filter((p) => p.status === "Active").length || 0;
   const totalInventoryValue =
@@ -201,6 +247,20 @@ export default function ProductsAdminPage() {
     products?.length > 0
       ? products.reduce((sum, p) => sum + (p.markup || 0), 0) / products.length
       : 0;
+=======
+  const activeProducts = products?.filter((p) => p.status === "Active").length || 0;
+  const totalInventoryValue = products?.reduce(
+    (sum, p) => {
+      const price = p.merchantPrice || p.price || 0;
+      const stock = p.stock || p.quantity || 0;
+      return sum + price * stock;
+    },
+    0
+  ) || 0;
+  const averageMarkup = products?.length > 0 
+    ? products.reduce((sum, p) => sum + (p.markup || 0), 0) / products.length 
+    : 0;
+>>>>>>> origin/feature/fix-null-hydration
 
   if (error) {
     return (
@@ -254,6 +314,7 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-blue-100">Total Products</p>
+<<<<<<< HEAD
                   <p className="text-2xl font-bold">
                     {loading ? (
                       <Skeleton className="h-8 w-16 bg-blue-400" />
@@ -261,6 +322,11 @@ export default function ProductsAdminPage() {
                       (totalProducts || 0).toLocaleString()
                     )}
                   </p>
+=======
+                  <div className="text-2xl font-bold">
+                    {loading ? <Skeleton className="h-8 w-16 bg-blue-400" /> : (totalProducts || 0).toLocaleString()}
+                  </div>
+>>>>>>> origin/feature/fix-null-hydration
                 </div>
                 <Package className="h-8 w-8 text-blue-200" />
               </div>
@@ -272,6 +338,7 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-green-100">Active Products</p>
+<<<<<<< HEAD
                   <p className="text-2xl font-bold">
                     {loading ? (
                       <Skeleton className="h-8 w-16 bg-green-400" />
@@ -279,6 +346,11 @@ export default function ProductsAdminPage() {
                       (activeProducts || 0).toLocaleString()
                     )}
                   </p>
+=======
+                  <div className="text-2xl font-bold">
+                    {loading ? <Skeleton className="h-8 w-16 bg-green-400" /> : (activeProducts || 0).toLocaleString()}
+                  </div>
+>>>>>>> origin/feature/fix-null-hydration
                 </div>
                 <TrendingUp className="h-8 w-8 text-green-200" />
               </div>
@@ -290,6 +362,7 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-purple-100">Inventory Value</p>
+<<<<<<< HEAD
                   <p className="text-2xl font-bold">
                     {loading ? (
                       <Skeleton className="h-8 w-16 bg-purple-400" />
@@ -297,6 +370,11 @@ export default function ProductsAdminPage() {
                       `₦${((totalInventoryValue || 0) / 1000000).toFixed(1)}M`
                     )}
                   </p>
+=======
+                  <div className="text-2xl font-bold">
+                    {loading ? <Skeleton className="h-8 w-16 bg-purple-400" /> : `₦${((totalInventoryValue || 0) / 1000000).toFixed(1)}M`}
+                  </div>
+>>>>>>> origin/feature/fix-null-hydration
                 </div>
                 <DollarSign className="h-8 w-8 text-purple-200" />
               </div>
@@ -308,6 +386,7 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-orange-100">Avg. Markup</p>
+<<<<<<< HEAD
                   <p className="text-2xl font-bold">
                     {loading ? (
                       <Skeleton className="h-8 w-16 bg-orange-400" />
@@ -315,6 +394,11 @@ export default function ProductsAdminPage() {
                       `${(averageMarkup || 0).toFixed(1)}%`
                     )}
                   </p>
+=======
+                  <div className="text-2xl font-bold">
+                    {loading ? <Skeleton className="h-8 w-16 bg-orange-400" /> : `${(averageMarkup || 0).toFixed(1)}%`}
+                  </div>
+>>>>>>> origin/feature/fix-null-hydration
                 </div>
                 <Percent className="h-8 w-8 text-orange-200" />
               </div>
@@ -347,7 +431,11 @@ export default function ProductsAdminPage() {
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
                   {categories.map((category, index) => (
+<<<<<<< HEAD
                     <SelectItem key={`${category}-${index}`} value={category}>
+=======
+                    <SelectItem key={`category-${category}-${index}`} value={category}>
+>>>>>>> origin/feature/fix-null-hydration
                       {category}
                     </SelectItem>
                   ))}
@@ -362,8 +450,8 @@ export default function ProductsAdminPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Merchants</SelectItem>
-                  {merchants.map((merchant) => (
-                    <SelectItem key={merchant} value={merchant}>
+                  {merchants.map((merchant, index) => (
+                    <SelectItem key={`merchant-${merchant}-${index}`} value={merchant}>
                       {merchant}
                     </SelectItem>
                   ))}
@@ -511,24 +599,36 @@ export default function ProductsAdminPage() {
                           {product.id.slice(0, 5)}...
                         </td>
                         <td className="p-2">
-                          <Badge variant="outline">{product.category}</Badge>
+                          <Badge variant="outline">{getCategory(product.category)}</Badge>
                         </td>
                         <td className="p-2">
                           <Badge
                             variant={
+<<<<<<< HEAD
                               product.seller.shopName === "Slot"
+=======
+                              getMerchant(product.merchant) === "Slot"
+>>>>>>> origin/feature/fix-null-hydration
                                 ? "default"
                                 : "secondary"
                             }
                           >
+<<<<<<< HEAD
                             {product.seller.shopName}
                           </Badge>
                         </td>
                         <td className="p-2 font-regular text-sm">
                           ₦{(product.price || 0).toLocaleString()}
+=======
+                            {getMerchant(product.merchant)}
+                          </Badge>
                         </td>
                         <td className="p-2 font-regular text-sm">
-                          {product.discount}%
+                          {formatCurrency(product.merchantPrice || product.price)}
+>>>>>>> origin/feature/fix-null-hydration
+                        </td>
+                        <td className="p-2 font-regular text-sm">
+                          {product.discount || 0}%
                         </td>
                         <td className="p-2">
                           <RBACGuard
@@ -537,7 +637,7 @@ export default function ProductsAdminPage() {
                           >
                             <Input
                               type="number"
-                              value={product.markup}
+                              value={product.markup || 0}
                               className="w-20 h-8"
                               min="0"
                               max="100"
@@ -553,27 +653,42 @@ export default function ProductsAdminPage() {
                             permissions={["manage_products"]}
                             requireAll={false}
                             fallback={
-                              <span className="text-sm">{product.markup}%</span>
+                              <span className="text-sm">{product.markup || 0}%</span>
                             }
                           >
-                            <span className="text-sm">{product.markup}%</span>
+                            <span className="text-sm">{product.markup || 0}%</span>
                           </RBACGuard>
                         </td>
                         <td className="p-2 font-medium text-sm text-green-600">
+<<<<<<< HEAD
                           ₦
                           {getDisplayPrice(
                             product.price || 0,
                             product.discount || 0,
                             product.markup || 0
                           ).toLocaleString()}
+=======
+                          {formatCurrency(getDisplayPrice(
+                            product.merchantPrice || product.price,
+                            product.discount,
+                            product.markup
+                          ))}
+>>>>>>> origin/feature/fix-null-hydration
                         </td>
                         <td className="p-2">
                           <Badge
                             variant={
+<<<<<<< HEAD
                               product.quantity > 10 ? "default" : "destructive"
                             }
                           >
                             {product.quantity}
+=======
+                              (product.stock || product.quantity || 0) > 10 ? "default" : "destructive"
+                            }
+                          >
+                            {product.stock || product.quantity || 0}
+>>>>>>> origin/feature/fix-null-hydration
                           </Badge>
                         </td>
                         <td className="p-2">
@@ -658,7 +773,11 @@ export default function ProductsAdminPage() {
                     id="merchantPrice"
                     name="merchantPrice"
                     type="number"
+<<<<<<< HEAD
                     value={editProduct.price}
+=======
+                    value={editProduct.merchantPrice || editProduct.price || 0}
+>>>>>>> origin/feature/fix-null-hydration
                     onChange={handleEditChange}
                   />
                 </div>
@@ -668,7 +787,7 @@ export default function ProductsAdminPage() {
                     id="discount"
                     name="discount"
                     type="number"
-                    value={editProduct.discount}
+                    value={editProduct.discount || 0}
                     onChange={handleEditChange}
                   />
                 </div>
@@ -678,7 +797,7 @@ export default function ProductsAdminPage() {
                     id="markup"
                     name="markup"
                     type="number"
-                    value={editProduct.markup}
+                    value={editProduct.markup || 0}
                     onChange={handleEditChange}
                   />
                 </div>
@@ -688,7 +807,11 @@ export default function ProductsAdminPage() {
                     id="stock"
                     name="stock"
                     type="number"
+<<<<<<< HEAD
                     value={editProduct.quantity}
+=======
+                    value={editProduct.stock || editProduct.quantity || 0}
+>>>>>>> origin/feature/fix-null-hydration
                     onChange={handleEditChange}
                   />
                 </div>

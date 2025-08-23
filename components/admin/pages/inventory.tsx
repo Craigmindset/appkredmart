@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useMemo } from "react";
@@ -25,6 +26,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Search,
   Package,
@@ -32,65 +34,7 @@ import {
   TrendingUp,
   TrendingDown,
 } from "lucide-react";
-
-// Demo inventory data with Slot and Gbam Inc. merchants
-const mockInventoryData = Array.from({ length: 50 }, (_, i) => {
-  const currentStock = Math.max(0, 100 - i * 3);
-  const minStock = 10;
-  const maxStock = 100;
-
-  // Calculate status based on stock levels
-  let status = "Normal";
-  if (currentStock === 0) {
-    status = "Out of Stock";
-  } else if (currentStock <= minStock) {
-    status = "Low Stock";
-  } else if (currentStock >= maxStock * 0.8) {
-    status = "Well Stocked";
-  }
-
-  // Calculate stock level percentage
-  const stockLevel =
-    currentStock === 0 ? 0 : Math.max(20, (currentStock / maxStock) * 100);
-
-  return {
-    id: `INV${1000 + i}`,
-    productName: [
-      "iPhone 15 Pro Max",
-      "Samsung Galaxy S24",
-      "MacBook Air M3",
-      "Dell XPS 13",
-      "Sony WH-1000XM5",
-      "AirPods Pro",
-      "iPad Pro",
-      "Surface Pro 9",
-      "Gaming Chair",
-      "Mechanical Keyboard",
-      "4K Monitor",
-      "Wireless Mouse",
-    ][i % 12],
-    category: [
-      "Phones and Tablets",
-      "Computing",
-      "Electronics",
-      "Accessories",
-      "Home & Kitchen",
-      "Premium Devices",
-    ][i % 6],
-    merchant: i % 2 === 0 ? "Slot" : "Gbam Inc.",
-    currentStock,
-    minStock,
-    maxStock,
-    price: 50000 + i * 5000,
-    deals: i % 4 === 0 ? "Kredmart deals" : i % 5 === 0 ? "Flash Sale" : null,
-    bestPrice: i % 3 === 0,
-    lastRestocked: new Date(
-      Date.now() - i * 24 * 60 * 60 * 1000
-    ).toLocaleDateString(),
-    status,
-    stockLevel: Math.round(stockLevel),
-  };
-});
+import { useInventory } from "@/lib/services/inventory/use-inventory";
 
 const merchants = ["All", "Slot", "Gbam Inc."];
 const categories = [
@@ -121,8 +65,19 @@ export default function InventoryAdminPage() {
   const [dealFilter, setDealFilter] = useState("All");
   const [priceFilter, setPriceFilter] = useState("All");
 
+  const { 
+    inventory, 
+    loading, 
+    error, 
+    stats,
+    fetchInventory 
+  } = useInventory({
+    limit: 50,
+    page: 1,
+  });
+
   const filteredData = useMemo(() => {
-    return mockInventoryData.filter((item) => {
+    return inventory.filter((item) => {
       const matchesSearch =
         item.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -149,19 +104,18 @@ export default function InventoryAdminPage() {
         matchesPrice
       );
     });
-  }, [searchQuery, merchantFilter, categoryFilter, dealFilter, priceFilter]);
+  }, [inventory, searchQuery, merchantFilter, categoryFilter, dealFilter, priceFilter]);
 
-  // Calculate summary stats
-  const totalProducts = filteredData.length;
-  const outOfStock = filteredData.filter(
-    (item) => item.status === "Out of Stock"
-  ).length;
-  const lowStock = filteredData.filter(
-    (item) => item.status === "Low Stock"
-  ).length;
-  const wellStocked = filteredData.filter(
-    (item) => item.status === "Well Stocked"
-  ).length;
+  // Apply backend filters when they change
+  const handleFilterChange = () => {
+    fetchInventory({
+      search: searchQuery || undefined,
+      merchant: merchantFilter !== "All" ? merchantFilter : undefined,
+      category: categoryFilter !== "All" ? categoryFilter : undefined,
+      deals: dealFilter !== "All" ? dealFilter : undefined,
+      priceType: priceFilter !== "All" ? priceFilter : undefined,
+    });
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -195,6 +149,21 @@ export default function InventoryAdminPage() {
     return "bg-green-500";
   };
 
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-center text-red-600">
+              <AlertTriangle className="h-8 w-8 mx-auto mb-2" />
+              <p>Failed to load inventory data: {error}</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
@@ -208,7 +177,7 @@ export default function InventoryAdminPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-900">
-              {totalProducts}
+              {loading ? <Skeleton className="h-8 w-16" /> : stats.totalProducts}
             </div>
           </CardContent>
         </Card>
@@ -221,7 +190,9 @@ export default function InventoryAdminPage() {
             <AlertTriangle className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-900">{outOfStock}</div>
+            <div className="text-2xl font-bold text-red-900">
+              {loading ? <Skeleton className="h-8 w-16" /> : stats.outOfStock}
+            </div>
           </CardContent>
         </Card>
 
@@ -233,7 +204,9 @@ export default function InventoryAdminPage() {
             <TrendingDown className="h-4 w-4 text-yellow-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-900">{lowStock}</div>
+            <div className="text-2xl font-bold text-yellow-900">
+              {loading ? <Skeleton className="h-8 w-16" /> : stats.lowStock}
+            </div>
           </CardContent>
         </Card>
 
@@ -246,7 +219,7 @@ export default function InventoryAdminPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-900">
-              {wellStocked}
+              {loading ? <Skeleton className="h-8 w-16" /> : stats.wellStocked}
             </div>
           </CardContent>
         </Card>
@@ -270,12 +243,16 @@ export default function InventoryAdminPage() {
                 className="pl-10"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleFilterChange()}
               />
             </div>
 
             {/* Filters */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Select value={merchantFilter} onValueChange={setMerchantFilter}>
+              <Select value={merchantFilter} onValueChange={(value) => {
+                setMerchantFilter(value);
+                setTimeout(handleFilterChange, 100);
+              }}>
                 <SelectTrigger>
                   <SelectValue placeholder="Filter by merchant" />
                 </SelectTrigger>
@@ -288,7 +265,10 @@ export default function InventoryAdminPage() {
                 </SelectContent>
               </Select>
 
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <Select value={categoryFilter} onValueChange={(value) => {
+                setCategoryFilter(value);
+                setTimeout(handleFilterChange, 100);
+              }}>
                 <SelectTrigger>
                   <SelectValue placeholder="Filter by category" />
                 </SelectTrigger>
@@ -301,7 +281,10 @@ export default function InventoryAdminPage() {
                 </SelectContent>
               </Select>
 
-              <Select value={dealFilter} onValueChange={setDealFilter}>
+              <Select value={dealFilter} onValueChange={(value) => {
+                setDealFilter(value);
+                setTimeout(handleFilterChange, 100);
+              }}>
                 <SelectTrigger>
                   <SelectValue placeholder="Filter by deals" />
                 </SelectTrigger>
@@ -314,7 +297,10 @@ export default function InventoryAdminPage() {
                 </SelectContent>
               </Select>
 
-              <Select value={priceFilter} onValueChange={setPriceFilter}>
+              <Select value={priceFilter} onValueChange={(value) => {
+                setPriceFilter(value);
+                setTimeout(handleFilterChange, 100);
+              }}>
                 <SelectTrigger>
                   <SelectValue placeholder="Filter by price" />
                 </SelectTrigger>
@@ -341,6 +327,7 @@ export default function InventoryAdminPage() {
                 <TableHead>Product Name</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>Merchant</TableHead>
+                <TableHead>Stock Status</TableHead>
                 <TableHead>Quantity</TableHead>
                 <TableHead>Price</TableHead>
                 <TableHead>Deals</TableHead>
@@ -348,57 +335,93 @@ export default function InventoryAdminPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredData.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.id}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {item.productName}
-                      {item.bestPrice && (
-                        <Badge
-                          variant="outline"
-                          className="bg-blue-50 text-blue-700 text-xs"
-                        >
-                          Best Price
-                        </Badge>
-                      )}
+              {loading ? (
+                Array.from({ length: 10 }).map((_, index) => (
+                  <TableRow key={index}>
+                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-12" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                  </TableRow>
+                ))
+              ) : filteredData.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={9} className="text-center py-8">
+                    <div className="flex flex-col items-center gap-2">
+                      <Package className="h-8 w-8 text-muted-foreground" />
+                      <p className="text-muted-foreground">No inventory items found</p>
                     </div>
                   </TableCell>
-                  <TableCell>{item.category}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="bg-gray-50">
-                      {item.merchant}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium">{item.currentStock}</span>
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {formatNaira(item.price)}
-                  </TableCell>
-                  <TableCell>
-                    {item.deals ? (
-                      <Badge
-                        variant="default"
-                        className={
-                          item.deals === "Kredmart deals"
-                            ? "bg-red-500 hover:bg-red-600"
-                            : "bg-orange-500 hover:bg-orange-600"
-                        }
-                      >
-                        {item.deals}
-                      </Badge>
-                    ) : (
-                      <span className="text-muted-foreground text-sm">
-                        No deals
-                      </span>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {item.lastRestocked}
-                  </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                filteredData.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell className="font-medium">{item.id}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {item.productName}
+                        {item.bestPrice && (
+                          <Badge
+                            variant="outline"
+                            className="bg-blue-50 text-blue-700 text-xs"
+                          >
+                            Best Price
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>{item.category}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="bg-gray-50">
+                        {item.merchant}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {getStatusBadge(item.status)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">{item.currentStock}</span>
+                        <div className="w-12 h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full transition-all ${getStockLevelColor(item.stockLevel)}`}
+                            style={{ width: `${Math.min(item.stockLevel, 100)}%` }}
+                          />
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      {formatNaira(item.price)}
+                    </TableCell>
+                    <TableCell>
+                      {item.deals ? (
+                        <Badge
+                          variant="default"
+                          className={
+                            item.deals === "Kredmart deals"
+                              ? "bg-red-500 hover:bg-red-600"
+                              : "bg-orange-500 hover:bg-orange-600"
+                          }
+                        >
+                          {item.deals}
+                        </Badge>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">
+                          No deals
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {item.lastRestocked}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>
