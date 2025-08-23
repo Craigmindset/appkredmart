@@ -82,7 +82,7 @@ export default function ProductsAdminPage() {
         selectedCategory === "all" || product.category === selectedCategory;
       const matchesMerchant =
         selectedMerchant === "all" ||
-        product.seller.shopName === selectedMerchant;
+        product.merchant.company === selectedMerchant;
 
       return matchesCategory && matchesMerchant;
     });
@@ -96,7 +96,7 @@ export default function ProductsAdminPage() {
 
   const merchants = useMemo(() => {
     if (!products || !Array.isArray(products)) return [];
-    return Array.from(new Set(products.map((p) => p.seller.shopName))).filter(
+    return Array.from(new Set(products.map((p) => p.merchant.company))).filter(
       Boolean
     );
   }, [products]);
@@ -254,13 +254,13 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-blue-100">Total Products</p>
-                  <p className="text-2xl font-bold">
+                  <div className="text-2xl font-bold">
                     {loading ? (
                       <Skeleton className="h-8 w-16 bg-blue-400" />
                     ) : (
                       (totalProducts || 0).toLocaleString()
                     )}
-                  </p>
+                  </div>
                 </div>
                 <Package className="h-8 w-8 text-blue-200" />
               </div>
@@ -272,13 +272,13 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-green-100">Active Products</p>
-                  <p className="text-2xl font-bold">
+                  <div className="text-2xl font-bold">
                     {loading ? (
                       <Skeleton className="h-8 w-16 bg-green-400" />
                     ) : (
                       (activeProducts || 0).toLocaleString()
                     )}
-                  </p>
+                  </div>
                 </div>
                 <TrendingUp className="h-8 w-8 text-green-200" />
               </div>
@@ -290,13 +290,13 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-purple-100">Inventory Value</p>
-                  <p className="text-2xl font-bold">
+                  <div className="text-2xl font-bold">
                     {loading ? (
                       <Skeleton className="h-8 w-16 bg-purple-400" />
                     ) : (
                       `₦${((totalInventoryValue || 0) / 1000000).toFixed(1)}M`
                     )}
-                  </p>
+                  </div>
                 </div>
                 <DollarSign className="h-8 w-8 text-purple-200" />
               </div>
@@ -308,13 +308,13 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-orange-100">Avg. Markup</p>
-                  <p className="text-2xl font-bold">
+                  <div className="text-2xl font-bold">
                     {loading ? (
                       <Skeleton className="h-8 w-16 bg-orange-400" />
                     ) : (
                       `${(averageMarkup || 0).toFixed(1)}%`
                     )}
-                  </p>
+                  </div>
                 </div>
                 <Percent className="h-8 w-8 text-orange-200" />
               </div>
@@ -515,17 +515,19 @@ export default function ProductsAdminPage() {
                           <Badge variant="outline">{product.category}</Badge>
                         </td>
                         <td className="p-2">
-                          <Badge variant="secondary">{product.brand || "-"}</Badge>
+                          <Badge variant="secondary">
+                            {product.brand || "-"}
+                          </Badge>
                         </td>
                         <td className="p-2">
                           <Badge
                             variant={
-                              product.seller.shopName === "Slot"
+                              product.merchant.company === "Slot"
                                 ? "default"
                                 : "secondary"
                             }
                           >
-                            {product.seller.shopName}
+                            {product.merchant.company}
                           </Badge>
                         </td>
                         <td className="p-2 font-regular text-sm">

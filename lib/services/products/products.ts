@@ -6,8 +6,8 @@ export interface GetProductDto {
   sku: string;
   category: string;
   brand?: string; // Added brand field (optional for now)
-  seller: {
-    shopName: string;
+  merchant: {
+    company: string;
   };
   price: number;
   discount: number;

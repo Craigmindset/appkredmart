@@ -36,7 +36,7 @@ const axiosForRefresh = axios.create({
 
 const refreshToken = async () => {
   try {
-    await axiosForRefresh.post("/api/auth/refresh"); // Refreshes the access token
+    await axiosForRefresh.post("/auth/refresh"); // Refreshes the access token
     return Promise.resolve(); // Retry the original request
   } catch (error) {
     return Promise.reject(error);
