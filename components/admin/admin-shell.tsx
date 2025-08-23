@@ -167,7 +167,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     if (item.title === "Wallet" && user?.position === "super-admin") {
       return true;
     }
-    return hasAnyPermission(item.permissions);
+    // return hasAnyPermission(item.permissions);
+    return true;
   });
 
   const getRoleBadgeColor = (role: string) => {
