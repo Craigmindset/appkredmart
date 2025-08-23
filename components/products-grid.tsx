@@ -11,10 +11,9 @@ export default function ProductsGrid({
 }: {
   title?: string;
   description?: string;
-  items: Product[];
+  // items: Product[];
+  items: any[];
 }) {
-  const { data } = useGetProducts({ limit: 5 });
-
   return (
     <section className="container mx-auto px-4 py-10">
       {(title || description) && (
@@ -33,12 +32,12 @@ export default function ProductsGrid({
       )}
       {/* Keep generic grid for shared usage; category page uses its own 3/5 layout */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {/* {items.map((p) => (
-          <ProductCard key={p.id} product={p} />
-        ))} */}
-        {data?.data.map((p) => (
+        {items.map((p) => (
           <ProductCard key={p.id} product={p} />
         ))}
+        {/* {data?.data.map((p) => (
+          <ProductCard key={p.id} product={p} />
+        ))} */}
       </div>
     </section>
   );
