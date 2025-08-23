@@ -3,17 +3,21 @@ import { backendAxios } from "@/lib/backendaxios";
 export interface GetProductDto {
   id: string;
   name: string;
+  description: string;
   sku: string;
   category: string;
   brand?: string; // Added brand field (optional for now)
   merchant: {
     company: string;
   };
+  label?: string;
+  specs?: string[];
   price: number;
   discount: number;
   markup: number;
   quantity: number;
   status: "Active" | "Inactive";
+  images: string[];
   image?: string;
   createdAt?: string;
   updatedAt?: string;

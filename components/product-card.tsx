@@ -16,16 +16,19 @@ import type { Product } from "@/lib/products";
 import { useCart } from "@/store/cart-store";
 import { useToast } from "@/hooks/use-toast";
 import { formatNaira } from "@/lib/currency";
+import { GetProductDto } from "@/lib/services/products/products";
 
-export default function ProductCard({ product }: { product: Product }) {
+// export default function ProductCard({ product }: { product: Product }) {
+
+export default function ProductCard({ product }: { product: GetProductDto }) {
   const [open, setOpen] = useState(false);
   const [qty, setQty] = useState(1);
   const add = useCart((s) => s.add);
   const { toast } = useToast();
 
   const onAdd = (q = 1) => {
-    add(product, q);
-    toast({ title: "Added to cart", description: product.title });
+    add(product as any, q);
+    toast({ title: "Added to cart", description: product.name });
   };
 
   return (
@@ -48,7 +51,7 @@ export default function ProductCard({ product }: { product: Product }) {
           )}
           <Image
             src={product.image || "/placeholder.svg"}
-            alt={product.title}
+            alt={product.name}
             width={400}
             height={300}
             className="h-48 w-full rounded-t-lg object-cover cursor-pointer"
@@ -75,7 +78,7 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
         <div className="p-3">
           <div className="text-sm text-muted-foreground">{product.brand}</div>
-          <div className="line-clamp-1 font-medium">{product.title}</div>
+          <div className="line-clamp-1 font-medium">{product.name}</div>
           <div className="mt-1 font-semibold">{formatNaira(product.price)}</div>
         </div>
       </div>
@@ -83,13 +86,13 @@ export default function ProductCard({ product }: { product: Product }) {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>{product.title}</DialogTitle>
+            <DialogTitle>{product.name}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-6 md:grid-cols-2">
             <div className="space-y-2">
               <Image
                 src={product.images?.[0] ?? product.image}
-                alt={product.title + " main"}
+                alt={product.name + " main"}
                 width={600}
                 height={400}
                 className="h-64 w-full rounded-md object-cover"
@@ -110,14 +113,19 @@ export default function ProductCard({ product }: { product: Product }) {
               </div>
             </div>
             <div className="space-y-4">
-              <p className="text-muted-foreground">{product.description}</p>
+              <div
+                className="text-muted-foreground"
+                dangerouslySetInnerHTML={{ __html: product.description }}
+              />
               <div>
                 <h4 className="mb-2 text-sm font-medium">Specifications</h4>
-                <ul className="list-inside list-disc text-sm text-muted-foreground">
-                  {product.specs.map((s) => (
-                    <li key={s}>{s}</li>
-                  ))}
-                </ul>
+                {product?.specs?.length && (
+                  <ul className="list-inside list-disc text-sm text-muted-foreground">
+                    {product.specs.map((s) => (
+                      <li key={s}>{s}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-sm">Qty</span>
