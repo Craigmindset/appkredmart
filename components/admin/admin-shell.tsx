@@ -17,6 +17,7 @@ import {
   Radio,
   DollarSign,
   HeadphonesIcon,
+  Loader2,
 } from "lucide-react";
 
 import {
@@ -42,6 +43,8 @@ import Link from "next/link";
 import { useWallet } from "@/store/wallet-store";
 import { usePathname, useRouter } from "next/navigation";
 import { useAdminRBACStore, type Permission } from "@/store/admin-rbac-store";
+import { useUser } from "@/lib/services/user/user";
+import { useLogout } from "@/lib/services/auth/use-logout";
 
 interface AdminNavItem {
   title: string;
@@ -140,16 +143,28 @@ const adminNavItems: AdminNavItem[] = [
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { currentUser, hasAnyPermission, signOut } = useAdminRBACStore();
+  const { currentUser, hasAnyPermission } = useAdminRBACStore();
+  const { mutateAsync: signOut } = useLogout();
+  const { user, loading } = useUser();
+  const { balance } = useWallet();
 
   const handleLogout = () => {
     signOut();
     router.push("/admin");
   };
 
+  if (loading) {
+    return <Loader2 className="animate-spin" />;
+  }
+
+  if (!loading && (!user || user?.role !== "admin")) {
+    router.push("/admin");
+    return <></>;
+  }
+
   // Show Wallet tab always for super-admin, permission-based for others
   const visibleNavItems = adminNavItems.filter((item) => {
-    if (item.title === "Wallet" && currentUser?.role === "super-admin") {
+    if (item.title === "Wallet" && user?.position === "super-admin") {
       return true;
     }
     return hasAnyPermission(item.permissions);
@@ -219,7 +234,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <Avatar className="h-8 w-8">
               <AvatarImage src="/placeholder.svg?height=32&width=32" />
               <AvatarFallback className="bg-blue-600 text-white text-sm">
-                {currentUser?.name
+                {`${user?.firstname} ${user?.lastname}`
                   .split(" ")
                   .map((n) => n[0])
                   .join("") || "AD"}
@@ -227,11 +242,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             </Avatar>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-white truncate">
-                {currentUser?.name || "Admin User"}
+                {user?.firstname}
               </p>
-              <p className="text-xs text-blue-300 truncate">
-                {currentUser?.email || "admin@kredmart.com"}
-              </p>
+              <p className="text-xs text-blue-300 truncate">{user?.email}</p>
               {/* Only show the role badge, remove any duplicate role text */}
               {currentUser && (
                 <Badge
@@ -272,7 +285,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 </h1>
                 <p className="text-sm text-gray-500">
                   {currentUser
-                    ? `Welcome, ${currentUser.name}`
+                    ? `Welcome, ${user?.firstname} ${user?.lastname}`
                     : "Manage your platform"}
                 </p>
               </div>
@@ -280,23 +293,19 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
             <div className="flex items-center gap-3">
               {/* System Wallet */}
-              {(() => {
-                const { balance } = useWallet();
-                return (
-                  <Link href="/admin/dashboard/wallet" passHref legacyBehavior>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="gap-2 hover:bg-gray-100"
-                    >
-                      <Wallet className="h-4 w-4 text-green-600" />
-                      <span className="hidden sm:inline text-sm font-medium text-gray-900">
-                        ₦{balance.toLocaleString()}
-                      </span>
-                    </Button>
-                  </Link>
-                );
-              })()}
+
+              <Link href="/admin/dashboard/wallet" passHref legacyBehavior>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2 hover:bg-gray-100"
+                >
+                  <Wallet className="h-4 w-4 text-green-600" />
+                  <span className="hidden sm:inline text-sm font-medium text-gray-900">
+                    ₦{balance.toLocaleString()}
+                  </span>
+                </Button>
+              </Link>
 
               {/* Broadcast */}
               <Button variant="ghost" size="sm" className="hover:bg-gray-100">
@@ -312,14 +321,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 <Avatar className="h-7 w-7">
                   <AvatarImage src="/placeholder.svg?height=28&width=28" />
                   <AvatarFallback className="bg-blue-600 text-white text-xs">
-                    {currentUser?.name
+                    {`${user?.firstname} ${user?.lastname}`
                       .split(" ")
                       .map((n) => n[0])
                       .join("") || "AD"}
                   </AvatarFallback>
                 </Avatar>
                 <span className="hidden sm:inline text-sm font-medium text-gray-900">
-                  {currentUser?.name || "Admin"}
+                  {user?.firstname} {user?.lastname}
                 </span>
               </Button>
 

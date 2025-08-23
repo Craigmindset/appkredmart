@@ -10,6 +10,8 @@ interface UserResponse {
   phone: string;
   picture?: string;
   emailVerified?: Date;
+  position?: string;
+  role?: string;
 }
 
 export const fetchUser = async () => {
