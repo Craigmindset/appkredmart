@@ -148,9 +148,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const { user, loading } = useUser();
   const { balance } = useWallet();
 
-  const handleLogout = () => {
-    signOut();
-    router.push("/admin");
+  const handleLogout = async () => {
+    await signOut().then(() => {
+      router.push("/admin");
+    });
   };
 
   if (loading) {
@@ -263,6 +264,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <SidebarMenuItem>
               <SidebarMenuButton
                 onClick={handleLogout}
+                type="button"
                 className="w-full justify-start px-3 py-2 text-blue-200 hover:bg-blue-800 hover:text-white rounded-lg transition-colors duration-200"
               >
                 <LogOut className="h-4 w-4 mr-3" />
@@ -337,6 +339,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               <Button
                 variant="ghost"
                 size="sm"
+                type="button"
                 onClick={handleLogout}
                 className="hover:bg-gray-100"
               >
