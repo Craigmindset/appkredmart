@@ -9,19 +9,18 @@
 //   withCredentials: true,
 // });
 // // lib/backendaxios.ts
-import axios from 'axios';
+import axios from "axios";
 
-const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000';
-console.log('BackendAxios baseURL:', baseURL); // Debug
+const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
 
 const backendAxios = axios.create({
   baseURL,
-  headers: { 'Content-Type': 'application/json' },
+  headers: { "Content-Type": "application/json" },
+  withCredentials: true,
 });
 
 backendAxios.interceptors.request.use((config) => {
-  console.log('Request URL:', (config.baseURL ?? '') + config.url); // Debug
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
