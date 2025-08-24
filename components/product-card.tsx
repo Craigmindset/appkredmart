@@ -79,7 +79,7 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
         <div className="p-3">
           <div className="text-sm text-muted-foreground">{product.brand}</div>
           <div className="line-clamp-1 font-medium">{product.name}</div>
-          <div className="mt-1 font-semibold">{formatNaira(product.price)}</div>
+          <div className="mt-1 font-semibold text-blue-600">{formatNaira(product.price)}</div>
         </div>
       </div>
 

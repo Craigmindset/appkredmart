@@ -15,7 +15,7 @@ export default function ProductsGrid({
   items: any[];
 }) {
   return (
-    <section className="container mx-auto px-4 py-10">
+  <section className="container mx-auto px-6 md:px-12 py-10">
       {(title || description) && (
         <div className="mb-6">
           {title && (
