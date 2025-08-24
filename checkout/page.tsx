@@ -687,7 +687,9 @@ export default function CheckoutPage() {
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow p-3 sticky top-4">
-              <h2 className="text-base font-semibold text-gray-900 mb-3">Order Summary</h2>
+              <h2 className="text-base font-semibold text-gray-900 mb-3">
+                Order Summary
+              </h2>
 
               {/* Cart Items */}
               <div className="space-y-2 mb-3 max-h-48 overflow-y-auto">
@@ -789,7 +791,9 @@ export default function CheckoutPage() {
                 <div className="border-t pt-2">
                   <div className="flex justify-between">
                     <span className="text-xs font-semibold">Total</span>
-                    <span className="text-base font-bold text-[#466cf4]">₦{total.toFixed(2)}</span>
+                    <span className="text-base font-bold text-[#466cf4]">
+                      ₦{total.toFixed(2)}
+                    </span>
                   </div>
                 </div>
               </div>

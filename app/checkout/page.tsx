@@ -16,6 +16,7 @@ export default function CheckoutPage() {
   const clear = useCart((s) => s.clear);
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  console.log({ items });
 
   const onPay = async (e: React.FormEvent) => {
     e.preventDefault();

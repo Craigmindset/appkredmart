@@ -1,29 +1,37 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import LayoutShell from "@/components/layout-shell"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { useSearchParams, useRouter } from "next/navigation"
-import { useState } from "react"
+import LayoutShell from "@/components/layout-shell";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { useReset } from "@/store/reset-store";
+import { useForgotPasswordVerify } from "@/lib/services/auth/use-forgot-password-verify";
 
 export default function ForgotVerifyPage() {
-  const params = useSearchParams()
-  const router = useRouter()
-  const email = (params.get("email") || "").toString()
-  const [code, setCode] = useState("")
-  const [loading, setLoading] = useState(false)
+  const params = useSearchParams();
+  const router = useRouter();
+  const email = (params.get("email") || "").toString();
+  const [code, setCode] = useState("");
+
+  const { setEmail, setToken } = useReset();
+  const { mutateAsync, loading } = useForgotPasswordVerify();
 
   const onVerify = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    await new Promise((r) => setTimeout(r, 500))
-    setLoading(false)
-    if (code === "111111") {
-      router.push(`/forgot-password/reset?email=${encodeURIComponent(email)}`)
-    }
-  }
+    e.preventDefault();
+    await mutateAsync({ email, code }).then(() => {
+      setEmail(email);
+      setToken(code);
+      router.push(`/forgot-password/reset?email=${encodeURIComponent(email)}`);
+    });
+    // setLoading(true);
+    // await new Promise((r) => setTimeout(r, 500));
+    // setLoading(false);
+    // if (code === "111111") {
+    // }
+  };
 
   return (
     <LayoutShell>
@@ -42,9 +50,13 @@ export default function ForgotVerifyPage() {
                 <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25">
                   <div className="h-5 w-5 rounded-full bg-white" />
                 </div>
-                <span className="text-2xl font-semibold tracking-tight">KredMart</span>
+                <span className="text-2xl font-semibold tracking-tight">
+                  KredMart
+                </span>
               </div>
-              <h1 className="text-3xl font-semibold leading-tight tracking-tight md:text-5xl">{"Check your inbox"}</h1>
+              <h1 className="text-3xl font-semibold leading-tight tracking-tight md:text-5xl">
+                {"Check your inbox"}
+              </h1>
               <p className="mt-4 max-w-md text-sm/6 text-white/85">
                 {"Enter the 6‑digit code we sent to your email to continue."}
               </p>
@@ -52,8 +64,12 @@ export default function ForgotVerifyPage() {
 
             <div className="flex w-full items-center justify-center py-10">
               <div className="w-full max-w-md rounded-2xl border bg-card p-6 shadow-lg backdrop-blur-md md:p-8">
-                <div className="text-xs font-medium text-muted-foreground">{"VERIFICATION"}</div>
-                <h2 className="mt-1 text-xl font-semibold tracking-tight md:text-2xl">{"Enter Code"}</h2>
+                <div className="text-xs font-medium text-muted-foreground">
+                  {"VERIFICATION"}
+                </div>
+                <h2 className="mt-1 text-xl font-semibold tracking-tight md:text-2xl">
+                  {"Enter Code"}
+                </h2>
 
                 <form onSubmit={onVerify} className="mt-6 space-y-4">
                   <Input
@@ -65,7 +81,11 @@ export default function ForgotVerifyPage() {
                     onChange={(e) => setCode(e.target.value)}
                     required
                   />
-                  <Button type="submit" className="h-11 w-full" disabled={loading}>
+                  <Button
+                    type="submit"
+                    className="h-11 w-full"
+                    disabled={loading}
+                  >
                     {loading ? "Verifying..." : "Verify"}
                   </Button>
                 </form>
@@ -75,5 +95,5 @@ export default function ForgotVerifyPage() {
         </div>
       </section>
     </LayoutShell>
-  )
+  );
 }
