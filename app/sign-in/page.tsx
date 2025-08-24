@@ -29,8 +29,27 @@ export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
   const { mutateAsync, loading } = useLogin();
 
+  // Import Zustand auth store dynamically to avoid SSR issues
+  const { useAuth } = require("@/store/auth-store");
+  const setUser = useAuth((s: any) => s.setUser);
+
   async function onSubmit(data: loginSchemaType) {
-    await mutateAsync(data).then(() => {
+    await mutateAsync(data).then(async (result) => {
+      // Fetch user profile from backend
+      try {
+        const { fetchUser } = require("@/lib/services/user/user");
+        const userData = await fetchUser();
+        // Map backend user fields to Zustand user shape
+        setUser({
+          firstName: userData.firstname,
+          lastName: userData.lastname,
+          email: userData.email,
+          phone: userData.phone,
+        });
+      } catch (e) {
+        // fallback: clear user
+        setUser(null);
+      }
       router.push("/welcome");
     });
   }
@@ -131,6 +150,8 @@ export default function SignInPage() {
                                 type={showPassword ? "text" : "password"}
                                 placeholder="••••••••••••"
                                 className="pr-10"
+                                minLength={6}
+                                maxLength={11}
                                 {...field}
                               />
                               <button

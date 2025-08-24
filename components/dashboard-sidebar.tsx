@@ -31,6 +31,7 @@ import {
   ShoppingCart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/lib/services/user/user";
 import { useCart, cartSelectors } from "@/store/cart-store";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { BrandLogo } from "@/components/brand-logo";
@@ -50,10 +51,15 @@ const items = [
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const cartCount = useCart(cartSelectors.count);
-  const { user, loading } = useUser();
 
+  // Use user from useUser (React Query)
+  const { user } = useUser();
+  const firstName = user?.firstname || "Kred";
+  const lastName = user?.lastname || "User";
+  const email = user?.email || "user@kredmart.com";
   const initials =
-    (user?.firstname?.[0] ?? "") + (user?.lastname?.[0] ?? "U");
+    (demoUser?.firstName?.[0] ?? "") +
+    (demoUser?.lastName?.[0] ?? (demoUser?.firstName ? "" : "U"));
 
   return (
     <SidebarProvider>
@@ -97,18 +103,19 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-white truncate">
-                  {loading ? "Loading..." : `${user?.firstname || ""} ${user?.lastname || ""}`.trim() || "User"}
-                </p>
-                <p className="text-xs text-blue-300 truncate">
-                  {user?.email || "user@example.com"}
-                </p>
+                <div className="text-xs font-medium text-sidebar-foreground truncate">
+                  {demoUser.firstName} {demoUser.lastName}
+                </div>
+                <div className="text-xs text-sidebar-foreground/60 truncate">
+                  {demoUser.email}
+                </div>
               </div>
             </div>
             <Button
               variant="outline"
               size="sm"
               className="mt-2 bg-transparent border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent"
+              onClick={handleLogout}
             >
               Logout
             </Button>
@@ -138,7 +145,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                       : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
-                  Hom2e
+                  Home
                 </Link>
                 <Link
                   href="/store"

@@ -16,6 +16,7 @@ import { useAdminRBACStore } from "@/store/admin-rbac-store";
 import { useUser } from "@/lib/services/user/user";
 import { useAdminUserStats } from "@/lib/services/admin/users";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAdminOverview } from "@/lib/services/dashboard/admin-overview";
 
 // Demo data
 const recentOrders = [
@@ -65,29 +66,17 @@ const topProducts = [
 
 export default function OverviewAdminPage() {
   const { currentUser } = useAdminRBACStore();
-  const { user, loading: userLoading, error: userError } = useUser();
-  const { stats: userStats, loading: statsLoading } = useAdminUserStats();
 
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
       <div className="rounded-lg p-8 bg-gradient-to-br from-blue-50 to-blue-100">
-        {userLoading ? (
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-64" />
-            <Skeleton className="h-4 w-48" />
-          </div>
-        ) : (
-          <>
-            <h1 className="text-3xl font-bold text-gray-900">
-              Welcome, {user?.firstname ? `${user.firstname} ${user.lastname}` : currentUser?.name || "Admin"}!
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Here's an overview of your platform
-              {user?.email && ` - ${user.email}`}
-            </p>
-          </>
-        )}
+        <h1 className="text-3xl font-bold text-gray-900">
+          Welcome, {currentUser?.name || "Admin"}!
+        </h1>
+        <p className="text-gray-600 mt-2">
+          Here's an overview of your platform
+        </p>
       </div>
 
       {/* User Info Card */}
@@ -138,7 +127,9 @@ export default function OverviewAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-blue-100">Total Revenue</p>
-                  <p className="text-2xl font-bold">₦1,450,000</p>
+                  <p className="text-2xl font-bold">
+                    ₦{data?.totalRevenue.toLocaleString() || 0}
+                  </p>
                 </div>
                 <DollarSign className="h-8 w-8 text-blue-200" />
               </div>
@@ -158,7 +149,9 @@ export default function OverviewAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-green-100">Total Orders</p>
-                  <p className="text-2xl font-bold">1,247</p>
+                  <p className="text-2xl font-bold">
+                    {data?.totalOrders.toLocaleString() || 0}
+                  </p>
                 </div>
                 <ShoppingCart className="h-8 w-8 text-green-200" />
               </div>
@@ -178,7 +171,9 @@ export default function OverviewAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-purple-100">Total Products</p>
-                  <p className="text-2xl font-bold">450</p>
+                  <p className="text-2xl font-bold">
+                    {data?.totalProducts?.toLocaleString() || 0}
+                  </p>
                 </div>
                 <Package className="h-8 w-8 text-purple-200" />
               </div>
@@ -198,13 +193,7 @@ export default function OverviewAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-orange-100">Total Users</p>
-                  {statsLoading ? (
-                    <Skeleton className="h-8 w-16 bg-orange-400" />
-                  ) : (
-                    <p className="text-2xl font-bold">
-                      {userStats?.totalUsers?.toLocaleString() || "247"}
-                    </p>
-                  )}
+                  <p className="text-2xl font-bold">247</p>
                 </div>
                 <Users className="h-8 w-8 text-orange-200" />
               </div>

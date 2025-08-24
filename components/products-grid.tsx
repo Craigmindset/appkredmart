@@ -1,21 +1,33 @@
-import type { Product } from "@/lib/products"
-import ProductCard from "./product-card"
+"use client";
+import type { Product } from "@/lib/products";
+import ProductCard from "./product-card";
+import { useProducts } from "@/lib/services/products/use-products";
+import { useGetProducts } from "@/lib/services/products/use-get-products";
 
 export default function ProductsGrid({
   title,
   description,
   items,
 }: {
-  title?: string
-  description?: string
-  items: Product[]
+  title?: string;
+  description?: string;
+  // items: Product[];
+  items: any[];
 }) {
   return (
     <section className="container mx-auto px-4 py-10">
       {(title || description) && (
         <div className="mb-6">
-          {title && <h2 className="text-xl md:text-2xl font-semibold tracking-tight">{title}</h2>}
-          {description && <p className="text-sm md:text-base text-muted-foreground mt-1">{description}</p>}
+          {title && (
+            <h2 className="text-xl md:text-2xl font-semibold tracking-tight">
+              {title}
+            </h2>
+          )}
+          {description && (
+            <p className="text-sm md:text-base text-muted-foreground mt-1">
+              {description}
+            </p>
+          )}
         </div>
       )}
       {/* Keep generic grid for shared usage; category page uses its own 3/5 layout */}
@@ -23,7 +35,10 @@ export default function ProductsGrid({
         {items.map((p) => (
           <ProductCard key={p.id} product={p} />
         ))}
+        {/* {data?.data.map((p) => (
+          <ProductCard key={p.id} product={p} />
+        ))} */}
       </div>
     </section>
-  )
+  );
 }

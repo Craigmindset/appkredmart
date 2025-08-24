@@ -1,32 +1,39 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import LayoutShell from "@/components/layout-shell"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { useSearchParams, useRouter } from "next/navigation"
-import { useState } from "react"
-import { Eye, EyeOff } from "lucide-react"
+import LayoutShell from "@/components/layout-shell";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import { useReset } from "@/store/reset-store";
+import { useResetPassword } from "@/lib/services/auth/use-reset-password";
 
 export default function ResetPasswordPage() {
-  const params = useSearchParams()
-  const router = useRouter()
-  const email = (params.get("email") || "").toString()
-  const [password, setPassword] = useState("")
-  const [confirm, setConfirm] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [showPwd, setShowPwd] = useState(false)
-  const [showConfirm, setShowConfirm] = useState(false)
+  const params = useSearchParams();
+  const router = useRouter();
+  const email = (params.get("email") || "").toString();
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
 
+  const [showPwd, setShowPwd] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const { setEmail, setToken, token } = useReset();
+  const { mutateAsync, loading } = useResetPassword();
   const onReset = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (password !== confirm) return
-    setLoading(true)
-    await new Promise((r) => setTimeout(r, 700))
-    setLoading(false)
-    router.push("/sign-in")
-  }
+    e.preventDefault();
+    if (password !== confirm) return;
+    await mutateAsync({ email, code: token || "", password }).then(() => {
+      setEmail(null);
+      setToken(null);
+      router.push("/sign-in");
+    });
+    // setLoading(true);
+    // await new Promise((r) => setTimeout(r, 700));
+    // setLoading(false);
+  };
 
   return (
     <LayoutShell>
@@ -45,24 +52,34 @@ export default function ResetPasswordPage() {
                 <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25">
                   <div className="h-5 w-5 rounded-full bg-white" />
                 </div>
-                <span className="text-2xl font-semibold tracking-tight">KredMart</span>
+                <span className="text-2xl font-semibold tracking-tight">
+                  KredMart
+                </span>
               </div>
               <h1 className="text-3xl font-semibold leading-tight tracking-tight md:text-5xl">
                 {"Set a new password"}
               </h1>
               <p className="mt-4 max-w-md text-sm/6 text-white/85">
-                {email ? `Resetting for ${email}` : "Enter a new password to secure your account."}
+                {email
+                  ? `Resetting for ${email}`
+                  : "Enter a new password to secure your account."}
               </p>
             </div>
 
             <div className="flex w-full items-center justify-center py-10">
               <div className="w-full max-w-md rounded-2xl border bg-card p-6 shadow-lg backdrop-blur-md md:p-8">
-                <div className="text-xs font-medium text-muted-foreground">{"RESET"}</div>
-                <h2 className="mt-1 text-xl font-semibold tracking-tight md:text-2xl">{"Create new password"}</h2>
+                <div className="text-xs font-medium text-muted-foreground">
+                  {"RESET"}
+                </div>
+                <h2 className="mt-1 text-xl font-semibold tracking-tight md:text-2xl">
+                  {"Create new password"}
+                </h2>
 
                 <form onSubmit={onReset} className="mt-6 space-y-4">
                   <div>
-                    <label className="mb-1 block text-sm font-medium">{"New Password"}</label>
+                    <label className="mb-1 block text-sm font-medium">
+                      {"New Password"}
+                    </label>
                     <div className="relative">
                       <Input
                         type={showPwd ? "text" : "password"}
@@ -78,12 +95,18 @@ export default function ResetPasswordPage() {
                         className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-muted-foreground"
                         aria-label={showPwd ? "Hide password" : "Show password"}
                       >
-                        {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showPwd ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
                       </button>
                     </div>
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm font-medium">{"Confirm Password"}</label>
+                    <label className="mb-1 block text-sm font-medium">
+                      {"Confirm Password"}
+                    </label>
                     <div className="relative">
                       <Input
                         type={showConfirm ? "text" : "password"}
@@ -97,13 +120,23 @@ export default function ResetPasswordPage() {
                         type="button"
                         onClick={() => setShowConfirm((v) => !v)}
                         className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-muted-foreground"
-                        aria-label={showConfirm ? "Hide password" : "Show password"}
+                        aria-label={
+                          showConfirm ? "Hide password" : "Show password"
+                        }
                       >
-                        {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showConfirm ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
                       </button>
                     </div>
                   </div>
-                  <Button type="submit" className="h-11 w-full" disabled={loading || password !== confirm}>
+                  <Button
+                    type="submit"
+                    className="h-11 w-full"
+                    disabled={loading || password !== confirm}
+                  >
                     {loading ? "Saving..." : "Save password"}
                   </Button>
 
@@ -120,5 +153,5 @@ export default function ResetPasswordPage() {
         </div>
       </section>
     </LayoutShell>
-  )
+  );
 }

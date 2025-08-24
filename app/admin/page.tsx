@@ -17,12 +17,13 @@ import {
 import { useAdminRBACStore, type AdminRole } from "@/store/admin-rbac-store";
 import { toast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Shield, User, X } from "lucide-react";
+import { useAdminLogin } from "@/lib/services/auth/use-admin-login";
 
 export default function AdminSignIn() {
   const router = useRouter();
   const { signIn } = useAdminRBACStore();
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { mutateAsync, loading } = useAdminLogin();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -41,21 +42,13 @@ export default function AdminSignIn() {
       return;
     }
 
-    setIsLoading(true);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Demo authentication - in real app, validate against API
-    signIn(formData.email, formData.role);
-
-    toast({
-      title: "Welcome!",
-      description: `Signed in as ${formData.role.replace("-", " ")}`,
+    await mutateAsync(formData).then(() => {
+      toast({
+        title: "Welcome!",
+        description: `Signed in as ${formData.role.replace("-", " ")}`,
+      });
+      router.replace("/admin/dashboard/overview");
     });
-
-    router.replace("/admin/dashboard/overview");
-    setIsLoading(false);
   };
 
   const roleDescriptions = {
@@ -187,8 +180,8 @@ export default function AdminSignIn() {
               </p>
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? (
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                   Signing In...

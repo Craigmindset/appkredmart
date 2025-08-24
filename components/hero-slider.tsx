@@ -58,7 +58,7 @@ export default function HeroSection() {
 
   const router = useRouter();
   const { user } = useAuth();
-  console.log("Auth user in HeroSection:", user);
+
   const slide = slides[current];
 
   return (

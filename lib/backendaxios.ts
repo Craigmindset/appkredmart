@@ -1,28 +1,60 @@
-import axios from 'axios';
+// import _axios from "axios";
 
-const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3000';
-// console.log('Environment check:', {
-//   NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
-//   finalBaseURL: baseURL,
-//   isClient: typeof window !== 'undefined'
+// export const backendAxios = _axios.create({
+//   // baseURL: env().NEXT_PUBLIC_BACKEND_URL,
+//   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+//   withCredentials: true,
 // });
+// // lib/backendaxios.ts
+import axios from "axios";
+import createAuthRefreshInterceptor from "axios-auth-refresh";
+import { getQueryClient } from "./query-client";
+
+const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
 
 const backendAxios = axios.create({
   baseURL,
+  headers: { "Content-Type": "application/json" },
   withCredentials: true,
-  headers: { 'Content-Type': 'application/json' },
 });
 
-backendAxios.interceptors.request.use((config) => {
-  console.log('Request URL:', (config.baseURL ?? '') + config.url); // Debug
-  // Only access localStorage on client side to prevent hydration issues
-  if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-  }
-  return config;
+const axiosForRefresh = axios.create({
+  baseURL,
+  withCredentials: true,
 });
+
+// backendAxios.interceptors.request.use((config) => {
+//   const token = localStorage.getItem("token");
+//   if (token) {
+//     config.headers.Authorization = `Bearer ${token}`;
+//   }
+//   return config;
+// });
+
+const refreshToken = async () => {
+  try {
+    await axiosForRefresh.post("/auth/refresh"); // Refreshes the access token
+    return Promise.resolve(); // Retry the original request
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
+
+const handleAuthError = () => refreshToken();
+
+const handleRefreshError = async () => {
+  const queryClient = getQueryClient();
+
+  await queryClient.setQueryData(["USER"], null);
+};
+
+createAuthRefreshInterceptor(backendAxios, handleAuthError, {
+  statusCodes: [403, 401],
+});
+
+createAuthRefreshInterceptor(axiosForRefresh, handleRefreshError);
 
 export { backendAxios };

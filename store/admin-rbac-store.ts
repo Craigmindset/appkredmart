@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { create } from "zustand"
-import { persist } from "zustand/middleware"
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-export type AdminRole = "super-admin" | "manager" | "marketer" | "finance"
+export type AdminRole = "super-admin" | "manager" | "marketer" | "finance";
 
 export type Permission =
   | "view_overview"
@@ -25,7 +25,8 @@ export type Permission =
   | "manage_support"
   | "manage_site"
   | "manage_accounts"
-  | "assign_roles"
+  | "view_wallet"
+  | "assign_roles";
 
 export const ROLE_PERMISSIONS: Record<AdminRole, Permission[]> = {
   "super-admin": [
@@ -86,25 +87,25 @@ export const ROLE_PERMISSIONS: Record<AdminRole, Permission[]> = {
     "view_orders",
     "track_orders",
   ],
-}
+};
 
 type AdminUser = {
-  id: string
-  name: string
-  email: string
-  role: AdminRole
-  permissions: Permission[]
-}
+  id: string;
+  name: string;
+  email: string;
+  role: AdminRole;
+  permissions: Permission[];
+};
 
 type AdminRBACState = {
-  currentUser: AdminUser | null
-  isAuthenticated: boolean
-  signIn: (email: string, role?: AdminRole) => void
-  signOut: () => void
-  hasPermission: (permission: Permission) => boolean
-  hasAnyPermission: (permissions: Permission[]) => boolean
-  canAccess: (requiredPermissions: Permission[]) => boolean
-}
+  currentUser: AdminUser | null;
+  isAuthenticated: boolean;
+  signIn: (email: string, role?: AdminRole) => void;
+  signOut: () => void;
+  hasPermission: (permission: Permission) => boolean;
+  hasAnyPermission: (permissions: Permission[]) => boolean;
+  canAccess: (requiredPermissions: Permission[]) => boolean;
+};
 
 export const useAdminRBACStore = create<AdminRBACState>()(
   persist(
@@ -113,43 +114,50 @@ export const useAdminRBACStore = create<AdminRBACState>()(
       isAuthenticated: false,
 
       signIn: (email: string, role: AdminRole = "super-admin") => {
-        const permissions = ROLE_PERMISSIONS[role]
+        const permissions = ROLE_PERMISSIONS[role];
         const user: AdminUser = {
           id: `admin_${Date.now()}`,
-          name: role === "super-admin" ? "Super Admin" : role.charAt(0).toUpperCase() + role.slice(1),
+          name:
+            role === "super-admin"
+              ? "Super Admin"
+              : role.charAt(0).toUpperCase() + role.slice(1),
           email,
           role,
           permissions,
-        }
+        };
 
         set({
           currentUser: user,
           isAuthenticated: true,
-        })
+        });
       },
 
       signOut: () => set({ currentUser: null, isAuthenticated: false }),
 
       hasPermission: (permission: Permission) => {
-        const { currentUser } = get()
-        return currentUser?.permissions.includes(permission) ?? false
+        const { currentUser } = get();
+        return currentUser?.permissions.includes(permission) ?? false;
       },
 
       hasAnyPermission: (permissions: Permission[]) => {
-        const { currentUser } = get()
-        if (!currentUser) return false
-        return permissions.some((permission) => currentUser.permissions.includes(permission))
+        const { currentUser } = get();
+        if (!currentUser) return false;
+        return permissions.some((permission) =>
+          currentUser.permissions.includes(permission)
+        );
       },
 
       canAccess: (requiredPermissions: Permission[]) => {
-        const { currentUser } = get()
-        if (!currentUser) return false
-        return requiredPermissions.every((permission) => currentUser.permissions.includes(permission))
+        const { currentUser } = get();
+        if (!currentUser) return false;
+        return requiredPermissions.every((permission) =>
+          currentUser.permissions.includes(permission)
+        );
       },
     }),
     {
       name: "admin-rbac",
       version: 1,
-    },
-  ),
-)
+    }
+  )
+);

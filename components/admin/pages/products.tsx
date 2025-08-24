@@ -172,8 +172,8 @@ export default function ProductsAdminPage() {
         productCategory.toLowerCase().includes(selectedCategory.toLowerCase());
       
       const matchesMerchant =
-        selectedMerchant === "all" || 
-        productMerchant.toLowerCase().includes(selectedMerchant.toLowerCase());
+        selectedMerchant === "all" ||
+        product.merchant.company === selectedMerchant;
 
       return matchesCategory && matchesMerchant;
     });
@@ -192,15 +192,11 @@ export default function ProductsAdminPage() {
   }, [safeProducts]);
 
   const merchants = useMemo(() => {
-    const merchantSet = new Set<string>();
-    safeProducts.forEach(product => {
-      const merchant = getMerchant(product.merchant);
-      if (merchant && merchant !== "Unknown") {
-        merchantSet.add(merchant);
-      }
-    });
-    return Array.from(merchantSet).sort();
-  }, [safeProducts]);
+    if (!products || !Array.isArray(products)) return [];
+    return Array.from(new Set(products.map((p) => p.seller.shopName))).filter(
+      Boolean
+    );
+  }, [products]);
 
   // Calculate display price: merchant price - discount + markup
   const getDisplayPrice = (product: any) => {
@@ -409,9 +405,13 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-blue-100">Total Products</p>
-                  <div className="text-2xl font-bold">
-                    {loading ? <Skeleton className="h-8 w-16 bg-blue-400" /> : totalProducts.toLocaleString()}
-                  </div>
+                  <p className="text-2xl font-bold">
+                    {loading ? (
+                      <Skeleton className="h-8 w-16 bg-blue-400" />
+                    ) : (
+                      (totalProducts || 0).toLocaleString()
+                    )}
+                  </p>
                 </div>
                 <Package className="h-8 w-8 text-blue-200" />
               </div>
@@ -423,9 +423,13 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-green-100">Active Products</p>
-                  <div className="text-2xl font-bold">
-                    {loading ? <Skeleton className="h-8 w-16 bg-green-400" /> : activeProducts.toLocaleString()}
-                  </div>
+                  <p className="text-2xl font-bold">
+                    {loading ? (
+                      <Skeleton className="h-8 w-16 bg-green-400" />
+                    ) : (
+                      (activeProducts || 0).toLocaleString()
+                    )}
+                  </p>
                 </div>
                 <TrendingUp className="h-8 w-8 text-green-200" />
               </div>
@@ -437,9 +441,13 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-purple-100">Inventory Value</p>
-                  <div className="text-2xl font-bold">
-                    {loading ? <Skeleton className="h-8 w-16 bg-purple-400" /> : `₦${((totalInventoryValue) / 1000000).toFixed(1)}M`}
-                  </div>
+                  <p className="text-2xl font-bold">
+                    {loading ? (
+                      <Skeleton className="h-8 w-16 bg-purple-400" />
+                    ) : (
+                      `₦${((totalInventoryValue || 0) / 1000000).toFixed(1)}M`
+                    )}
+                  </p>
                 </div>
                 <DollarSign className="h-8 w-8 text-purple-200" />
               </div>
@@ -451,9 +459,13 @@ export default function ProductsAdminPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-orange-100">Avg. Markup</p>
-                  <div className="text-2xl font-bold">
-                    {loading ? <Skeleton className="h-8 w-16 bg-orange-400" /> : `${averageMarkup.toFixed(1)}%`}
-                  </div>
+                  <p className="text-2xl font-bold">
+                    {loading ? (
+                      <Skeleton className="h-8 w-16 bg-orange-400" />
+                    ) : (
+                      `${(averageMarkup || 0).toFixed(1)}%`
+                    )}
+                  </p>
                 </div>
                 <Percent className="h-8 w-8 text-orange-200" />
               </div>
@@ -597,6 +609,7 @@ export default function ProductsAdminPage() {
                     <th className="text-left p-2">Product</th>
                     <th className="text-left p-2">Product ID</th>
                     <th className="text-left p-2">Category</th>
+                    <th className="text-left p-2">Brand</th>
                     <th className="text-left p-2">Merchant</th>
                     <th className="text-left p-2">Merchant Price</th>
                     <th className="text-left p-2">Discount (%)</th>
@@ -624,108 +637,115 @@ export default function ProductsAdminPage() {
                       </td>
                     </tr>
                   ) : (
-                    filteredProducts.map((product, index) => {
-                      const productId = getProductId(product);
-                      const productName = getProductName(product);
-                      const productSku = getProductSku(product);
-                      const category = getCategory(product.category);
-                      const merchant = getMerchant(product.merchant);
-                      const merchantPrice = getPrice(product);
-                      const discount = getDiscount(product);
-                      const markup = getMarkup(product);
-                      const stock = getStock(product);
-                      const displayPrice = getDisplayPrice(product);
-
-                      return (
-                        <tr key={`${productId}-${index}`} className="border-b hover:bg-gray-50">
-                          <td className="p-2">
-                            <Checkbox
-                              checked={selectedProducts.includes(productId)}
-                              onCheckedChange={(checked) =>
-                                handleProductSelect(productId, checked as boolean)
-                              }
+                    filteredProducts.map((product) => (
+                      <tr
+                        key={product.id}
+                        className="border-b hover:bg-gray-50"
+                      >
+                        <td className="p-2">
+                          <Checkbox
+                            checked={selectedProducts.includes(product.id)}
+                            onCheckedChange={(checked) =>
+                              handleProductSelect(
+                                product.id,
+                                checked as boolean
+                              )
+                            }
+                          />
+                        </td>
+                        <td className="p-2">
+                          <p className="font-medium">{product.name}</p>
+                        </td>
+                        <td className="p-2 text-sm text-gray-600">
+                          {product.id.slice(0, 5)}...
+                        </td>
+                        <td className="p-2">
+                          <Badge variant="outline">{product.category}</Badge>
+                        </td>
+                        <td className="p-2">
+                          <Badge
+                            variant={
+                              product.seller.shopName === "Slot"
+                                ? "default"
+                                : "secondary"
+                            }
+                          >
+                            {product.seller.shopName}
+                          </Badge>
+                        </td>
+                        <td className="p-2 font-regular text-sm">
+                          ₦{(product.price || 0).toLocaleString()}
+                        </td>
+                        <td className="p-2 font-regular text-sm">
+                          {product.discount}%
+                        </td>
+                        <td className="p-2">
+                          <RBACGuard
+                            permissions={["manage_products"]}
+                            requireAll={false}
+                          >
+                            <Input
+                              type="number"
+                              value={product.markup}
+                              className="w-20 h-8"
+                              min="0"
+                              max="100"
+                              onChange={(e) => {
+                                const newMarkup = Number(e.target.value);
+                                updateProduct(product.id, {
+                                  markup: newMarkup,
+                                });
+                              }}
                             />
-                          </td>
-                          <td className="p-2">
-                            <p className="font-medium">{productName}</p>
-                          </td>
-                          <td className="p-2 text-sm text-gray-600">
-                            {productSku}
-                          </td>
-                          <td className="p-2">
-                            <Badge variant="outline">{category}</Badge>
-                          </td>
-                          <td className="p-2">
-                            <Badge
-                              variant={
-                                merchant === "Slot" ? "default" : "secondary"
-                              }
-                            >
-                              {merchant}
-                            </Badge>
-                          </td>
-                          <td className="p-2 font-regular text-sm">
-                            {formatCurrency(merchantPrice)}
-                          </td>
-                          <td className="p-2 font-regular text-sm">
-                            {discount.toFixed(1)}%
-                          </td>
-                          <td className="p-2">
+                          </RBACGuard>
+                          <RBACGuard
+                            permissions={["manage_products"]}
+                            requireAll={false}
+                            fallback={
+                              <span className="text-sm">{product.markup}%</span>
+                            }
+                          >
+                            <span className="text-sm">{product.markup}%</span>
+                          </RBACGuard>
+                        </td>
+                        <td className="p-2 font-medium text-sm text-green-600">
+                          ₦
+                          {getDisplayPrice(
+                            product.price || 0,
+                            product.discount || 0,
+                            product.markup || 0
+                          ).toLocaleString()}
+                        </td>
+                        <td className="p-2">
+                          <Badge
+                            variant={
+                              product.quantity > 10 ? "default" : "destructive"
+                            }
+                          >
+                            {product.quantity}
+                          </Badge>
+                        </td>
+                        <td className="p-2">
+                          <div className="flex items-center gap-1">
+                            <Button variant="ghost" size="sm">
+                              <Eye className="h-4 w-4" />
+                            </Button>
                             <RBACGuard
                               permissions={["manage_products"]}
                               requireAll={false}
                             >
-                              <Input
-                                type="number"
-                                value={markup}
-                                className="w-20 h-8"
-                                min="0"
-                                max="100"
-                                onChange={(e) => handleMarkupChange(product, e.target.value)}
-                              />
-                            </RBACGuard>
-                            <RBACGuard
-                              permissions={["manage_products"]}
-                              requireAll={false}
-                              fallback={
-                                <span className="text-sm">{markup.toFixed(1)}%</span>
-                              }
-                            >
-                              <span className="text-sm">{markup.toFixed(1)}%</span>
-                            </RBACGuard>
-                          </td>
-                          <td className="p-2 font-medium text-sm text-green-600">
-                            {formatCurrency(displayPrice)}
-                          </td>
-                          <td className="p-2">
-                            <Badge
-                              variant={stock > 10 ? "default" : "destructive"}
-                            >
-                              {stock}
-                            </Badge>
-                          </td>
-                          <td className="p-2">
-                            <div className="flex items-center gap-1">
-                              <Button variant="ghost" size="sm">
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                              <RBACGuard
-                                permissions={["manage_products"]}
-                                requireAll={false}
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEditClick(product)}
                               >
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleEditClick(product)}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                              </RBACGuard>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            </RBACGuard>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
                   )}
                 </tbody>
               </table>
