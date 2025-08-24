@@ -14,7 +14,6 @@ import {
   Tag,
   Info,
   Lock,
-  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -39,7 +38,6 @@ import { appFontClass } from "@/lib/fonts";
 import { useEffect, useMemo, useState } from "react";
 import { allCategories } from "@/lib/products";
 import { slugifyCategory } from "@/lib/categories";
-import { useUser } from "@/lib/services/user/user";
 
 const MENU = [
   { href: "/", label: "Home" },
@@ -106,7 +104,6 @@ export default function SiteHeader() {
   const initialQ = (searchParams?.get("search") ?? "").toString();
   const [term, setTerm] = useState(initialQ);
   const itemCount = useCart(cartSelectors.count);
-  const { user } = useUser();
 
   const submitSearch = (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -124,7 +121,7 @@ export default function SiteHeader() {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full border-b bg-blue-800 bg-background/55 backdrop-blur supports-[backdrop-filter]:bg-background/75 ${appFontClass}`}
+      className={`sticky top-0 z-50 w-full border-b bg-blue-800 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75 ${appFontClass}`}
     >
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
@@ -211,32 +208,22 @@ export default function SiteHeader() {
             <div className="flex items-center gap-1 md:hidden">
               <CountrySelector />
 
-              {!user ? (
-                <>
-                  {/* Login icon for mobile - only show when not logged in */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => router.push("/sign-in")}
-                  >
-                    <Lock className="h-4 w-4" />
-                    <span className="sr-only">Login</span>
-                  </Button>
-                </>
-              ) : (
-                <>
-                  {/* User profile icon for mobile - only show when logged in */}
-                  {/* TODO: Add condition to check if user is logged in */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => router.push("/dashboard")}
-                  >
-                    <User className="h-4 w-4" />
-                    <span className="sr-only">Profile</span>
-                  </Button>
-                </>
-              )}
+              {/* Login icon for mobile - only show when not logged in */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => router.push("/sign-in")}
+              >
+                <Lock className="h-4 w-4" />
+                <span className="sr-only">Login</span>
+              </Button>
+
+              {/* User profile icon for mobile - only show when logged in */}
+              {/* TODO: Add condition to check if user is logged in */}
+              {/* <Button variant="ghost" size="icon" onClick={() => router.push("/dashboard")}>
+                <User className="h-4 w-4" />
+                <span className="sr-only">Profile</span>
+              </Button> */}
             </div>
 
             {/* Desktop country selector */}
@@ -259,35 +246,19 @@ export default function SiteHeader() {
               )}
             </Button>
 
-            {!user ? (
-              <>
-                {/* Desktop auth links */}
-                <Link
-                  href="/sign-in"
-                  className="hidden md:inline text-sm hover:underline"
-                >
-                  Login
-                </Link>
-                <Link
-                  href="/sign-up"
-                  className="hidden md:inline-flex h-8 items-center justify-center rounded-md border border-input bg-background px-3 text-sm"
-                >
-                  Sign Up
-                </Link>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="ghost"
-                  className="hidden md:inline"
-                  size="icon"
-                  onClick={() => router.push("/dashboard")}
-                >
-                  <User className="h-4 w-4" />
-                  <span className="sr-only">Profile</span>
-                </Button>
-              </>
-            )}
+            {/* Desktop auth links */}
+            <Link
+              href="/sign-in"
+              className="hidden md:inline text-sm hover:underline"
+            >
+              Login
+            </Link>
+            <Link
+              href="/sign-up"
+              className="hidden md:inline-flex h-8 items-center justify-center rounded-md border border-input bg-background px-3 text-sm"
+            >
+              Sign Up
+            </Link>
           </div>
         </div>
 

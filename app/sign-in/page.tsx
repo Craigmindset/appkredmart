@@ -150,6 +150,8 @@ export default function SignInPage() {
                                 type={showPassword ? "text" : "password"}
                                 placeholder="••••••••••••"
                                 className="pr-10"
+                                minLength={6}
+                                maxLength={11}
                                 {...field}
                               />
                               <button

@@ -61,9 +61,20 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const router = require("next/navigation").useRouter();
   // Logout: clear token, invalidate user query, redirect
   const handleLogout = async () => {
+    // Call backend logout endpoint to clear cookies/session
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (e) {
+      // Optionally handle error
+    }
+    // Remove token from localStorage
     if (typeof window !== "undefined") {
       localStorage.removeItem("token");
     }
+    // Invalidate user query if react-query is used
     try {
       const { getQueryClient } = require("@/lib/query-client");
       const queryClient = getQueryClient();
