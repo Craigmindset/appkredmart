@@ -90,14 +90,34 @@ export default function CheckoutPage() {
   const router = useRouter();
   const user = useAuth((s) => s.user);
 
-  // Redirect non-authenticated users to sign-in
-  useEffect(() => {
-    if (!user) {
-      router.replace("/sign-in");
-    }
-  }, [user, router]);
+  // Guest checkout logic
+  const [showGuestModal, setShowGuestModal] = useState(false);
+  const [guestMode, setGuestMode] = useState(false);
 
-  if (!user) return null; // Optionally show a spinner or message
+  // Prefill delivery info for logged-in users
+  useEffect(() => {
+    if (user) {
+      setGuestInfo((info) => ({
+        ...info,
+        email: user.email || "",
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+      }));
+    }
+  }, [user]);
+
+  // Show guest modal for non-logged-in users
+  useEffect(() => {
+    if (!user && !guestMode) {
+      setShowGuestModal(true);
+    } else {
+      setShowGuestModal(false);
+    }
+  }, [user, guestMode]);
+
+  // Payment methods available
+  const paymentMethods =
+    user || guestMode ? ["paystack", "bnpl", "wallet"] : ["paystack"];
   const cartCount = useCart(cartSelectors.count);
   const cartItems = useCart((state) => state.items);
   const getCartTotal = useCart(cartSelectors.total);
@@ -287,6 +307,39 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
+
+      {/* Guest Modal */}
+      {showGuestModal && !user && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-xl shadow-lg p-8 max-w-xs w-full text-center">
+            <h2 className="text-lg font-bold mb-4">
+              Continue as Guest or Register
+            </h2>
+            <p className="mb-6 text-sm text-gray-600">
+              To access all payment options, please register or sign in. You can
+              also checkout as a guest with Paystack.
+            </p>
+            <div className="flex flex-col gap-3">
+              <Button
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                onClick={() => {
+                  setGuestMode(true);
+                  setShowGuestModal(false);
+                  setSelectedPaymentMethod("paystack");
+                }}
+              >
+                Continue as Guest
+              </Button>
+              <Button
+                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-900"
+                onClick={() => router.push("/sign-up")}
+              >
+                Register
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4">
         {/* Top bar */}
@@ -495,30 +548,36 @@ export default function CheckoutPage() {
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <PaymentCard
-                  active={selectedPaymentMethod === "paystack"}
-                  onClick={() => setSelectedPaymentMethod("paystack")}
-                  icon={<CreditCard className="h-5 w-5" />}
-                  title="Pay Now"
-                  subtitle="Paystack"
-                  color="blue"
-                />
-                <PaymentCard
-                  active={selectedPaymentMethod === "bnpl"}
-                  onClick={() => setSelectedPaymentMethod("bnpl")}
-                  icon={<Calendar className="h-5 w-5" />}
-                  title="BNPL"
-                  subtitle="Pay monthly"
-                  color="green"
-                />
-                <PaymentCard
-                  active={selectedPaymentMethod === "wallet"}
-                  onClick={() => setSelectedPaymentMethod("wallet")}
-                  icon={<Wallet className="h-5 w-5" />}
-                  title="Wallet Loan"
-                  subtitle="Instant loan"
-                  color="purple"
-                />
+                {paymentMethods.includes("paystack") && (
+                  <PaymentCard
+                    active={selectedPaymentMethod === "paystack"}
+                    onClick={() => setSelectedPaymentMethod("paystack")}
+                    icon={<CreditCard className="h-5 w-5" />}
+                    title="Pay Now"
+                    subtitle="Paystack"
+                    color="blue"
+                  />
+                )}
+                {paymentMethods.includes("bnpl") && (
+                  <PaymentCard
+                    active={selectedPaymentMethod === "bnpl"}
+                    onClick={() => setSelectedPaymentMethod("bnpl")}
+                    icon={<Calendar className="h-5 w-5" />}
+                    title="BNPL"
+                    subtitle="Pay monthly"
+                    color="green"
+                  />
+                )}
+                {paymentMethods.includes("wallet") && (
+                  <PaymentCard
+                    active={selectedPaymentMethod === "wallet"}
+                    onClick={() => setSelectedPaymentMethod("wallet")}
+                    icon={<Wallet className="h-5 w-5" />}
+                    title="Wallet Loan"
+                    subtitle="Instant loan"
+                    color="purple"
+                  />
+                )}
               </div>
 
               {/* BNPL inline options */}
