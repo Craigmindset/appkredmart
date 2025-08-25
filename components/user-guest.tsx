@@ -9,13 +9,15 @@ const UserGuest = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useUser();
   const searchParams = useSearchParams();
   const next = searchParams.get("next");
+
   if (loading) {
     return <Loader2 className="animate-spin" />;
   }
-  if (user && user.role === "user") {
-    redirect(next || "/welcome");
+  if (!user || user.role !== "user") {
+    return children;
   }
-  return children;
+
+  return redirect(next || "/welcome");
 };
 
 export default UserGuest;

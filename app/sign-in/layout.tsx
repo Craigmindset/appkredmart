@@ -1,3 +1,4 @@
+import LayoutShell from "@/components/layout-shell";
 import UserGuest from "@/components/user-guest";
 import { Suspense } from "react";
 
@@ -8,7 +9,9 @@ export default function AdminDashboardLayout({
 }) {
   return (
     <Suspense>
-      <UserGuest>{children}</UserGuest>
+      <LayoutShell showFooter={false}>
+        <UserGuest>{children}</UserGuest>
+      </LayoutShell>
     </Suspense>
   );
 }

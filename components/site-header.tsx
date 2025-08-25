@@ -2,22 +2,8 @@
 
 import type React from "react";
 
-import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import {
-  AlignJustify,
-  Menu,
-  ShoppingCart,
-  Home,
-  CreditCard,
-  Store,
-  Tag,
-  Info,
-  Lock,
-  User,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,12 +20,26 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useCart, cartSelectors } from "@/store/cart-store";
-import { appFontClass } from "@/lib/fonts";
-import { useEffect, useMemo, useState } from "react";
-import { allCategories } from "@/lib/products";
 import { slugifyCategory } from "@/lib/categories";
+import { appFontClass } from "@/lib/fonts";
+import { allCategories } from "@/lib/products";
 import { useUser } from "@/lib/services/user/user";
+import { cartSelectors, useCart } from "@/store/cart-store";
+import {
+  AlignJustify,
+  CreditCard,
+  Home,
+  Info,
+  Lock,
+  Menu,
+  ShoppingCart,
+  Store,
+  Tag,
+  User,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useMemo, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
 
 const MENU = [
