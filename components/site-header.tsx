@@ -2,21 +2,8 @@
 
 import type React from "react";
 
-import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import {
-  AlignJustify,
-  Menu,
-  ShoppingCart,
-  Home,
-  CreditCard,
-  Store,
-  Tag,
-  Info,
-  Lock,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,11 +20,27 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useCart, cartSelectors } from "@/store/cart-store";
-import { appFontClass } from "@/lib/fonts";
-import { useEffect, useMemo, useState } from "react";
-import { allCategories } from "@/lib/products";
 import { slugifyCategory } from "@/lib/categories";
+import { appFontClass } from "@/lib/fonts";
+import { allCategories } from "@/lib/products";
+import { useUser } from "@/lib/services/user/user";
+import { cartSelectors, useCart } from "@/store/cart-store";
+import {
+  AlignJustify,
+  CreditCard,
+  Home,
+  Info,
+  Lock,
+  Menu,
+  ShoppingCart,
+  Store,
+  Tag,
+  User,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useMemo, useState } from "react";
+import { Skeleton } from "./ui/skeleton";
 
 const MENU = [
   { href: "/", label: "Home" },
@@ -93,6 +96,7 @@ function CountrySelector() {
 export default function SiteHeader() {
   const pathname = usePathname();
   const isStore = useMemo(() => pathname?.startsWith("/store"), [pathname]);
+  const { user, loading } = useUser();
   const storeSegment = useMemo(() => {
     if (!pathname) return null;
     const parts = pathname.split("/").filter(Boolean);
@@ -209,14 +213,35 @@ export default function SiteHeader() {
               <CountrySelector />
 
               {/* Login icon for mobile - only show when not logged in */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => router.push("/sign-in")}
-              >
-                <Lock className="h-4 w-4" />
-                <span className="sr-only">Login</span>
-              </Button>
+              {loading ? (
+                <Skeleton className="w-10 h-10" />
+              ) : !user ? (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => router.push("/sign-in")}
+                >
+                  <Lock className="h-4 w-4" />
+                  <span className="sr-only">Login</span>
+                </Button>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() =>
+                    router.push(
+                      user.role === "admin"
+                        ? "/admin/dashboard/overview"
+                        : user.role === "merchant"
+                        ? "/admindesk/dashboard/overview"
+                        : `/dashboard`
+                    )
+                  }
+                >
+                  <User className="h-4 w-4" />
+                  <span className="sr-only">Profile</span>
+                </Button>
+              )}
 
               {/* User profile icon for mobile - only show when logged in */}
               {/* TODO: Add condition to check if user is logged in */}
@@ -247,18 +272,41 @@ export default function SiteHeader() {
             </Button>
 
             {/* Desktop auth links */}
-            <Link
-              href="/sign-in"
-              className="hidden md:inline text-sm hover:underline"
-            >
-              Login
-            </Link>
-            <Link
-              href="/sign-up"
-              className="hidden md:inline-flex h-8 items-center justify-center rounded-md border border-input bg-background px-3 text-sm"
-            >
-              Sign Up
-            </Link>
+            {loading ? (
+              <Skeleton className="w-10 h-8 ml-2" />
+            ) : !user ? (
+              <>
+                <Link
+                  href="/sign-in"
+                  className="hidden md:inline text-sm hover:underline"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/sign-up"
+                  className="hidden md:inline-flex h-8 items-center justify-center rounded-md border border-input bg-background px-3 text-sm"
+                >
+                  Sign Up
+                </Link>
+              </>
+            ) : (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() =>
+                  router.push(
+                    user.role === "admin"
+                      ? "/admin/dashboard/overview"
+                      : user.role === "merchant"
+                      ? "/admindesk/dashboard/overview"
+                      : `/dashboard`
+                  )
+                }
+              >
+                <User className="h-4 w-4" />
+                <span className="sr-only">Profile</span>
+              </Button>
+            )}
           </div>
         </div>
 
