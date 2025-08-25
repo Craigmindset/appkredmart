@@ -1,6 +1,8 @@
-import AdBannerGrid from "@/components/ad-banner-grid";
 import BrandCarousel from "@/components/brand-carousel";
 import HeroSlider from "@/components/hero-slider";
+import AdBanner from "@/components/AdBanner2";
+import TestimonialGrid from "@/components/TestimonialGrid";
+import ThreeColumnAd from "@/components/ThreeColumnAd";
 import LayoutShell from "@/components/layout-shell";
 import Newsletter from "@/components/newsletter";
 import TestimonialsSlider from "@/components/testimonials-slider";
@@ -12,8 +14,9 @@ export default function Page() {
       <HeroSlider />
       <BrandCarousel />
       <ProductDeals />
-      <AdBannerGrid />
-      <TestimonialsSlider />
+      <AdBanner />
+      <ThreeColumnAd />
+      <TestimonialGrid />
       <Newsletter />
     </LayoutShell>
   );

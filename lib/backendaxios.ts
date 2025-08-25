@@ -15,6 +15,12 @@ import { getQueryClient } from "./query-client";
 
 const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
 
+export const serverAxios = axios.create({
+  baseURL,
+  headers: { "Content-Type": "application/json" },
+  withCredentials: true,
+});
+
 const backendAxios = axios.create({
   baseURL,
   headers: { "Content-Type": "application/json" },

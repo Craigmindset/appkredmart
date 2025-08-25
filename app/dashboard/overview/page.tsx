@@ -15,12 +15,15 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useUser } from "@/lib/services/user/user";
+import { useUserOverview } from "@/lib/services/dashboard/user-overview";
+import { formatNaira } from "@/lib/currency";
 
 export default function OverviewPage() {
+  const { data: overview } = useUserOverview();
   const stats = [
     {
       title: "Total Balance",
-      value: "₦125,000",
+      value: formatNaira(overview?.totalBalance || 0),
       change: "+12.5%",
       trend: "up",
       icon: DollarSign,
@@ -30,7 +33,7 @@ export default function OverviewPage() {
     },
     {
       title: "Active Loans",
-      value: "2",
+      value: overview?.activeLoans || 0,
       change: "No change",
       trend: "neutral",
       icon: CreditCard,
@@ -40,7 +43,7 @@ export default function OverviewPage() {
     },
     {
       title: "Total Orders",
-      value: "24",
+      value: overview?.activeOrders || 0,
       change: "+8.2%",
       trend: "up",
       icon: ShoppingCart,
@@ -50,7 +53,7 @@ export default function OverviewPage() {
     },
     {
       title: "Pending Deliveries",
-      value: "3",
+      value: overview?.pendingDeliveries || 0,
       change: "-2 from last week",
       trend: "down",
       icon: Package,

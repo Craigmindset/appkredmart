@@ -41,7 +41,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { useWallet } from "@/store/wallet-store";
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import { useAdminRBACStore, type Permission } from "@/store/admin-rbac-store";
 import { useUser } from "@/lib/services/user/user";
 import { useLogout } from "@/lib/services/auth/use-logout";
@@ -159,8 +159,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   }
 
   if (!loading && (!user || user?.role !== "admin")) {
-    router.push("/admin");
-    return <></>;
+    redirect("/admin");
   }
 
   // Show Wallet tab always for super-admin, permission-based for others

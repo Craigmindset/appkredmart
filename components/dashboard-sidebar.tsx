@@ -3,7 +3,7 @@
 import type React from "react";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import {
   Sidebar,
   SidebarContent,
@@ -29,13 +29,14 @@ import {
   Settings,
   Wallet,
   ShoppingCart,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/lib/services/user/user";
 import { useCart, cartSelectors } from "@/store/cart-store";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { BrandLogo } from "@/components/brand-logo";
-import { useUser } from "@/lib/services/user/user";
+import { useLogout } from "@/lib/services/auth/use-logout";
 
 const items = [
   { label: "Overview", href: "/dashboard/overview", icon: Home },
@@ -53,14 +54,51 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const cartCount = useCart(cartSelectors.count);
 
   // Use user from useUser (React Query)
-  const { user } = useUser();
+  const { user, loading } = useUser();
+  const router = useRouter();
+  const { mutateAsync, isPending } = useLogout();
   const firstName = user?.firstname || "Kred";
   const lastName = user?.lastname || "User";
   const email = user?.email || "user@kredmart.com";
   const initials =
-    (demoUser?.firstName?.[0] ?? "") +
-    (demoUser?.lastName?.[0] ?? (demoUser?.firstName ? "" : "U"));
+    (firstName?.[0] ?? "") + (lastName?.[0] ?? (firstName ? "" : "U"));
 
+  if (loading) {
+    return <Loader2 className="animate-spin" />;
+  }
+
+  if (!user || user.role !== "user") {
+    redirect("/sign-in");
+  }
+
+  const handleLogout = async () => {
+    await mutateAsync().then(() => {
+      localStorage.removeItem("token");
+      router.push("/");
+    });
+    // Call backend logout endpoint to clear cookies/session
+    // try {
+    //   await fetch("/api/auth/logout", {
+    //     method: "POST",
+    //     credentials: "include",
+    //   });
+    // } catch (e) {
+    //   // Optionally handle error
+    // }
+    // // Remove token from localStorage
+    // if (typeof window !== "undefined") {
+    //   localStorage.removeItem("token");
+    // }
+    // // Invalidate user query if react-query is used
+    // try {
+    //   const { getQueryClient } = require("@/lib/query-client");
+    //   const queryClient = getQueryClient();
+    //   await queryClient.invalidateQueries({ queryKey: ["USER"] });
+    // } catch (e) {}
+    // router.push("/");
+  };
+
+  // removed duplicate useUser
   return (
     <SidebarProvider>
       <div className="flex min-h-svh w-full bg-slate-50">
@@ -104,10 +142,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               </Avatar>
               <div className="flex-1 min-w-0">
                 <div className="text-xs font-medium text-sidebar-foreground truncate">
-                  {demoUser.firstName} {demoUser.lastName}
+                  {firstName} {lastName}
                 </div>
                 <div className="text-xs text-sidebar-foreground/60 truncate">
-                  {demoUser.email}
+                  {email}
                 </div>
               </div>
             </div>
@@ -116,6 +154,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               size="sm"
               className="mt-2 bg-transparent border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent"
               onClick={handleLogout}
+              disabled={isPending}
             >
               Logout
             </Button>
