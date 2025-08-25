@@ -35,7 +35,7 @@ export interface MerchantsQueryParams {
 }
 
 class MerchantsService {
-  private baseUrl = "/api/merchants";
+  private baseUrl = "/api/admin/merchants";
 
   private checkAuth() {
     if (typeof window === 'undefined') {
@@ -113,7 +113,8 @@ class MerchantsService {
     this.checkAuth();
     
     try {
-      const response = await backendAxios.patch(`${this.baseUrl}/${id}/status`, { status });
+      const response = await backendAxios.patch(`${this.baseUrl}/${id}/status`, { status }); 
+      //later change to put the correct endpoint url
       return response.data;
     } catch (error: any) {
       if (error.response?.status === 401) {

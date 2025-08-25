@@ -13,7 +13,7 @@ export const fetchUserOverview = async () => {
   const response = await backendAxios.get<
     UserOverviewResponse,
     AxiosResponse<UserOverviewResponse>
-  >("/user/overview");
+  >("/api/user/overview");
   return response.data;
 };
 

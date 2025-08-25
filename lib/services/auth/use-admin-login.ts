@@ -6,7 +6,7 @@ import { getQueryClient } from "../../query-client";
 import { loginSchemaType } from "../../validations/auth";
 
 export const login = async (data: loginSchemaType) => {
-  const response = await backendAxios.post("/auth/admin/login", data);
+  const response = await backendAxios.post("/api/auth/admin/login", data);
   return response.data;
 };
 
