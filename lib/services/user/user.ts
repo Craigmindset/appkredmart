@@ -11,7 +11,7 @@ interface UserResponse {
   picture?: string;
   emailVerified?: Date;
   position?: string;
-  role?: string;
+  role?: "user" | "merchant" | "admin";
 }
 
 export const fetchUser = async () => {
