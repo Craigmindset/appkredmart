@@ -91,11 +91,7 @@ export default function SiteFooter() {
             <p className="text-gray-400 text-sm">
               © {new Date().getFullYear()} KredMart. All rights reserved.
             </p>
-            <div className="flex space-x-4 md:space-x-5">
-              <Link href="/access-loan" className="text-gray-300 hover:text-white transition-colors text-sm">Access Loan</Link>
-              <Link href="/deals" className="text-gray-300 hover:text-white transition-colors text-sm">Deals</Link>
-              <Link href="/store" className="text-gray-300 hover:text-white transition-colors text-sm">Store</Link>
-            </div>
+          
           </div>
         </div>
       </div>
