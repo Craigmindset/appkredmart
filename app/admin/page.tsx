@@ -27,6 +27,7 @@ export default function AdminSignIn() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    // role removed from UI, but still defaulted for backend compatibility
     role: "super-admin" as AdminRole,
   });
 
@@ -51,17 +52,9 @@ export default function AdminSignIn() {
     });
   };
 
-  const roleDescriptions = {
-    "super-admin": "Full access to all features and settings",
-    manager: "Manage merchants, users, inventory, and orders",
-    marketer: "Manage products, inventory, and customer support",
-    finance: "Access to revenue, transactions, and financial data",
-  };
-
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4
-    "
+      className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4 py-16 md:py-32"
       style={{
         backgroundImage: "url('/images/login-bg.jpg')",
         backgroundSize: "cover",
@@ -120,6 +113,8 @@ export default function AdminSignIn() {
                   }
                   className="pr-10"
                   required
+                  minLength={6}
+                  maxLength={11}
                 />
                 <Button
                   type="button"
@@ -135,49 +130,6 @@ export default function AdminSignIn() {
                   )}
                 </Button>
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="role">Role</Label>
-              <Select
-                value={formData.role}
-                onValueChange={(value: AdminRole) =>
-                  setFormData((prev) => ({ ...prev, role: value }))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="super-admin">
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4" />
-                      Super Admin
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="manager">
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4" />
-                      Manager
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="marketer">
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4" />
-                      Marketer
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="finance">
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4" />
-                      Finance
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-gray-500">
-                {roleDescriptions[formData.role]}
-              </p>
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
