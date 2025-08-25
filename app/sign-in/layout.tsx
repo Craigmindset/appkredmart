@@ -1,10 +1,14 @@
-import { DashboardShell } from "@/components/dashboard-sidebar";
 import UserGuest from "@/components/user-guest";
+import { Suspense } from "react";
 
 export default function AdminDashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <UserGuest>{children}</UserGuest>;
+  return (
+    <Suspense>
+      <UserGuest>{children}</UserGuest>
+    </Suspense>
+  );
 }
