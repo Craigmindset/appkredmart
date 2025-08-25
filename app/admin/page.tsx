@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,8 +24,16 @@ export default function AdminSignIn() {
   const { signIn } = useAdminRBACStore();
   const [showPassword, setShowPassword] = useState(false);
   const { mutateAsync, loading } = useAdminLogin();
+  // Prefill email from localStorage if available
+  const [initialEmail, setInitialEmail] = useState("");
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const cachedEmail = localStorage.getItem("kredmart_admin_email");
+      if (cachedEmail) setInitialEmail(cachedEmail);
+    }
+  }, []);
   const [formData, setFormData] = useState({
-    email: "",
+    email: initialEmail,
     password: "",
     // role removed from UI, but still defaulted for backend compatibility
     role: "super-admin" as AdminRole,
@@ -41,6 +49,11 @@ export default function AdminSignIn() {
         variant: "destructive",
       });
       return;
+    }
+
+    // Cache admin email in localStorage
+    if (typeof window !== "undefined") {
+      localStorage.setItem("kredmart_admin_email", formData.email);
     }
 
     await mutateAsync(formData).then(() => {
