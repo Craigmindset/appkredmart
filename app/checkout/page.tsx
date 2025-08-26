@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -13,6 +13,7 @@ import {
   AlertCircle,
   ChevronDown,
   ChevronUp,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,8 +21,11 @@ import { useCart, cartSelectors } from "@/store/cart-store";
 import { useAuth } from "@/store/auth-store";
 import { useRouter } from "next/navigation";
 import Header from "@/components/site-header";
+import Insurance, { insuranceOptions } from "./insurance";
 
-// --- Data --------------------------------------------------------------------
+/** -----------------------------------------------------------------------
+ * Data
+ * ----------------------------------------------------------------------*/
 const landmarkAddresses = [
   "ABUJA 1 BRANCH - Suite c16/17 New Bannex Plaza, Aminu Kano Crescent, Wuse 2, Abuja, NG",
   "Ikeja - Medical Rd - NO 2B Medical Road, Ikeja, Lagos, NG",
@@ -78,51 +82,53 @@ const loanProviders = [
   },
 ];
 
-// --- Helpers -----------------------------------------------------------------
+/** -----------------------------------------------------------------------
+ * Helpers
+ * ----------------------------------------------------------------------*/
 const money = (n: number) =>
   `₦${n.toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
 
-// --- Page --------------------------------------------------------------------
+/** -----------------------------------------------------------------------
+ * Page
+ * ----------------------------------------------------------------------*/
 export default function CheckoutPage() {
   const router = useRouter();
   const user = useAuth((s) => s.user);
 
-  // Guest checkout logic
+  /** Guest checkout control */
   const [showGuestModal, setShowGuestModal] = useState(false);
   const [guestMode, setGuestMode] = useState(false);
 
-  // Prefill delivery info for logged-in users
+  /** Prefill for signed-in users */
   useEffect(() => {
     if (user) {
       setGuestInfo((info) => ({
         ...info,
         email: user.email || "",
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
-        phone: user.phone || "",
+        firstName: (user as any).firstName || "",
+        lastName: (user as any).lastName || "",
+        phone: (user as any).phone || "",
       }));
     }
   }, [user]);
 
-  // Show guest modal for non-logged-in users
+  /** Ask non-logged-in users to continue as guest/register */
   useEffect(() => {
-    if (!user && !guestMode) {
-      setShowGuestModal(true);
-    } else {
-      setShowGuestModal(false);
-    }
+    if (!user && !guestMode) setShowGuestModal(true);
+    else setShowGuestModal(false);
   }, [user, guestMode]);
 
-  // Payment methods available
-  const paymentMethods =
-    user || guestMode ? ["paystack", "bnpl", "wallet"] : ["paystack"];
+  /** Cart */
   const cartCount = useCart(cartSelectors.count);
-  const cartItems = useCart((state) => state.items);
+  const cartItems = useCart((s) => s.items);
   const getCartTotal = useCart(cartSelectors.total);
 
+  /** Payments */
+  const paymentMethods =
+    user || guestMode ? ["paystack", "bnpl", "wallet"] : ["paystack"];
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
     "paystack" | "bnpl" | "wallet"
   >("paystack");
@@ -130,9 +136,11 @@ export default function CheckoutPage() {
   const [selectedLoanProvider, setSelectedLoanProvider] =
     useState("creditloan");
   const [isProcessing, setIsProcessing] = useState(false);
+
+  /** Mobile summary toggle */
   const [showSummaryMobile, setShowSummaryMobile] = useState(false);
 
-  // Contact/Delivery info (compact)
+  /** Delivery/Contact (shared) */
   const [guestInfo, setGuestInfo] = useState({
     firstName: "",
     lastName: "",
@@ -144,12 +152,44 @@ export default function CheckoutPage() {
     landmark: "",
   });
 
-  // Totals
+  /** Insurance state */
+  const [selectedInsurance, setSelectedInsurance] = useState<string | null>(
+    null
+  );
+
+  /** UI: reveal/hide Device Protection section on demand (from upsell) */
+  const [showProtection, setShowProtection] = useState(false);
+  const protectionRef = useRef<HTMLDivElement | null>(null);
+
+  /** Smooth scroll to the protection section when it opens */
+  useEffect(() => {
+    if (showProtection && protectionRef.current) {
+      // slight delay ensures DOM is painted before scrolling
+      const t = setTimeout(
+        () =>
+          protectionRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          }),
+        100
+      );
+      return () => clearTimeout(t);
+    }
+  }, [showProtection]);
+
+  /** Derived insurance amounts */
+  const insuranceObj = selectedInsurance
+    ? insuranceOptions.find((o) => o.id === selectedInsurance)
+    : null;
+  const insurancePrice = insuranceObj?.price || 0;
+
+  /** Totals */
   const subtotal = getCartTotal;
   const vat = subtotal * 0.075;
   const delivery = 0;
-  const total = subtotal + vat + delivery;
+  const total = subtotal + vat + delivery + insurancePrice;
 
+  /** BNPL math */
   const calculateBnplPayment = () => {
     const duration = bnplDurations.find((d) => d.id === selectedBnplDuration);
     if (!duration) return 0;
@@ -159,15 +199,11 @@ export default function CheckoutPage() {
     return totalWithInterest / months;
   };
 
-  // Show Delivery form for BNPL & Wallet; Paystack needs only email (and phone for receipts)
+  /** Which methods require full address form */
   const requiresDeliveryForm =
     selectedPaymentMethod === "bnpl" || selectedPaymentMethod === "wallet";
 
-  // Sync form reveal (legacy behavior simplified)
-  useEffect(() => {
-    // No-op: UI now conditionally renders instead of toggling another state
-  }, [selectedPaymentMethod]);
-
+  /** Form change */
   const handleGuestInfoChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -175,7 +211,7 @@ export default function CheckoutPage() {
     setGuestInfo((p) => ({ ...p, [name]: value }));
   };
 
-  // --- Payment flows (as in your code) --------------------------------------
+  /** ------------------------ Payment flows ------------------------ */
   const processPaystackPayment = async () => {
     setIsProcessing(true);
     try {
@@ -183,9 +219,15 @@ export default function CheckoutPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: total * 100,
+          amount: total * 100, // kobo
           email: guestInfo.email || "user@example.com",
-          metadata: { cartItems, customerInfo: guestInfo },
+          metadata: {
+            cartItems,
+            customerInfo: guestInfo,
+            insurance: selectedInsurance
+              ? insuranceOptions.find((o) => o.id === selectedInsurance)
+              : null,
+          },
         }),
       });
       const data = await response.json();
@@ -214,6 +256,9 @@ export default function CheckoutPage() {
           customerInfo: guestInfo,
           cartItems,
           monthlyPayment: calculateBnplPayment(),
+          insurance: selectedInsurance
+            ? insuranceOptions.find((o) => o.id === selectedInsurance)
+            : null,
         }),
       });
       const data = await response.json();
@@ -243,6 +288,9 @@ export default function CheckoutPage() {
           provider: selectedLoanProvider,
           customerInfo: guestInfo,
           cartItems,
+          insurance: selectedInsurance
+            ? insuranceOptions.find((o) => o.id === selectedInsurance)
+            : null,
         }),
       });
       const data = await response.json();
@@ -270,12 +318,11 @@ export default function CheckoutPage() {
     }
   };
 
-  // ✅ Fixed: validation now matches the UI
+  /** Validation aligned with visible fields */
   const isFormValid = () => {
     if (selectedPaymentMethod === "paystack") {
       return Boolean(guestInfo.email);
     }
-    // BNPL & Wallet need full delivery info
     return (
       guestInfo.firstName &&
       guestInfo.lastName &&
@@ -287,6 +334,7 @@ export default function CheckoutPage() {
     );
   };
 
+  /** Empty cart guard */
   if (cartCount === 0) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -305,6 +353,9 @@ export default function CheckoutPage() {
     );
   }
 
+  /** -----------------------------------------------------------------------
+   * Render
+   * ----------------------------------------------------------------------*/
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -366,31 +417,49 @@ export default function CheckoutPage() {
               <ChevronDown className="h-4 w-4" />
             )}
           </button>
+
           {showSummaryMobile && (
-            <OrderSummary
-              cartItems={cartItems}
-              subtotal={subtotal}
-              vat={vat}
-              total={total}
-              selectedPaymentMethod={selectedPaymentMethod}
-              selectedBnplDuration={selectedBnplDuration}
-              calculateBnplPayment={calculateBnplPayment}
-              selectedLoanProvider={selectedLoanProvider}
-            />
+            <>
+              <OrderSummary
+                cartItems={cartItems}
+                subtotal={subtotal}
+                vat={vat}
+                total={total}
+                selectedPaymentMethod={selectedPaymentMethod}
+                selectedBnplDuration={selectedBnplDuration}
+                calculateBnplPayment={calculateBnplPayment}
+                selectedLoanProvider={selectedLoanProvider}
+                insurance={insuranceObj}
+                onToggleProtection={() => setShowProtection(true)}
+              />
+
+              {/* Device Protection (collapsible on mobile) */}
+              <section ref={protectionRef} className="mt-3">
+                <DeviceProtection
+                  open={showProtection}
+                  onClose={() => setShowProtection(false)}
+                  selected={selectedInsurance}
+                  onSelect={(id) =>
+                    setSelectedInsurance(id === selectedInsurance ? null : id)
+                  }
+                />
+              </section>
+            </>
           )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
           {/* Left: Forms */}
           <div className="lg:col-span-2 space-y-4">
-            {/* Delivery Information always for Paystack, BNPL, Wallet */}
+            {/* Delivery Information */}
             {(selectedPaymentMethod === "paystack" || requiresDeliveryForm) && (
               <section className="bg-white rounded-xl border shadow-sm p-4">
                 <h2 className="text-base font-semibold text-gray-900 mb-3">
                   Delivery Information
                 </h2>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {/* Email field always present and required */}
+                  {/* Email */}
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       Email *
@@ -404,7 +473,8 @@ export default function CheckoutPage() {
                       required
                     />
                   </div>
-                  {/* First Name and Last Name */}
+
+                  {/* Names */}
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       First Name *
@@ -431,7 +501,8 @@ export default function CheckoutPage() {
                       required
                     />
                   </div>
-                  {/* Phone Number field (moved here) */}
+
+                  {/* Phone */}
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       Phone Number *
@@ -445,6 +516,7 @@ export default function CheckoutPage() {
                       required
                     />
                   </div>
+
                   {/* Address */}
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-medium text-gray-700 mb-1">
@@ -459,6 +531,8 @@ export default function CheckoutPage() {
                       required
                     />
                   </div>
+
+                  {/* City / State */}
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       City *
@@ -486,45 +560,51 @@ export default function CheckoutPage() {
                       required
                     />
                     <datalist id="states">
-                      <option value="Abia" />
-                      <option value="Adamawa" />
-                      <option value="Akwa Ibom" />
-                      <option value="Anambra" />
-                      <option value="Bauchi" />
-                      <option value="Bayelsa" />
-                      <option value="Benue" />
-                      <option value="Borno" />
-                      <option value="Cross River" />
-                      <option value="Delta" />
-                      <option value="Ebonyi" />
-                      <option value="Edo" />
-                      <option value="Ekiti" />
-                      <option value="Enugu" />
-                      <option value="FCT" />
-                      <option value="Gombe" />
-                      <option value="Imo" />
-                      <option value="Jigawa" />
-                      <option value="Kaduna" />
-                      <option value="Kano" />
-                      <option value="Katsina" />
-                      <option value="Kebbi" />
-                      <option value="Kogi" />
-                      <option value="Kwara" />
-                      <option value="Lagos" />
-                      <option value="Nasarawa" />
-                      <option value="Niger" />
-                      <option value="Ogun" />
-                      <option value="Ondo" />
-                      <option value="Osun" />
-                      <option value="Oyo" />
-                      <option value="Plateau" />
-                      <option value="Rivers" />
-                      <option value="Sokoto" />
-                      <option value="Taraba" />
-                      <option value="Yobe" />
-                      <option value="Zamfara" />
+                      {[
+                        "Abia",
+                        "Adamawa",
+                        "Akwa Ibom",
+                        "Anambra",
+                        "Bauchi",
+                        "Bayelsa",
+                        "Benue",
+                        "Borno",
+                        "Cross River",
+                        "Delta",
+                        "Ebonyi",
+                        "Edo",
+                        "Ekiti",
+                        "Enugu",
+                        "FCT",
+                        "Gombe",
+                        "Imo",
+                        "Jigawa",
+                        "Kaduna",
+                        "Kano",
+                        "Katsina",
+                        "Kebbi",
+                        "Kogi",
+                        "Kwara",
+                        "Lagos",
+                        "Nasarawa",
+                        "Niger",
+                        "Ogun",
+                        "Ondo",
+                        "Osun",
+                        "Oyo",
+                        "Plateau",
+                        "Rivers",
+                        "Sokoto",
+                        "Taraba",
+                        "Yobe",
+                        "Zamfara",
+                      ].map((s) => (
+                        <option key={s} value={s} />
+                      ))}
                     </datalist>
                   </div>
+
+                  {/* Landmark */}
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       Nearest Landmark
@@ -557,7 +637,7 @@ export default function CheckoutPage() {
               </section>
             )}
 
-            {/* Payment Method (compact, modern cards) */}
+            {/* Payment */}
             <section className="bg-white rounded-xl border shadow-sm p-4">
               <h2 className="text-base font-semibold text-gray-900 mb-3">
                 Payment
@@ -685,34 +765,26 @@ export default function CheckoutPage() {
 
             {/* Notices */}
             {selectedPaymentMethod === "bnpl" && (
-              <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3 text-xs text-yellow-800">
-                <div className="flex items-start gap-1.5">
-                  <AlertCircle className="h-4 w-4 mt-0.5" />
-                  <div>
-                    <p className="font-medium">BNPL Terms</p>
-                    <ul className="list-disc list-inside space-y-0.5 mt-1">
-                      <li>Account creation required</li>
-                      <li>Credit check may be performed</li>
-                      <li>Late payment fees may apply</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+              <Notice
+                color="yellow"
+                title="BNPL Terms"
+                items={[
+                  "Account creation required",
+                  "Credit check may be performed",
+                  "Late payment fees may apply",
+                ]}
+              />
             )}
             {selectedPaymentMethod === "wallet" && (
-              <div className="rounded-lg border border-purple-200 bg-purple-50 p-3 text-xs text-purple-800">
-                <div className="flex items-start gap-1.5">
-                  <AlertCircle className="h-4 w-4 mt-0.5" />
-                  <div>
-                    <p className="font-medium">Loan Requirements</p>
-                    <ul className="list-disc list-inside space-y-0.5 mt-1">
-                      <li>Valid ID and BVN required</li>
-                      <li>Minimum age: 18 years</li>
-                      <li>Credit assessment will be conducted</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+              <Notice
+                color="purple"
+                title="Loan Requirements"
+                items={[
+                  "Valid ID and BVN required",
+                  "Minimum age: 18 years",
+                  "Credit assessment will be conducted",
+                ]}
+              />
             )}
 
             {/* Pay button */}
@@ -739,16 +811,32 @@ export default function CheckoutPage() {
 
           {/* Right: Order Summary (sticky on desktop) */}
           <aside className="hidden lg:block">
-            <OrderSummary
-              cartItems={cartItems}
-              subtotal={subtotal}
-              vat={vat}
-              total={total}
-              selectedPaymentMethod={selectedPaymentMethod}
-              selectedBnplDuration={selectedBnplDuration}
-              calculateBnplPayment={calculateBnplPayment}
-              selectedLoanProvider={selectedLoanProvider}
-            />
+            <div className="sticky top-4 flex flex-col gap-4">
+              <OrderSummary
+                cartItems={cartItems}
+                subtotal={subtotal}
+                vat={vat}
+                total={total}
+                selectedPaymentMethod={selectedPaymentMethod}
+                selectedBnplDuration={selectedBnplDuration}
+                calculateBnplPayment={calculateBnplPayment}
+                selectedLoanProvider={selectedLoanProvider}
+                insurance={insuranceObj}
+                onToggleProtection={() => setShowProtection(true)}
+              />
+
+              {/* Device Protection (collapsible on desktop) */}
+              <section ref={protectionRef}>
+                <DeviceProtection
+                  open={showProtection}
+                  onClose={() => setShowProtection(false)}
+                  selected={selectedInsurance}
+                  onSelect={(id) =>
+                    setSelectedInsurance(id === selectedInsurance ? null : id)
+                  }
+                />
+              </section>
+            </div>
           </aside>
         </div>
       </div>
@@ -756,7 +844,11 @@ export default function CheckoutPage() {
   );
 }
 
-// --- UI Partials -------------------------------------------------------------
+/** -----------------------------------------------------------------------
+ * UI Partials
+ * ----------------------------------------------------------------------*/
+
+/** Payment Card */
 function PaymentCard({
   active,
   onClick,
@@ -805,6 +897,25 @@ function PaymentCard({
   );
 }
 
+/** Little row for totals */
+function Row({
+  label,
+  value,
+  tight = false,
+}: {
+  label: React.ReactNode;
+  value: React.ReactNode;
+  tight?: boolean;
+}) {
+  return (
+    <div className={`flex justify-between ${tight ? "py-0.5" : ""}`}>
+      <span className="text-gray-600 text-sm">{label}</span>
+      <span className="font-semibold text-sm">{value}</span>
+    </div>
+  );
+}
+
+/** Order Summary + Protection Upsell */
 function OrderSummary({
   cartItems,
   subtotal,
@@ -814,6 +925,8 @@ function OrderSummary({
   selectedBnplDuration,
   calculateBnplPayment,
   selectedLoanProvider,
+  insurance,
+  onToggleProtection,
 }: {
   cartItems: any[];
   subtotal: number;
@@ -823,9 +936,18 @@ function OrderSummary({
   selectedBnplDuration: string;
   calculateBnplPayment: () => number;
   selectedLoanProvider: string;
+  insurance?: {
+    id: string;
+    label: string;
+    price: number;
+    description: string;
+    claim: string;
+  } | null;
+  /** When the upsell is clicked */
+  onToggleProtection: () => void;
 }) {
   return (
-    <div className="bg-white rounded-xl border shadow-sm p-4 sticky top-4">
+    <div className="bg-white rounded-xl border shadow-sm p-4">
       <h2 className="text-base font-semibold text-gray-900 mb-3">
         Order Summary
       </h2>
@@ -862,6 +984,20 @@ function OrderSummary({
           value={<span className="text-green-600 font-semibold">Free</span>}
         />
         <Row label="VAT" value={money(vat)} />
+
+        {insurance && (
+          <Row
+            label={
+              <span className="flex items-center gap-1">
+                Insurance
+                <span className="text-xs text-gray-500">
+                  ({insurance.description})
+                </span>
+              </span>
+            }
+            value={money(insurance.price)}
+          />
+        )}
 
         {selectedPaymentMethod === "bnpl" && (
           <div className="bg-blue-50 p-3 rounded-lg text-sm">
@@ -919,27 +1055,139 @@ function OrderSummary({
         </div>
       </div>
 
+      {/* Security hint */}
       <div className="mt-1 flex items-center justify-center gap-1 text-[11px] text-gray-600">
         <Shield className="h-3.5 w-3.5" />
         <span>Secure & encrypted payment</span>
+      </div>
+
+      {/* --- 🛡️ Protection Upsell (your request) --- */}
+      <button
+        onClick={onToggleProtection}
+        className="mt-3 w-full flex items-center gap-3 rounded-lg border border-blue-100 bg-blue-50/60 hover:bg-blue-100/70 transition p-3 text-left"
+        aria-label="Open device protection options"
+      >
+        {/* Replace src with your brand/logo if available */}
+        <div className="shrink-0 rounded-md bg-white p-2 border">
+          <Image
+            src="/Cubecover.png" // fallback to shield icon if you don't have a logo
+            alt="Cubecover"
+            width={28}
+            height={28}
+            onError={(e) => {
+              // if logo missing, quietly show nothing; icon on the right covers it
+            }}
+          />
+        </div>
+        <div className="flex-1">
+          <p
+            className="text-sm font-semibold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis"
+            style={{ width: "100%" }}
+          >
+            Get a screen & water protection cover
+          </p>
+          <p className="text-xs text-gray-600">
+            Protect your device from accidental damage. See flexible 1-year
+            options.
+          </p>
+        </div>
+        <Shield className="h-5 w-5 text-[#466cf4]" />
+      </button>
+    </div>
+  );
+}
+
+/** Reusable notice block */
+function Notice({
+  color,
+  title,
+  items,
+}: {
+  color: "yellow" | "purple";
+  title: string;
+  items: string[];
+}) {
+  const colorMap = {
+    yellow: {
+      border: "border-yellow-200",
+      bg: "bg-yellow-50",
+      text: "text-yellow-800",
+      icon: "text-yellow-700",
+    },
+    purple: {
+      border: "border-purple-200",
+      bg: "bg-purple-50",
+      text: "text-purple-800",
+      icon: "text-purple-700",
+    },
+  }[color];
+
+  return (
+    <div
+      className={`rounded-lg border ${colorMap.border} ${colorMap.bg} p-3 text-xs ${colorMap.text}`}
+    >
+      <div className="flex items-start gap-1.5">
+        <AlertCircle className={`h-4 w-4 mt-0.5 ${colorMap.icon}`} />
+        <div>
+          <p className="font-medium">{title}</p>
+          <ul className="list-disc list-inside space-y-0.5 mt-1">
+            {items.map((it) => (
+              <li key={it}>{it}</li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );
 }
 
-function Row({
-  label,
-  value,
-  tight = false,
+/** Device Protection wrapper around your <Insurance /> with collapse/close */
+function DeviceProtection({
+  open,
+  onClose,
+  selected,
+  onSelect,
 }: {
-  label: string;
-  value: React.ReactNode;
-  tight?: boolean;
+  open: boolean;
+  onClose: () => void;
+  selected: string | null;
+  onSelect: (id: string | null) => void;
 }) {
+  if (!open) {
+    // Keep DOM light when hidden on desktop; on mobile this is after summary toggle so it's fine to unmount
+    return null;
+  }
   return (
-    <div className={`flex justify-between ${tight ? "py-0.5" : ""}`}>
-      <span className="text-gray-600 text-sm">{label}</span>
-      <span className="font-semibold text-sm">{value}</span>
-    </div>
+    <section className="bg-white rounded-xl border shadow-sm p-4">
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-base font-semibold text-gray-900">
+          Device Protection
+        </h3>
+        <button
+          type="button"
+          onClick={onClose}
+          className="inline-flex items-center justify-center rounded-md border border-gray-200 hover:bg-gray-50 p-1"
+          aria-label="Close device protection"
+          title="Close"
+        >
+          <X className="h-4 w-4 text-gray-600" />
+        </button>
+      </div>
+      <p className="text-xs text-gray-600 mb-3">
+        1-year Screen & Water Protection. Choose a cover that matches your
+        device value.
+      </p>
+
+      {/* Your existing Insurance options UI */}
+      <Insurance selected={selected} onSelect={(id) => onSelect(id)} />
+
+      {/* Tiny helper text */}
+      {selected && (
+        <div className="mt-2 text-[11px] text-green-700 bg-green-50 border border-green-100 rounded-md px-2 py-1">
+          <span className="font-medium">Added:</span>{" "}
+          {insuranceOptions.find((o) => o.id === selected)?.description}
+        </div>
+      )}
+    </section>
   );
 }
