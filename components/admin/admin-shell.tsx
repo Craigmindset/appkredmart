@@ -166,6 +166,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const visibleNavItems = adminNavItems.filter((item) => {
     if (item.title === "Wallet" && user?.position === "super-admin") {
       return true;
+      // return user.position
     }
     // return hasAnyPermission(item.permissions);
     return true;

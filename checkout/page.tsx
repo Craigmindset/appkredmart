@@ -1,22 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import {
-  ArrowLeft,
-  CreditCard,
-  Calendar,
-  Wallet,
-  Shield,
-  Check,
-  AlertCircle,
-} from "lucide-react";
-import LayoutShell from "@/components/layout-shell";
+import Header from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useCart, cartSelectors } from "@/store/cart-store";
-import Header from "@/components/site-header";
+import { cartSelectors, useCart } from "@/store/cart-store";
+import {
+  AlertCircle,
+  ArrowLeft,
+  Calendar,
+  Check,
+  CreditCard,
+  Shield,
+  Wallet,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 // BNPL Duration Options
 // Landmark addresses
