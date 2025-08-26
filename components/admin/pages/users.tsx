@@ -1,12 +1,24 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Users,
   ShoppingCart,
@@ -17,7 +29,8 @@ import {
   MessageCircle,
   UserX,
   Download,
-} from "lucide-react"
+} from "lucide-react";
+import { useFetchUsers } from "@/lib/services/merchant/use-fetch-users";
 
 // Demo user data
 const demoUsers = [
@@ -71,31 +84,39 @@ const demoUsers = [
     walletAccount: "KW567890123",
     status: "Active",
   },
-]
+];
 
 export default function UsersAdminPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [users, setUsers] = useState(demoUsers)
+  const [searchTerm, setSearchTerm] = useState("");
+  // const [users, setUsers] = useState(demoUsers);
+  const { data, loading } = useFetchUsers();
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.id.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  const users = data?.data || [];
+
+  // const filteredUsers = users.filter(
+  //   (user) =>
+  //     user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     user.id.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   const handleMessageUser = (userId: string) => {
-    console.log("Message user:", userId)
+    console.log("Message user:", userId);
     // Implement messaging functionality
-  }
+  };
 
   const handleDeactivateUser = (userId: string) => {
-    setUsers(
-      users.map((user) =>
-        user.id === userId ? { ...user, status: user.status === "Active" ? "Inactive" : "Active" } : user,
-      ),
-    )
-  }
+    // setUsers(
+    //   users.map((user) =>
+    //     user.id === userId
+    //       ? {
+    //           ...user,
+    //           status: user.status === "Active" ? "Inactive" : "Active",
+    //         }
+    //       : user
+    //   )
+    // );
+  };
 
   const exportToCSV = () => {
     const headers = [
@@ -108,57 +129,62 @@ export default function UsersAdminPage() {
       "Loan Status",
       "Wallet Account",
       "Status",
-    ]
+    ];
     const csvContent = [
       headers.join(","),
-      ...filteredUsers.map((user, index) =>
+      ...users.map((user, index) =>
         [
           index + 1,
           user.id,
-          user.username,
+          `${user.firstname} ${user.lastname}`,
           user.email,
           user.phone,
-          user.totalOrders,
-          user.loanStatus,
-          user.walletAccount,
+          user._count.orders,
+          user.loanApplications[0]?.status || "None",
+          user.wallet.accountNumber || "None",
           user.status,
-        ].join(","),
+        ].join(",")
       ),
-    ].join("\n")
+    ].join("\n");
 
-    const blob = new Blob([csvContent], { type: "text/csv" })
-    const url = window.URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = "users_report.csv"
-    a.click()
-    window.URL.revokeObjectURL(url)
-  }
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "users_report.csv";
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
 
   const getLoanStatusColor = (status: string) => {
     switch (status) {
       case "Active":
-        return "bg-blue-100 text-blue-800"
+        return "bg-blue-100 text-blue-800";
       case "Pending":
-        return "bg-yellow-100 text-yellow-800"
+        return "bg-yellow-100 text-yellow-800";
       case "Completed":
-        return "bg-green-100 text-green-800"
+        return "bg-green-100 text-green-800";
       case "Defaulted":
-        return "bg-red-100 text-red-800"
+        return "bg-red-100 text-red-800";
       default:
-        return "bg-gray-100 text-gray-800"
+        return "bg-gray-100 text-gray-800";
     }
-  }
+  };
 
   const getStatusColor = (status: string) => {
-    return status === "Active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-  }
+    return status === "Active"
+      ? "bg-green-100 text-green-800"
+      : "bg-red-100 text-red-800";
+  };
 
   // Summary statistics
-  const totalUsers = users.length
-  const activeUsers = users.filter((u) => u.status === "Active").length
-  const totalOrders = users.reduce((sum, u) => sum + u.totalOrders, 0)
-  const activeLoans = users.filter((u) => u.loanStatus === "Active").length
+  console.log({ users });
+  const totalUsers = users.length;
+  const activeUsers = users.filter((u) => u.status === "ACTIVE").length;
+  const totalOrders = users.reduce((sum, u) => sum + u._count.orders, 0);
+  const activeLoans = users.filter(
+    (u) => u.loanApplications && u.loanApplications[0]?.status === "Active"
+  ).length;
 
   return (
     <div className="space-y-6">
@@ -171,7 +197,9 @@ export default function UsersAdminPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">{totalUsers}</div>
-            <p className="text-xs text-muted-foreground">{activeUsers} active users</p>
+            <p className="text-xs text-muted-foreground">
+              {activeUsers} active users
+            </p>
           </CardContent>
         </Card>
 
@@ -181,7 +209,9 @@ export default function UsersAdminPage() {
             <ShoppingCart className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{totalOrders}</div>
+            <div className="text-2xl font-bold text-green-600">
+              {totalOrders}
+            </div>
             <p className="text-xs text-muted-foreground">Across all users</p>
           </CardContent>
         </Card>
@@ -192,19 +222,27 @@ export default function UsersAdminPage() {
             <CreditCard className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{activeLoans}</div>
+            <div className="text-2xl font-bold text-orange-600">
+              {activeLoans}
+            </div>
             <p className="text-xs text-muted-foreground">Currently active</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Wallet Accounts</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Wallet Accounts
+            </CardTitle>
             <Wallet className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-600">{totalUsers}</div>
-            <p className="text-xs text-muted-foreground">All users have wallets</p>
+            <div className="text-2xl font-bold text-purple-600">
+              {totalUsers}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              All users have wallets
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -215,7 +253,9 @@ export default function UsersAdminPage() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <CardTitle>User Management</CardTitle>
-              <p className="text-sm text-muted-foreground">View and manage all registered users</p>
+              <p className="text-sm text-muted-foreground">
+                View and manage all registered users
+              </p>
             </div>
             <div className="flex gap-2">
               <Button onClick={exportToCSV} variant="outline" size="sm">
@@ -246,7 +286,7 @@ export default function UsersAdminPage() {
                 <TableRow>
                   <TableHead className="w-12">SN</TableHead>
                   <TableHead>User ID</TableHead>
-                  <TableHead>Username</TableHead>
+                  <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Phone</TableHead>
                   <TableHead>Total Orders</TableHead>
@@ -257,20 +297,36 @@ export default function UsersAdminPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredUsers.map((user, index) => (
+                {users?.map((user, index) => (
                   <TableRow key={user.id}>
                     <TableCell className="font-medium">{index + 1}</TableCell>
-                    <TableCell className="font-mono text-sm">{user.id}</TableCell>
-                    <TableCell className="font-medium">{user.username}</TableCell>
+                    <TableCell className="font-mono text-sm">
+                      {user.id}
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      {user.firstname} {user.lastname}
+                    </TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.phone}</TableCell>
-                    <TableCell className="text-center">{user.totalOrders}</TableCell>
-                    <TableCell>
-                      <Badge className={getLoanStatusColor(user.loanStatus)}>{user.loanStatus}</Badge>
+                    <TableCell className="text-center">
+                      {user._count.orders}
                     </TableCell>
-                    <TableCell className="font-mono text-sm">{user.walletAccount}</TableCell>
                     <TableCell>
-                      <Badge className={getStatusColor(user.status)}>{user.status}</Badge>
+                      <Badge
+                        className={getLoanStatusColor(
+                          user.loanApplications[0]?.status
+                        )}
+                      >
+                        {user.loanApplications[0]?.status || "None"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="font-mono text-sm">
+                      {user.wallet.accountNumber || "None"}
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={getStatusColor(user.status)}>
+                        {user.status}
+                      </Badge>
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
@@ -280,13 +336,19 @@ export default function UsersAdminPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleMessageUser(user.id)}>
+                          <DropdownMenuItem
+                            onClick={() => handleMessageUser(user.id)}
+                          >
                             <MessageCircle className="mr-2 h-4 w-4" />
                             Message User
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleDeactivateUser(user.id)}>
+                          <DropdownMenuItem
+                            onClick={() => handleDeactivateUser(user.id)}
+                          >
                             <UserX className="mr-2 h-4 w-4" />
-                            {user.status === "Active" ? "Deactivate" : "Activate"}
+                            {user.status === "ACTIVE"
+                              ? "Deactivate"
+                              : "Activate"}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -297,13 +359,15 @@ export default function UsersAdminPage() {
             </Table>
           </div>
 
-          {filteredUsers.length === 0 && (
+          {users?.length === 0 && (
             <div className="text-center py-8">
-              <p className="text-muted-foreground">No users found matching your search.</p>
+              <p className="text-muted-foreground">
+                No users found matching your search.
+              </p>
             </div>
           )}
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
