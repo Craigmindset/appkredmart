@@ -1056,9 +1056,9 @@ function OrderSummary({
           <Row
             label={
               <span className="flex items-center gap-1">
-                Insurance
+                <span className="font-semibold text-green-700">Insurance</span>
                 <span className="text-xs text-gray-500">
-                  ({insurance.description})
+                  (Device Protection)
                 </span>
               </span>
             }
@@ -1131,17 +1131,17 @@ function OrderSummary({
       {/* --- 🛡️ Protection Upsell --- */}
       <button
         onClick={onToggleProtection}
-        className="mt-3 w-full flex items-center gap-3 rounded-lg border border-blue-100 bg-blue-50/60 hover:bg-blue-100/70 transition p-3 text-left"
+        className="mt-3 w-full flex items-center gap-3 rounded-lg border border-blue-100 bg-blue-50/60 hover:bg-blue-100/70 transition p-2 text-left"
         aria-label="Open device protection options"
       >
         <div className="shrink-0 rounded-md bg-white p-2 border">
           <Image src="/Cubecover.png" alt="Cubecover" width={28} height={28} />
         </div>
-        <div className="flex-1">
-          <p className="text-sm font-semibold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis">
+        <div className="flex-1 ">
+          <p className="text-xs font-semibold text-gray-900 ">
             Get a screen & water protection cover
           </p>
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-gray-600 ">
             Protect your device from accidental damage. See flexible 1-year
             options.
           </p>
