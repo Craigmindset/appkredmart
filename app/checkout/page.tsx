@@ -102,6 +102,7 @@ export default function CheckoutPage() {
         email: user.email || "",
         firstName: user.firstName || "",
         lastName: user.lastName || "",
+        phone: user.phone || "",
       }));
     }
   }, [user]);
@@ -403,7 +404,7 @@ export default function CheckoutPage() {
                       required
                     />
                   </div>
-                  {/* ...existing delivery fields... */}
+                  {/* First Name and Last Name */}
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       First Name *
@@ -430,6 +431,21 @@ export default function CheckoutPage() {
                       required
                     />
                   </div>
+                  {/* Phone Number field (moved here) */}
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Phone Number *
+                    </label>
+                    <Input
+                      name="phone"
+                      value={guestInfo.phone}
+                      onChange={handleGuestInfoChange}
+                      placeholder="Phone number"
+                      className="h-10 text-sm"
+                      required
+                    />
+                  </div>
+                  {/* Address */}
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       Address *
@@ -832,7 +848,7 @@ function OrderSummary({
               <p className="text-xs text-gray-600">Qty: {item.quantity}</p>
             </div>
             <span className="text-sm font-semibold">
-              ₦{(item.product.price * item.quantity).toFixed(2)}
+              {money(item.product.price * item.quantity)}
             </span>
           </div>
         ))}
@@ -840,18 +856,18 @@ function OrderSummary({
 
       {/* Totals */}
       <div className="space-y-2 mb-3 border-t pt-2">
-        <Row label="Subtotal" value={`₦${subtotal.toFixed(2)}`} />
+        <Row label="Subtotal" value={money(subtotal)} />
         <Row
           label="Delivery"
           value={<span className="text-green-600 font-semibold">Free</span>}
         />
-        <Row label="VAT" value={`₦${vat.toFixed(2)}`} />
+        <Row label="VAT" value={money(vat)} />
 
         {selectedPaymentMethod === "bnpl" && (
           <div className="bg-blue-50 p-3 rounded-lg text-sm">
             <Row
               label="Monthly Payment"
-              value={`₦${calculateBnplPayment().toFixed(2)}`}
+              value={money(calculateBnplPayment())}
               tight
             />
             <Row
@@ -867,7 +883,7 @@ function OrderSummary({
 
         {selectedPaymentMethod === "wallet" && (
           <div className="bg-purple-50 p-3 rounded-lg text-sm">
-            <Row label="Loan Amount" value={`₦${total.toFixed(2)}`} tight />
+            <Row label="Loan Amount" value={money(total)} tight />
             <Row
               label="Provider"
               value={
@@ -897,7 +913,7 @@ function OrderSummary({
               Total
             </span>
             <span className="text-base font-bold text-[#466cf4]">
-              ₦{total.toFixed(2)}
+              {money(total)}
             </span>
           </div>
         </div>
