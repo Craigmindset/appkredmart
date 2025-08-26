@@ -143,7 +143,7 @@ const adminNavItems: AdminNavItem[] = [
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { currentUser, hasAnyPermission } = useAdminRBACStore();
+  // const { currentUser, hasAnyPermission } = useAdminRBACStore();
   const { mutateAsync: signOut } = useLogout();
   const { user, loading } = useUser();
   const { balance } = useWallet();
@@ -166,6 +166,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const visibleNavItems = adminNavItems.filter((item) => {
     if (item.title === "Wallet" && user?.position === "super-admin") {
       return true;
+      // return user.position
     }
     // return hasAnyPermission(item.permissions);
     return true;
@@ -247,14 +248,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               </p>
               <p className="text-xs text-blue-300 truncate">{user?.email}</p>
               {/* Only show the role badge, remove any duplicate role text */}
-              {currentUser && (
+              {user && (
                 <Badge
                   variant="outline"
                   className={`text-xs mt-1 ${getRoleBadgeColor(
-                    currentUser.role
+                    user.position || ""
                   )}`}
                 >
-                  {currentUser.role.replace("-", " ").toUpperCase()}
+                  {(user.position || "").replace("-", " ").toUpperCase()}
                 </Badge>
               )}
             </div>
@@ -286,7 +287,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                   Admin Dashboard
                 </h1>
                 <p className="text-sm text-gray-500">
-                  {currentUser
+                  {user
                     ? `Welcome, ${user?.firstname} ${user?.lastname}`
                     : "Manage your platform"}
                 </p>

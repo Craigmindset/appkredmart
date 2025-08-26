@@ -3,8 +3,8 @@
 import React, { useRef, useEffect } from "react";
 
 export default function ThreeColumnAd() {
-  const row1Ref = useRef<HTMLDivElement>(null);
-  const row2Ref = useRef<HTMLDivElement>(null);
+  const row1Ref = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
+  const row2Ref = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
 
   // Auto-scroll logic for mobile
   useEffect(() => {

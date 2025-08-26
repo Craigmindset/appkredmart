@@ -19,11 +19,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 export default function SignInPage() {
   const router = useRouter();
+  // Prefill email from localStorage if available
+  const [initialEmail, setInitialEmail] = useState("");
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const cachedEmail = localStorage.getItem("kredmart_email");
+      if (cachedEmail) setInitialEmail(cachedEmail);
+    }
+  }, []);
 
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -34,6 +42,10 @@ export default function SignInPage() {
   const setUser = useAuth((s: any) => s.setUser);
 
   async function onSubmit(data: loginSchemaType) {
+    // Cache email in localStorage
+    if (typeof window !== "undefined") {
+      localStorage.setItem("kredmart_email", data.email);
+    }
     await mutateAsync(data).then(async (result) => {
       // Fetch user profile from backend
       try {
@@ -57,7 +69,7 @@ export default function SignInPage() {
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
+      email: initialEmail,
       password: "",
     },
   });
