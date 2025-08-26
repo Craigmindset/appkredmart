@@ -137,8 +137,9 @@ export default function CheckoutPage() {
     useState("creditloan");
   const [isProcessing, setIsProcessing] = useState(false);
 
-  /** Mobile summary toggle */
+  /** Mobile toggles */
   const [showSummaryMobile, setShowSummaryMobile] = useState(false);
+  const [showDeliveryMobile, setShowDeliveryMobile] = useState(false);
 
   /** Delivery/Contact (shared) */
   const [guestInfo, setGuestInfo] = useState({
@@ -164,7 +165,6 @@ export default function CheckoutPage() {
   /** Smooth scroll to the protection section when it opens */
   useEffect(() => {
     if (showProtection && protectionRef.current) {
-      // slight delay ensures DOM is painted before scrolling
       const t = setTimeout(
         () =>
           protectionRef.current?.scrollIntoView({
@@ -202,6 +202,11 @@ export default function CheckoutPage() {
   /** Which methods require full address form */
   const requiresDeliveryForm =
     selectedPaymentMethod === "bnpl" || selectedPaymentMethod === "wallet";
+
+  /** Auto-open mobile delivery when an address is required */
+  useEffect(() => {
+    if (requiresDeliveryForm) setShowDeliveryMobile(true);
+  }, [requiresDeliveryForm]);
 
   /** Form change */
   const handleGuestInfoChange = (
@@ -451,189 +456,52 @@ export default function CheckoutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
           {/* Left: Forms */}
           <div className="lg:col-span-2 space-y-4">
-            {/* Delivery Information */}
+            {/* Delivery Information — mobile collapsible */}
             {(selectedPaymentMethod === "paystack" || requiresDeliveryForm) && (
-              <section className="bg-white rounded-xl border shadow-sm p-4">
+              <div className="lg:hidden">
+                <button
+                  onClick={() => setShowDeliveryMobile((s) => !s)}
+                  className="mb-2 w-full flex items-center justify-between rounded-md bg-white border px-3 py-2 text-sm"
+                  aria-expanded={showDeliveryMobile}
+                  aria-controls="delivery-mobile-panel"
+                >
+                  <span className="font-medium">Delivery Information</span>
+                  {showDeliveryMobile ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
+                </button>
+
+                {showDeliveryMobile && (
+                  <section
+                    id="delivery-mobile-panel"
+                    className="bg-white rounded-xl border shadow-sm p-4"
+                  >
+                    <h2 className="text-base font-semibold text-gray-900 mb-3">
+                      Delivery Information
+                    </h2>
+
+                    <DeliveryForm
+                      guestInfo={guestInfo}
+                      onChange={handleGuestInfoChange}
+                    />
+                  </section>
+                )}
+              </div>
+            )}
+
+            {/* Delivery Information — desktop always visible */}
+            {(selectedPaymentMethod === "paystack" || requiresDeliveryForm) && (
+              <section className="hidden lg:block bg-white rounded-xl border shadow-sm p-4">
                 <h2 className="text-base font-semibold text-gray-900 mb-3">
                   Delivery Information
                 </h2>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {/* Email */}
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      Email *
-                    </label>
-                    <Input
-                      name="email"
-                      value={guestInfo.email}
-                      onChange={handleGuestInfoChange}
-                      placeholder="you@email.com"
-                      className="h-10 text-sm"
-                      required
-                    />
-                  </div>
-
-                  {/* Names */}
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      First Name *
-                    </label>
-                    <Input
-                      name="firstName"
-                      value={guestInfo.firstName}
-                      onChange={handleGuestInfoChange}
-                      placeholder="First name"
-                      className="h-10 text-sm"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      Last Name *
-                    </label>
-                    <Input
-                      name="lastName"
-                      value={guestInfo.lastName}
-                      onChange={handleGuestInfoChange}
-                      placeholder="Last name"
-                      className="h-10 text-sm"
-                      required
-                    />
-                  </div>
-
-                  {/* Phone */}
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      Phone Number *
-                    </label>
-                    <Input
-                      name="phone"
-                      value={guestInfo.phone}
-                      onChange={handleGuestInfoChange}
-                      placeholder="Phone number"
-                      className="h-10 text-sm"
-                      required
-                    />
-                  </div>
-
-                  {/* Address */}
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      Address *
-                    </label>
-                    <Input
-                      name="address"
-                      value={guestInfo.address}
-                      onChange={handleGuestInfoChange}
-                      placeholder="Street address"
-                      className="h-10 text-sm"
-                      required
-                    />
-                  </div>
-
-                  {/* City / State */}
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      City *
-                    </label>
-                    <Input
-                      name="city"
-                      value={guestInfo.city}
-                      onChange={handleGuestInfoChange}
-                      placeholder="City"
-                      className="h-10 text-sm"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      State *
-                    </label>
-                    <input
-                      name="state"
-                      value={guestInfo.state}
-                      onChange={handleGuestInfoChange}
-                      placeholder="State"
-                      list="states"
-                      className="h-10 text-sm border rounded-md px-3 w-full"
-                      required
-                    />
-                    <datalist id="states">
-                      {[
-                        "Abia",
-                        "Adamawa",
-                        "Akwa Ibom",
-                        "Anambra",
-                        "Bauchi",
-                        "Bayelsa",
-                        "Benue",
-                        "Borno",
-                        "Cross River",
-                        "Delta",
-                        "Ebonyi",
-                        "Edo",
-                        "Ekiti",
-                        "Enugu",
-                        "FCT",
-                        "Gombe",
-                        "Imo",
-                        "Jigawa",
-                        "Kaduna",
-                        "Kano",
-                        "Katsina",
-                        "Kebbi",
-                        "Kogi",
-                        "Kwara",
-                        "Lagos",
-                        "Nasarawa",
-                        "Niger",
-                        "Ogun",
-                        "Ondo",
-                        "Osun",
-                        "Oyo",
-                        "Plateau",
-                        "Rivers",
-                        "Sokoto",
-                        "Taraba",
-                        "Yobe",
-                        "Zamfara",
-                      ].map((s) => (
-                        <option key={s} value={s} />
-                      ))}
-                    </datalist>
-                  </div>
-
-                  {/* Landmark */}
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      Nearest Landmark
-                    </label>
-                    <select
-                      name="landmark"
-                      value={guestInfo.landmark}
-                      onChange={handleGuestInfoChange}
-                      className="h-10 text-sm border rounded-md px-3 bg-white w-full focus:outline-none focus:ring-2 focus:ring-[#466cf4]"
-                    >
-                      <option value="">Select Nearest Landmark</option>
-                      {landmarkAddresses.map((address, idx) => {
-                        const match = address.match(
-                          /^(.*?)\s*-\s*(.*?)(,\s*([A-Za-z ]+),\s*NG)?$/
-                        );
-                        let label = address;
-                        if (match) {
-                          label = match[1];
-                          if (match[4]) label += ` (${match[4]})`;
-                        }
-                        return (
-                          <option key={idx} value={address} title={address}>
-                            {label}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </div>
-                </div>
+                <DeliveryForm
+                  guestInfo={guestInfo}
+                  onChange={handleGuestInfoChange}
+                />
               </section>
             )}
 
@@ -825,7 +693,7 @@ export default function CheckoutPage() {
                 onToggleProtection={() => setShowProtection(true)}
               />
 
-              {/* Device Protection (collapsible on desktop) */}
+              {/* Device Protection (collapsible on desktop via button) */}
               <section ref={protectionRef}>
                 <DeviceProtection
                   open={showProtection}
@@ -847,6 +715,205 @@ export default function CheckoutPage() {
 /** -----------------------------------------------------------------------
  * UI Partials
  * ----------------------------------------------------------------------*/
+
+/** Delivery Form (reusable) */
+function DeliveryForm({
+  guestInfo,
+  onChange,
+}: {
+  guestInfo: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    address: string;
+    city: string;
+    state: string;
+    landmark: string;
+  };
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => void;
+}) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {/* Email */}
+      <div className="sm:col-span-2">
+        <label className="block text-xs font-medium text-gray-700 mb-1">
+          Email *
+        </label>
+        <Input
+          name="email"
+          value={guestInfo.email}
+          onChange={onChange}
+          placeholder="you@email.com"
+          className="h-10 text-sm"
+          required
+        />
+      </div>
+
+      {/* Names */}
+      <div>
+        <label className="block text-xs font-medium text-gray-700 mb-1">
+          First Name *
+        </label>
+        <Input
+          name="firstName"
+          value={guestInfo.firstName}
+          onChange={onChange}
+          placeholder="First name"
+          className="h-10 text-sm"
+          required
+        />
+      </div>
+      <div>
+        <label className="block text-xs font-medium text-gray-700 mb-1">
+          Last Name *
+        </label>
+        <Input
+          name="lastName"
+          value={guestInfo.lastName}
+          onChange={onChange}
+          placeholder="Last name"
+          className="h-10 text-sm"
+          required
+        />
+      </div>
+
+      {/* Phone */}
+      <div className="sm:col-span-2">
+        <label className="block text-xs font-medium text-gray-700 mb-1">
+          Phone Number *
+        </label>
+        <Input
+          name="phone"
+          value={guestInfo.phone}
+          onChange={onChange}
+          placeholder="Phone number"
+          className="h-10 text-sm"
+          required
+        />
+      </div>
+
+      {/* Address */}
+      <div className="sm:col-span-2">
+        <label className="block text-xs font-medium text-gray-700 mb-1">
+          Address *
+        </label>
+        <Input
+          name="address"
+          value={guestInfo.address}
+          onChange={onChange}
+          placeholder="Street address"
+          className="h-10 text-sm"
+          required
+        />
+      </div>
+
+      {/* City / State */}
+      <div>
+        <label className="block text-xs font-medium text-gray-700 mb-1">
+          City *
+        </label>
+        <Input
+          name="city"
+          value={guestInfo.city}
+          onChange={onChange}
+          placeholder="City"
+          className="h-10 text-sm"
+          required
+        />
+      </div>
+      <div>
+        <label className="block text-xs font-medium text-gray-700 mb-1">
+          State *
+        </label>
+        <input
+          name="state"
+          value={guestInfo.state}
+          onChange={onChange}
+          placeholder="State"
+          list="states"
+          className="h-10 text-sm border rounded-md px-3 w-full"
+          required
+        />
+        <datalist id="states">
+          {[
+            "Abia",
+            "Adamawa",
+            "Akwa Ibom",
+            "Anambra",
+            "Bauchi",
+            "Bayelsa",
+            "Benue",
+            "Borno",
+            "Cross River",
+            "Delta",
+            "Ebonyi",
+            "Edo",
+            "Ekiti",
+            "Enugu",
+            "FCT",
+            "Gombe",
+            "Imo",
+            "Jigawa",
+            "Kaduna",
+            "Kano",
+            "Katsina",
+            "Kebbi",
+            "Kogi",
+            "Kwara",
+            "Lagos",
+            "Nasarawa",
+            "Niger",
+            "Ogun",
+            "Ondo",
+            "Osun",
+            "Oyo",
+            "Plateau",
+            "Rivers",
+            "Sokoto",
+            "Taraba",
+            "Yobe",
+            "Zamfara",
+          ].map((s) => (
+            <option key={s} value={s} />
+          ))}
+        </datalist>
+      </div>
+
+      {/* Landmark */}
+      <div className="sm:col-span-2">
+        <label className="block text-xs font-medium text-gray-700 mb-1">
+          Nearest Landmark
+        </label>
+        <select
+          name="landmark"
+          value={guestInfo.landmark}
+          onChange={onChange}
+          className="h-10 text-sm border rounded-md px-3 bg-white w-full focus:outline-none focus:ring-2 focus:ring-[#466cf4]"
+        >
+          <option value="">Select Nearest Landmark</option>
+          {landmarkAddresses.map((address, idx) => {
+            const match = address.match(
+              /^(.*?)\s*-\s*(.*?)(,\s*([A-Za-z ]+),\s*NG)?$/
+            );
+            let label = address;
+            if (match) {
+              label = match[1];
+              if (match[4]) label += ` (${match[4]})`;
+            }
+            return (
+              <option key={idx} value={address} title={address}>
+                {label}
+              </option>
+            );
+          })}
+        </select>
+      </div>
+    </div>
+  );
+}
 
 /** Payment Card */
 function PaymentCard({
@@ -1061,29 +1128,17 @@ function OrderSummary({
         <span>Secure & encrypted payment</span>
       </div>
 
-      {/* --- 🛡️ Protection Upsell (your request) --- */}
+      {/* --- 🛡️ Protection Upsell --- */}
       <button
         onClick={onToggleProtection}
         className="mt-3 w-full flex items-center gap-3 rounded-lg border border-blue-100 bg-blue-50/60 hover:bg-blue-100/70 transition p-3 text-left"
         aria-label="Open device protection options"
       >
-        {/* Replace src with your brand/logo if available */}
         <div className="shrink-0 rounded-md bg-white p-2 border">
-          <Image
-            src="/Cubecover.png" // fallback to shield icon if you don't have a logo
-            alt="Cubecover"
-            width={28}
-            height={28}
-            onError={(e) => {
-              // if logo missing, quietly show nothing; icon on the right covers it
-            }}
-          />
+          <Image src="/Cubecover.png" alt="Cubecover" width={28} height={28} />
         </div>
         <div className="flex-1">
-          <p
-            className="text-sm font-semibold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis"
-            style={{ width: "100%" }}
-          >
+          <p className="text-sm font-semibold text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis">
             Get a screen & water protection cover
           </p>
           <p className="text-xs text-gray-600">
@@ -1153,10 +1208,8 @@ function DeviceProtection({
   selected: string | null;
   onSelect: (id: string | null) => void;
 }) {
-  if (!open) {
-    // Keep DOM light when hidden on desktop; on mobile this is after summary toggle so it's fine to unmount
-    return null;
-  }
+  if (!open) return null;
+
   return (
     <section className="bg-white rounded-xl border shadow-sm p-4">
       <div className="flex items-center justify-between mb-2">
@@ -1178,10 +1231,8 @@ function DeviceProtection({
         device value.
       </p>
 
-      {/* Your existing Insurance options UI */}
       <Insurance selected={selected} onSelect={(id) => onSelect(id)} />
 
-      {/* Tiny helper text */}
       {selected && (
         <div className="mt-2 text-[11px] text-green-700 bg-green-50 border border-green-100 rounded-md px-2 py-1">
           <span className="font-medium">Added:</span>{" "}
