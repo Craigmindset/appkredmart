@@ -1135,13 +1135,13 @@ function OrderSummary({
         aria-label="Open device protection options"
       >
         <div className="shrink-0 rounded-md bg-white p-2 border">
-          <Image src="/Cubecover.png" alt="Cubecover" width={28} height={28} />
+          <Image src="/cubecover.png" alt="Cubecover" width={28} height={28} />
         </div>
         <div className="flex-1 ">
           <p className="text-xs font-semibold text-gray-900 ">
             Get a screen & water protection cover
           </p>
-          <p className="text-xs text-gray-600 ">
+          <p className="text-sm text-gray-600 ">
             Protect your device from accidental damage. See flexible 1-year
             options.
           </p>
