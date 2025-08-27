@@ -7,6 +7,7 @@ import LayoutShell from "@/components/layout-shell";
 import Newsletter from "@/components/newsletter";
 import TestimonialsSlider from "@/components/testimonials-slider";
 import { ProductDeals } from "./page-client";
+import Chat from "@/components/Chat";
 
 export default function Page() {
   return (
@@ -18,6 +19,7 @@ export default function Page() {
       <ThreeColumnAd />
       <TestimonialGrid />
       <Newsletter />
+      <Chat />
     </LayoutShell>
   );
 }
