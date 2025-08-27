@@ -26,6 +26,7 @@ export const fetchUser = async () => {
 export const useUser = () => {
   const {
     error,
+    refetch,
     isPending: loading,
     data,
   } = useQuery({
@@ -33,5 +34,5 @@ export const useUser = () => {
     queryFn: fetchUser,
   });
 
-  return { user: data, loading, error };
+  return { user: data, loading, error, refetch };
 };
