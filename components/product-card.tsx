@@ -20,12 +20,21 @@ import { GetProductDto } from "@/lib/services/products/products";
 export default function ProductCard({ product }: { product: GetProductDto }) {
   const [open, setOpen] = useState(false);
   const [qty, setQty] = useState(1);
+  const [added, setAdded] = useState(false);
   const add = useCart((s) => s.add);
   const { toast } = useToast();
 
   const onAdd = (q = 1) => {
     add(product as any, q);
     toast({ title: "Added to cart", description: product.name });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1200);
+  };
+
+  // Reset added state when modal closes
+  const handleOpenChange = (v: boolean) => {
+    setOpen(v);
+    if (!v) setAdded(false);
   };
 
   return (
@@ -88,11 +97,14 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
       </div>
 
       {/* Modal */}
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="max-w-4xl p-0 overflow-hidden rounded-2xl bg-white shadow-2xl border-0 my-8 max-h-[80vh]">
           <div className="flex flex-col md:flex-row min-h-[340px] max-h-[75vh] overflow-y-auto">
             {/* Left: Main Image + Thumbnails */}
-            <div className="md:w-1/2 bg-gray-50 flex flex-col items-center justify-center p-4 md:p-6 md:sticky md:top-0 md:self-start" style={{ zIndex: 1 }}>
+            <div
+              className="md:w-1/2 bg-gray-50 flex flex-col items-center justify-center p-4 md:p-6 md:sticky md:top-0 md:self-start"
+              style={{ zIndex: 1 }}
+            >
               <Image
                 src={product.images?.[0] ?? product.image ?? "/placeholder.svg"}
                 alt={product.name + " main"}
@@ -157,7 +169,9 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
                 {/* Key Features / Specs */}
                 {Array.isArray(product?.specs) && product.specs.length > 0 && (
                   <div className="mb-3">
-                    <h4 className="text-xs font-semibold text-gray-800 mb-1">Key Features</h4>
+                    <h4 className="text-xs font-semibold text-gray-800 mb-1">
+                      Key Features
+                    </h4>
                     <ul className="list-disc list-inside text-xs text-gray-500 space-y-1">
                       {product.specs.map((s) => (
                         <li key={s}>{s}</li>
@@ -180,10 +194,14 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
                   className="w-14 h-8 text-xs"
                 />
                 <Button
-                  className="ml-auto px-3 py-1.5 text-xs rounded-md"
+                  className={`ml-auto px-3 py-1.5 text-xs rounded-md transition-colors ${
+                    added ? "bg-green-600 hover:bg-green-700 text-white" : ""
+                  }`}
                   onClick={() => onAdd(qty)}
                 >
-                  {"Add to cart — " + formatNaira(qty * product.price)}
+                  {added
+                    ? "Added!"
+                    : "Add to cart — " + formatNaira(qty * product.price)}
                 </Button>
               </div>
             </div>
