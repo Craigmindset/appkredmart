@@ -150,7 +150,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
   const handleLogout = async () => {
     await signOut().then(() => {
-      router.push("/admin");
+      redirect("/admin");
     });
   };
 

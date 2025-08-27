@@ -1,12 +1,17 @@
 "use client";
 
 import React from "react";
-import { demoMerchant } from "@/lib/merchant-demo";
 
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarInset,
   SidebarMenu,
@@ -14,28 +19,23 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
 } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useLogout } from "@/lib/services/auth/use-logout";
+import { useUser } from "@/lib/services/user/user";
+import { useMerchantWallet } from "@/lib/services/wallet/use-merchant-wallet";
 import {
-  LogOut,
-  Wallet,
-  ShoppingBag,
-  LayoutList,
   Boxes,
-  Upload,
+  Home,
+  LayoutList,
+  LogOut,
   PackageSearch,
   Settings,
-  Home,
+  ShoppingBag,
+  Upload,
+  Wallet,
 } from "lucide-react";
-import { useUser } from "@/lib/services/user/user";
-import { useLogout } from "@/lib/services/auth/use-logout";
+import Link from "next/link";
+import { redirect, usePathname } from "next/navigation";
 
 const merchantNavItems = [
   { label: "Overview", href: "/admindesk/dashboard/overview", icon: Home },
@@ -70,6 +70,7 @@ export function MerchantDashboardShell({
   children: React.ReactNode;
 }) {
   const { user } = useUser();
+  const { data: wallet } = useMerchantWallet();
   const { mutateAsync: logout } = useLogout();
   const pathname = usePathname();
 
@@ -77,9 +78,10 @@ export function MerchantDashboardShell({
     (user?.firstname?.[0] ?? "") +
     (user?.lastname?.[0] ?? (user?.firstname ? "" : "M"));
 
-  const handleLogout = () => {
-    // Since auth is removed, just redirect to merchant sign-in
-    window.location.href = "/admindesk";
+  const handleLogout = async () => {
+    await logout().then(() => {
+      redirect("/admindesk");
+    });
   };
 
   return (
@@ -189,7 +191,7 @@ export function MerchantDashboardShell({
               >
                 <Wallet className="h-4 w-4 text-green-300" />
                 <span className="hidden sm:inline text-sm font-medium text-white">
-                  ₦{demoMerchant.balance.toLocaleString()}
+                  ₦{wallet?.balance.toLocaleString()}
                 </span>
               </Link>
               {/* Profile */}

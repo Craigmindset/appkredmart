@@ -47,8 +47,7 @@ import {
 import { toast } from "sonner";
 
 import { demoMerchant } from "@/lib/merchant-demo";
-// Demo wallet data (shared)
-const walletData = demoMerchant;
+import { useMerchantWallet } from "@/lib/services/wallet/use-merchant-wallet";
 
 // Demo transaction data
 const demoTransactions = [
@@ -131,6 +130,7 @@ export function Wallet() {
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [showPinModal, setShowPinModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const { data: wallet } = useMerchantWallet();
   const [withdrawalData, setWithdrawalData] = useState({
     receiverBank: "",
     receiverAccount: "",
@@ -155,7 +155,7 @@ export function Wallet() {
       return;
     }
 
-    if (Number.parseFloat(withdrawalData.amount) > walletData.balance) {
+    if (Number.parseFloat(withdrawalData.amount) > (wallet?.balance || 0)) {
       toast.error("Insufficient balance");
       return;
     }
@@ -238,7 +238,7 @@ export function Wallet() {
                 <div className="flex items-center gap-3">
                   <div className="text-2xl font-bold">
                     {showBalance
-                      ? `₦${walletData.balance.toLocaleString()}`
+                      ? `₦${(wallet?.balance || 0).toLocaleString()}`
                       : "₦****"}
                   </div>
                   <Button
@@ -287,13 +287,13 @@ export function Wallet() {
               </Label>
               <div className="flex items-center justify-between mt-1 p-2 bg-muted rounded-md">
                 <span className="text-sm font-medium truncate">
-                  {walletData.accountName}
+                  {wallet?.accountName}
                 </span>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() =>
-                    copyToClipboard(walletData.accountName, "Account name")
+                    copyToClipboard(wallet?.accountName || "", "Account name")
                   }
                   className="h-6 w-6 p-0 ml-2"
                 >
@@ -308,13 +308,16 @@ export function Wallet() {
               </Label>
               <div className="flex items-center justify-between mt-1 p-2 bg-muted rounded-md">
                 <span className="text-sm font-mono font-medium">
-                  {walletData.accountNumber}
+                  {wallet?.accountNumber}
                 </span>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() =>
-                    copyToClipboard(walletData.accountNumber, "Account number")
+                    copyToClipboard(
+                      wallet?.accountNumber || "",
+                      "Account number"
+                    )
                   }
                   className="h-6 w-6 p-0 ml-2"
                 >
@@ -328,9 +331,7 @@ export function Wallet() {
                 Bank Name
               </Label>
               <div className="mt-1 p-2 bg-muted rounded-md">
-                <span className="text-sm font-medium">
-                  {walletData.bankName}
-                </span>
+                <span className="text-sm font-medium">{wallet?.bankName}</span>
               </div>
             </div>
           </CardContent>
@@ -533,7 +534,7 @@ export function Wallet() {
                 }
               />
               <div className="text-sm text-muted-foreground mt-1">
-                Available: ₦{walletData.balance.toLocaleString()}
+                Available: ₦{(wallet?.balance || 0).toLocaleString()}
               </div>
             </div>
 
