@@ -94,8 +94,8 @@ const Chat: React.FC = () => {
     <div
       className="fixed z-50 flex flex-col items-end"
       style={{
-        // Respect iOS/Android safe areas so it doesn’t hug the screen edges
-        right: "max(1rem, env(safe-area-inset-right))",
+        // On mobile, move more to the left; on desktop, keep at 1rem
+        right: `max(1rem, env(safe-area-inset-right), ${typeof window !== 'undefined' && window.innerWidth <= 640 ? '3rem' : '1rem'})`,
         bottom: "max(1rem, env(safe-area-inset-bottom))",
       }}
       onKeyDown={onKeyDown}
