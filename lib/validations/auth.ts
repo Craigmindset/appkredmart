@@ -17,6 +17,16 @@ export const registerSchema = z.object({
 
 export type registerSchemaType = z.infer<typeof registerSchema>;
 
+export const merchantRegisterSchema = registerSchema.extend({
+  token: z.string(),
+  position: z.string(),
+  company: z.string(),
+  cac: z.string(),
+  document: z.string(),
+});
+
+export type merchantRegisterSchemaType = z.infer<typeof merchantRegisterSchema>;
+
 export const registerPasswordSchema = z
   .object({
     password: z.string().min(6, "Password must be at least 6 characters"),

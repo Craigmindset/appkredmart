@@ -34,6 +34,8 @@ import {
   Settings,
   Home,
 } from "lucide-react";
+import { useUser } from "@/lib/services/user/user";
+import { useLogout } from "@/lib/services/auth/use-logout";
 
 const merchantNavItems = [
   { label: "Overview", href: "/admindesk/dashboard/overview", icon: Home },
@@ -67,11 +69,13 @@ export function MerchantDashboardShell({
 }: {
   children: React.ReactNode;
 }) {
+  const { user } = useUser();
+  const { mutateAsync: logout } = useLogout();
   const pathname = usePathname();
 
   const initials =
-    (demoMerchant?.firstName?.[0] ?? "") +
-    (demoMerchant?.lastName?.[0] ?? (demoMerchant?.firstName ? "" : "M"));
+    (user?.firstname?.[0] ?? "") +
+    (user?.lastname?.[0] ?? (user?.firstname ? "" : "M"));
 
   const handleLogout = () => {
     // Since auth is removed, just redirect to merchant sign-in
@@ -129,11 +133,9 @@ export function MerchantDashboardShell({
             </Avatar>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-white truncate">
-                {demoMerchant.storeName}
+                {user?.company}
               </p>
-              <p className="text-xs text-blue-300 truncate">
-                {demoMerchant.email}
-              </p>
+              <p className="text-xs text-blue-300 truncate">{user?.email}</p>
             </div>
           </div>
           <SidebarMenu>
@@ -161,7 +163,7 @@ export function MerchantDashboardShell({
                   Merchant Dashboard
                 </h1>
                 <p className="text-sm text-blue-200">
-                  Welcome, {demoMerchant.firstName}
+                  Welcome, {user?.firstname}
                 </p>
               </div>
             </div>
@@ -202,7 +204,7 @@ export function MerchantDashboardShell({
                   </AvatarFallback>
                 </Avatar>
                 <span className="hidden sm:inline text-sm font-medium text-white">
-                  {demoMerchant.firstName}
+                  {user?.firstname}
                 </span>
               </Button>
               {/* Logout */}

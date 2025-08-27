@@ -1,27 +1,20 @@
 "use client";
 
-import type React from "react";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useAdminRBACStore, type AdminRole } from "@/store/admin-rbac-store";
 import { toast } from "@/hooks/use-toast";
-import { Eye, EyeOff, Shield, User, X } from "lucide-react";
 import { useAdminLogin } from "@/lib/services/auth/use-admin-login";
+import { type AdminRole } from "@/store/admin-rbac-store";
+import { Eye, EyeOff, Shield, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import type React from "react";
+import { useEffect, useState } from "react";
 
 export default function AdminSignIn() {
   const router = useRouter();
-  const { signIn } = useAdminRBACStore();
+
   const [showPassword, setShowPassword] = useState(false);
   const { mutateAsync, loading } = useAdminLogin();
   // Prefill email from localStorage if available

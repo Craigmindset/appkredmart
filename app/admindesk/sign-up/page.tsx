@@ -10,7 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { StepProgress } from "@/components/step-progress";
 import { BadgeCheck, Badge, KeyRound, Lock, Eye, EyeOff } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
+import { useMerchantRegister } from "@/lib/services/auth/use-merchant-register";
+import { useVerifyMerchantEmailOtp } from "@/lib/services/auth/use-merchant-verify";
+import { useMerchantAddPassword } from "@/lib/services/auth/use-merchant-add-password";
 
 type Step = 1 | 2 | 3 | 4;
 const DEMO_MERCHANT_ID = "KM02341";
@@ -70,7 +73,6 @@ function Timeline({ current }: { current: Step }) {
 
 export default function MerchantSignUpPage() {
   const router = useRouter();
-  const { toast } = useToast();
 
   const [step, setStep] = useState<Step>(1);
 
@@ -82,6 +84,10 @@ export default function MerchantSignUpPage() {
   const [companyName, setCompanyName] = useState("");
   const [cacNumber, setCacNumber] = useState("");
   const [supportingDoc, setSupportingDoc] = useState<File | null>(null);
+
+  const { mutateAsync, loading: verifyingMerchantId } = useMerchantRegister();
+  const { verifyOtp: verifyOtpAsync, loading: verifyingOtp } =
+    useVerifyMerchantEmailOtp();
 
   const validateFileSize = (file: File | null): boolean => {
     if (!file) return false;
@@ -104,7 +110,7 @@ export default function MerchantSignUpPage() {
 
   // Step 2: merchant id verification
   const [merchantId, setMerchantId] = useState("");
-  const [verifyingMerchantId, setVerifyingMerchantId] = useState(false);
+  // const [verifyingMerchantId, setVerifyingMerchantId] = useState(false);
   const [merchantVerified, setMerchantVerified] = useState(false);
   const merchantIdValidFormat = useMemo(
     () => /^[A-Za-z0-9]{7}$/.test(merchantId),
@@ -113,62 +119,80 @@ export default function MerchantSignUpPage() {
 
   async function verifyMerchantId() {
     if (!merchantIdValidFormat) {
-      toast({
-        title: "Invalid Merchant ID format",
+      toast.error("Invalid Merchant ID format", {
         description: "Enter a 7-character code. Example: KM02341",
-        variant: "destructive",
       });
       return;
     }
-    setVerifyingMerchantId(true);
-    await new Promise((r) => setTimeout(r, 700));
-    setVerifyingMerchantId(false);
-    if (merchantId.toUpperCase() === DEMO_MERCHANT_ID) {
+    if (!supportingDoc) {
+      toast.error("Please upload supporting document");
+      return;
+    }
+    await mutateAsync({
+      firstname: firstName,
+      lastname: lastName,
+      email,
+      phone: "",
+      token: merchantId,
+      position: role,
+      company: companyName,
+      cac: cacNumber,
+      documentFile: supportingDoc,
+    }).then(() => {
       setMerchantVerified(true);
-      toast({
-        title: "Merchant ID verified",
+      setStep(3);
+      toast.success("Merchant ID verified", {
         description: "Your Merchant ID has been verified successfully.",
       });
-      setStep(3);
-    } else {
-      setMerchantVerified(false);
-      toast({
-        title: "Verification failed",
-        description:
-          "We couldn't verify this Merchant ID. Use KM02341 as the demo code.",
-        variant: "destructive",
-      });
-    }
+    });
+    // setVerifyingMerchantId(true);
+    // await new Promise((r) => setTimeout(r, 700));
+    // setVerifyingMerchantId(false);
+    // if (merchantId.toUpperCase() === DEMO_MERCHANT_ID) {
+    //   setMerchantVerified(true);
+    //   toast({
+    //     title: "Merchant ID verified",
+    //     description: "Your Merchant ID has been verified successfully.",
+    //   });
+    //   setStep(3);
+    // } else {
+    //   setMerchantVerified(false);
+    //   toast({
+    //     title: "Verification failed",
+    //     description:
+    //       "We couldn't verify this Merchant ID. Use KM02341 as the demo code.",
+    //     variant: "destructive",
+    //   });
+    // }
   }
 
   // Step 3: OTP
   const [otp, setOtp] = useState("");
-  const [verifyingOtp, setVerifyingOtp] = useState(false);
   const otpValidFormat = useMemo(() => /^\d{6}$/.test(otp), [otp]);
 
   async function verifyOtp() {
     if (!otpValidFormat) {
-      toast({
-        title: "Invalid OTP",
+      toast.error("Invalid OTP", {
         description:
           "Enter the 6-digit code sent to your email. Use 111111 for demo.",
-        variant: "destructive",
       });
       return;
     }
-    setVerifyingOtp(true);
-    await new Promise((r) => setTimeout(r, 600));
-    setVerifyingOtp(false);
-    if (otp === DEMO_OTP) {
-      toast({ title: "OTP verified", description: "Verification successful." });
-      setStep(4);
-    } else {
-      toast({
-        title: "Incorrect OTP",
-        description: "Use 111111 as the demo code.",
-        variant: "destructive",
+    await verifyOtpAsync({ token: otp }).then(() => {
+      toast.success("OTP verified", {
+        description: "Verification successful.",
       });
-    }
+      setStep(4);
+    });
+    // setVerifyingOtp(true);
+    // await new Promise((r) => setTimeout(r, 600));
+    // setVerifyingOtp(false);
+    // if (otp === DEMO_OTP) {
+    // } else {
+    //   toast.error("Incorrect OTP", {
+    //     description: "Use 111111 as the demo code.",
+    //   });
+    // }
   }
 
   // Step 4: password
@@ -176,23 +200,28 @@ export default function MerchantSignUpPage() {
   const [confirm, setConfirm] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [creating, setCreating] = useState(false);
   const passwordOk = useMemo(
     () => pwd.length >= 8 && pwd === confirm,
     [pwd, confirm]
   );
 
+  const { mutateAsync: addMerchantPasswordAsync, loading: creating } =
+    useMerchantAddPassword();
   async function onCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!passwordOk) return;
-    setCreating(true);
-    await new Promise((r) => setTimeout(r, 900));
-    setCreating(false);
-    toast({
-      title: "Account created",
-      description: "You can now sign in to your merchant dashboard.",
+    await addMerchantPasswordAsync({
+      password: pwd,
+      confirmPassword: confirm,
+    }).then((res) => {
+      toast.success("Account created", {
+        description: "You can now sign in to your merchant dashboard.",
+      });
+      router.replace("/admindesk");
     });
-    router.replace("/admindesk");
+    // setCreating(true);
+    // await new Promise((r) => setTimeout(r, 900));
+    // setCreating(false);
   }
 
   // Prevent skipping ahead without prerequisites
@@ -336,11 +365,9 @@ export default function MerchantSignUpPage() {
                           onChange={(e) => {
                             const file = e.target.files?.[0] || null;
                             if (file && !validateFileSize(file)) {
-                              toast({
-                                title: "File too large",
+                              toast.error("File too large", {
                                 description:
                                   "Please upload a file smaller than 5MB",
-                                variant: "destructive",
                               });
                               e.target.value = "";
                               return;

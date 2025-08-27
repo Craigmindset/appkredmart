@@ -11,6 +11,7 @@ interface UserResponse {
   picture?: string;
   emailVerified?: Date;
   position?: string;
+  company?: string;
   role?: "user" | "merchant" | "admin";
 }
 
