@@ -32,6 +32,8 @@ import {
   TrendingUp,
   TrendingDown,
 } from "lucide-react";
+import { useAdminFetchProducts } from "@/lib/services/products/use-admin-fetch-products";
+import { formatDate } from "date-fns";
 
 // Demo inventory data with Slot and Gbam Inc. merchants
 const mockInventoryData = Array.from({ length: 50 }, (_, i) => {
@@ -120,6 +122,9 @@ export default function InventoryAdminPage() {
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [dealFilter, setDealFilter] = useState("All");
   const [priceFilter, setPriceFilter] = useState("All");
+
+  const { data } = useAdminFetchProducts({ search: searchQuery });
+  const inventories = data?.data || [];
 
   const filteredData = useMemo(() => {
     return mockInventoryData.filter((item) => {
@@ -348,36 +353,36 @@ export default function InventoryAdminPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredData.map((item) => (
+              {inventories.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.id}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      {item.productName}
-                      {item.bestPrice && (
+                      {item.name}
+                      {/* {item?.bestPrice && (
                         <Badge
                           variant="outline"
                           className="bg-blue-50 text-blue-700 text-xs"
                         >
                           Best Price
                         </Badge>
-                      )}
+                      )} */}
                     </div>
                   </TableCell>
                   <TableCell>{item.category}</TableCell>
                   <TableCell>
                     <Badge variant="outline" className="bg-gray-50">
-                      {item.merchant}
+                      {item?.merchant?.company}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <span className="font-medium">{item.currentStock}</span>
+                    <span className="font-medium">{item?.quantity}</span>
                   </TableCell>
                   <TableCell className="font-medium">
                     {formatNaira(item.price)}
                   </TableCell>
                   <TableCell>
-                    {item.deals ? (
+                    {/* {item?.deals ? (
                       <Badge
                         variant="default"
                         className={
@@ -388,14 +393,14 @@ export default function InventoryAdminPage() {
                       >
                         {item.deals}
                       </Badge>
-                    ) : (
-                      <span className="text-muted-foreground text-sm">
-                        No deals
-                      </span>
-                    )}
+                    ) : ( */}
+                    <span className="text-muted-foreground text-sm">
+                      No deals
+                    </span>
+                    {/* )} */}
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
-                    {item.lastRestocked}
+                    {item.updatedAt && formatDate(item.updatedAt, "dd/MM/yyyy")}
                   </TableCell>
                 </TableRow>
               ))}

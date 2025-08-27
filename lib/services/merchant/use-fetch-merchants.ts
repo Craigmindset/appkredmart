@@ -14,6 +14,7 @@ export interface MerchantDto {
   position?: string;
   createdAt: Date;
   cac: string;
+  documentMedia: { original: string };
   products: { id: string; markup: number; orderItem: [] }[];
 }
 

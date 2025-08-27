@@ -1,17 +1,9 @@
 "use client";
-import { useState, useMemo, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { RBACGuard } from "@/components/admin/rbac-guard";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -19,23 +11,34 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/hooks/use-toast";
-import { RBACGuard } from "@/components/admin/rbac-guard";
 import {
-  Search,
-  Package,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "@/hooks/use-toast";
+import {
+  AdminGetProductDto,
+  useAdminFetchProducts,
+} from "@/lib/services/products/use-admin-fetch-products";
+import { useAdminUpdateProduct } from "@/lib/services/products/use-admin-update-product";
+import {
   DollarSign,
-  TrendingUp,
+  Download,
   Edit,
   Eye,
-  Download,
-  Percent,
   Loader2,
+  Package,
+  Percent,
+  Search,
+  TrendingUp,
 } from "lucide-react";
-import { useProducts } from "@/lib/services/products/use-products";
-import { GetProductDto } from "@/lib/services/products/products";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useMemo, useState } from "react";
 
 export default function ProductsAdminPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -45,53 +48,71 @@ export default function ProductsAdminPage() {
   const [bulkMarkup, setBulkMarkup] = useState("");
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [isApplyingBulk, setIsApplyingBulk] = useState(false);
-  const [editProduct, setEditProduct] = useState<GetProductDto | null>(null);
+  const [editProduct, setEditProduct] = useState<AdminGetProductDto | null>(
+    null
+  );
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
+  // const {
+  //   products,
+  //   loading,
+  //   error,
+  //   totalPages,
+  //   total,
+  //   fetchProducts,
+  //   updateProduct,
+  //   bulkUpdateMarkup,
+  // } = useAdminProducts({ limit: 50, page: currentPage });
+
   const {
-    products,
-    loading,
+    data,
+    isLoading: loading,
+    refetch,
     error,
-    totalPages,
-    total,
-    fetchProducts,
-    updateProduct,
-    bulkUpdateMarkup,
-  } = useProducts({ limit: 50, page: currentPage });
+  } = useAdminFetchProducts({
+    search: searchTerm,
+  });
 
+  const { mutateAsync: updateProductAsync, loading: updateLoading } =
+    useAdminUpdateProduct();
+  const products = data?.data || [];
   // Debounced search effect
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      fetchProducts({
-        search: searchTerm || undefined,
-        page: 1,
-        limit: 50,
-      });
-      setCurrentPage(1);
-    }, 500);
+  // useEffect(() => {
+  //   const timeoutId = setTimeout(() => {
+  //     fetchProducts({
+  //       search: searchTerm || undefined,
+  //       page: 1,
+  //       limit: 50,
+  //     });
+  //     setCurrentPage(1);
+  //   }, 500);
 
-    return () => clearTimeout(timeoutId);
-  }, [searchTerm, fetchProducts]);
+  //   return () => clearTimeout(timeoutId);
+  // }, [searchTerm, fetchProducts]);
 
   // Filter products client-side for category and merchant
-  const filteredProducts = useMemo(() => {
-    if (!products || !Array.isArray(products)) return [];
-    return products.filter((product) => {
-      const matchesCategory =
-        selectedCategory === "all" || product.category === selectedCategory;
-      const matchesMerchant =
-        selectedMerchant === "all" ||
-        product.merchant.company === selectedMerchant;
+  // const filteredProducts = useMemo(() => {
+  //   if (!products || !Array.isArray(products)) return [];
+  //   return products.filter((product) => {
+  //     const matchesCategory =
+  //       selectedCategory === "all" || product.category === selectedCategory;
+  //     const matchesMerchant =
+  //       selectedMerchant === "all" ||
+  //       product.merchant.company === selectedMerchant;
 
-      return matchesCategory && matchesMerchant;
-    });
-  }, [products, selectedCategory, selectedMerchant]);
+  //     return matchesCategory && matchesMerchant;
+  //   });
+  // }, [products, selectedCategory, selectedMerchant]);
 
   // Get unique categories and merchants from current products
   const categories = useMemo(() => {
     if (!products || !Array.isArray(products)) return [];
-    return Array.from(new Set(products.map((p) => p.category))).filter(Boolean);
+    return Array.from(
+      new Set(
+        products.flatMap((p) => p.category ?? []) // flatten all category arrays
+      )
+    ).filter(Boolean) as string[];
   }, [products]);
 
   const merchants = useMemo(() => {
@@ -124,7 +145,7 @@ export default function ProductsAdminPage() {
   // Handle select all
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedProducts(filteredProducts.map((p) => p.id));
+      setSelectedProducts(products.map((p) => p.id));
     } else {
       setSelectedProducts([]);
     }
@@ -144,7 +165,7 @@ export default function ProductsAdminPage() {
     setIsApplyingBulk(true);
 
     try {
-      await bulkUpdateMarkup(selectedProducts, Number(bulkMarkup));
+      // await bulkUpdateMarkup(selectedProducts, Number(bulkMarkup));
       setIsBulkModalOpen(false);
       setBulkMarkup("");
       setSelectedProducts([]);
@@ -155,7 +176,7 @@ export default function ProductsAdminPage() {
     }
   };
 
-  const handleEditClick = (product: GetProductDto) => {
+  const handleEditClick = (product: AdminGetProductDto) => {
     setEditProduct({ ...product });
     setEditModalOpen(true);
   };
@@ -171,15 +192,20 @@ export default function ProductsAdminPage() {
     if (!editProduct) return;
 
     try {
-      await updateProduct(editProduct.id, {
-        name: editProduct.name,
-        price: Number(editProduct.price),
-        markup: Number(editProduct.markup),
-        discount: Number(editProduct.discount),
-        quantity: Number(editProduct.quantity),
+      await updateProductAsync({
+        productId: editProduct.id,
+        productData: {
+          name: editProduct.name,
+          price: Number(editProduct.price),
+          markup: Number(editProduct.markup),
+          discount: Number(editProduct.discount),
+          quantity: Number(editProduct.quantity),
+        },
+      }).then(async () => {
+        await refetch();
+        setEditProduct(null);
+        setEditModalOpen(false);
       });
-      setEditModalOpen(false);
-      setEditProduct(null);
     } catch (error) {
       console.error("Update failed:", error);
     }
@@ -187,13 +213,13 @@ export default function ProductsAdminPage() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    fetchProducts({ page, limit: 50 });
+    // fetchProducts({ page, limit: 50 });
   };
 
   // Calculate summary stats
-  const totalProducts = total || 0;
+  const totalProducts = products.length || 0;
   const activeProducts =
-    products?.filter((p) => p.status === "Active").length || 0;
+    products?.filter((p) => p.status === "PUBLISHED").length || 0;
   const totalInventoryValue =
     products?.reduce((sum, p) => sum + (p.price || 0) * (p.quantity || 0), 0) ||
     0;
@@ -210,9 +236,9 @@ export default function ProductsAdminPage() {
             <h2 className="text-xl font-semibold text-red-600">
               Error Loading Products
             </h2>
-            <p className="text-gray-600 mt-2">{error}</p>
+            <p className="text-gray-600 mt-2">{(error as Error)?.message}</p>
             <Button
-              onClick={() => fetchProducts()}
+              onClick={() => refetch()}
               className="mt-4"
               variant="outline"
             >
@@ -378,7 +404,7 @@ export default function ProductsAdminPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>
-                Products ({filteredProducts.length})
+                Products ({products.length})
                 {loading && (
                   <Loader2 className="inline ml-2 h-4 w-4 animate-spin" />
                 )}
@@ -386,8 +412,8 @@ export default function ProductsAdminPage() {
               <div className="flex items-center gap-2">
                 <Checkbox
                   checked={
-                    selectedProducts.length === filteredProducts.length &&
-                    filteredProducts.length > 0
+                    selectedProducts.length === products.length &&
+                    products.length > 0
                   }
                   onCheckedChange={handleSelectAll}
                 />
@@ -479,7 +505,7 @@ export default function ProductsAdminPage() {
                         ))}
                       </tr>
                     ))
-                  ) : filteredProducts.length === 0 ? (
+                  ) : products.length === 0 ? (
                     <tr>
                       <td
                         colSpan={11}
@@ -489,7 +515,7 @@ export default function ProductsAdminPage() {
                       </td>
                     </tr>
                   ) : (
-                    filteredProducts.map((product) => (
+                    products.map((product) => (
                       <tr
                         key={product.id}
                         className="border-b hover:bg-gray-50"
@@ -512,7 +538,11 @@ export default function ProductsAdminPage() {
                           {product.id.slice(0, 5)}...
                         </td>
                         <td className="p-2">
-                          <Badge variant="outline">{product.category}</Badge>
+                          {product.category.map((p) => (
+                            <Badge variant="outline" className="mr-2" key={p}>
+                              {p}
+                            </Badge>
+                          ))}
                         </td>
                         <td className="p-2">
                           <Badge variant="secondary">
@@ -549,9 +579,9 @@ export default function ProductsAdminPage() {
                               max="100"
                               onChange={(e) => {
                                 const newMarkup = Number(e.target.value);
-                                updateProduct(product.id, {
-                                  markup: newMarkup,
-                                });
+                                // updateProduct(product.id, {
+                                //   markup: newMarkup,
+                                // });
                               }}
                             />
                           </RBACGuard>
@@ -609,7 +639,7 @@ export default function ProductsAdminPage() {
             </div>
 
             {/* Pagination */}
-            {totalPages > 1 && (
+            {data?.count && data.count > 1 && (
               <div className="flex items-center justify-center gap-2 mt-4">
                 <Button
                   variant="outline"
@@ -620,13 +650,13 @@ export default function ProductsAdminPage() {
                   Previous
                 </Button>
                 <span className="text-sm text-gray-600">
-                  Page {currentPage} of {totalPages}
+                  Page {currentPage} of {data?.count}
                 </span>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages || loading}
+                  disabled={currentPage === data?.count || loading}
                 >
                   Next
                 </Button>
@@ -662,7 +692,7 @@ export default function ProductsAdminPage() {
                   <Label htmlFor="merchantPrice">Merchant Price</Label>
                   <Input
                     id="merchantPrice"
-                    name="merchantPrice"
+                    name="price"
                     type="number"
                     value={editProduct.price}
                     onChange={handleEditChange}
@@ -692,18 +722,21 @@ export default function ProductsAdminPage() {
                   <Label htmlFor="stock">Stock</Label>
                   <Input
                     id="stock"
-                    name="stock"
+                    name="quantity"
                     type="number"
                     value={editProduct.quantity}
                     onChange={handleEditChange}
                   />
                 </div>
                 <div className="flex gap-2 justify-end">
-                  <Button type="submit">Save</Button>
+                  <Button type="submit" disabled={updateLoading}>
+                    Save
+                  </Button>
                   <Button
                     variant="outline"
                     type="button"
                     onClick={() => setEditModalOpen(false)}
+                    disabled={updateLoading}
                   >
                     Cancel
                   </Button>

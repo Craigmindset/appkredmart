@@ -1,9 +1,31 @@
 import { backendAxios } from "@/lib/backendaxios";
 import { useQuery } from "@tanstack/react-query";
-import { GetProductDto } from "./products";
+
+export interface AdminGetProductDto {
+  id: string;
+  name: string;
+  description: string;
+  sku: string;
+  category: string[];
+  brand?: string; // Added brand field (optional for now)
+  merchant: {
+    company: string;
+  };
+  label?: string;
+  specs?: string[];
+  price: number;
+  discount: number;
+  markup: number;
+  quantity: number;
+  status: "DRAFT" | "PUBLISHED" | "REJECTED";
+  images: string[];
+  image?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 export type ProductsResponseDto = {
-  data: GetProductDto[];
+  data: AdminGetProductDto[];
   count: number;
   offset: number;
   limit: number;
