@@ -1,13 +1,41 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Package, AlertTriangle, CheckCircle, XCircle, ChevronLeft, ChevronRight } from "lucide-react"
+import { useState, useMemo } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Search,
+  Package,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { useMerchantFetchProducts } from "@/lib/services/products/use-merchant-fetch-products";
 
 // Demo products data
 const demoProducts = [
@@ -20,7 +48,12 @@ const demoProducts = [
     price: 1250000,
     discount: 10,
     quantity: 25,
-    colors: ["Space Black", "White Titanium", "Blue Titanium", "Natural Titanium"],
+    colors: [
+      "Space Black",
+      "White Titanium",
+      "Blue Titanium",
+      "Natural Titanium",
+    ],
     image: "/placeholder.svg?height=40&width=40",
   },
   {
@@ -131,15 +164,15 @@ const demoProducts = [
     colors: ["Blue", "Black", "Light Blue"],
     image: "/placeholder.svg?height=40&width=40",
   },
-]
+];
 
 // Generate more demo data to reach 50+ items
 const generateMoreProducts = () => {
-  const additionalProducts = []
-  const baseProducts = demoProducts.slice(0, 5)
+  const additionalProducts = [];
+  const baseProducts = demoProducts.slice(0, 5);
 
   for (let i = 0; i < 45; i++) {
-    const baseProduct = baseProducts[i % baseProducts.length]
+    const baseProduct = baseProducts[i % baseProducts.length];
     additionalProducts.push({
       ...baseProduct,
       id: `PROD-${String(i + 11).padStart(3, "0")}`,
@@ -147,93 +180,126 @@ const generateMoreProducts = () => {
       quantity: Math.floor(Math.random() * 50),
       discount: Math.floor(Math.random() * 30),
       price: baseProduct.price + Math.floor(Math.random() * 100000),
-    })
+    });
   }
 
-  return [...demoProducts, ...additionalProducts]
-}
+  return [...demoProducts, ...additionalProducts];
+};
 
-const allProducts = generateMoreProducts()
+const allProducts = generateMoreProducts();
 
 const getStockStatus = (quantity: number) => {
-  if (quantity === 0) return { status: "Out of Stock", color: "bg-red-100 text-red-800", icon: XCircle }
-  if (quantity <= 10) return { status: "Low Stock", color: "bg-yellow-100 text-yellow-800", icon: AlertTriangle }
-  return { status: "In Stock", color: "bg-green-100 text-green-800", icon: CheckCircle }
-}
+  if (quantity === 0)
+    return {
+      status: "Out of Stock",
+      color: "bg-red-100 text-red-800",
+      icon: XCircle,
+    };
+  if (quantity <= 10)
+    return {
+      status: "Low Stock",
+      color: "bg-yellow-100 text-yellow-800",
+      icon: AlertTriangle,
+    };
+  return {
+    status: "In Stock",
+    color: "bg-green-100 text-green-800",
+    icon: CheckCircle,
+  };
+};
 
 const getDiscountColor = (discount: number) => {
-  if (discount === 0) return "bg-gray-100 text-gray-800"
-  if (discount <= 10) return "bg-blue-100 text-blue-800"
-  if (discount <= 20) return "bg-orange-100 text-orange-800"
-  return "bg-red-100 text-red-800"
-}
+  if (discount === 0) return "bg-gray-100 text-gray-800";
+  if (discount <= 10) return "bg-blue-100 text-blue-800";
+  if (discount <= 20) return "bg-orange-100 text-orange-800";
+  return "bg-red-100 text-red-800";
+};
 
 export function Inventory() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [brandFilter, setBrandFilter] = useState("all")
-  const [categoryFilter, setCategoryFilter] = useState("all")
-  const [priceSort, setPriceSort] = useState("none")
-  const [discountFilter, setDiscountFilter] = useState("all")
-  const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 50
+  const [searchTerm, setSearchTerm] = useState("");
+  const [brandFilter, setBrandFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [priceSort, setPriceSort] = useState("none");
+  const [discountFilter, setDiscountFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 50;
+  const { data } = useMerchantFetchProducts({ search: searchTerm });
+
+  const products = data?.data || [];
 
   // Get unique brands and categories for filters
-  const brands = [...new Set(allProducts.map((p) => p.brand))].sort()
-  const categories = [...new Set(allProducts.map((p) => p.category))].sort()
+  const brands = [...new Set(allProducts.map((p) => p.brand))].sort();
+  const categories = [...new Set(allProducts.map((p) => p.category))].sort();
 
   const filteredAndSortedProducts = useMemo(() => {
     const filtered = allProducts.filter((product) => {
       const matchesSearch =
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchTerm.toLowerCase())
+        product.category.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesBrand = brandFilter === "all" || product.brand === brandFilter
-      const matchesCategory = categoryFilter === "all" || product.category === categoryFilter
+      const matchesBrand =
+        brandFilter === "all" || product.brand === brandFilter;
+      const matchesCategory =
+        categoryFilter === "all" || product.category === categoryFilter;
 
-      let matchesDiscount = true
-      if (discountFilter === "with-discount") matchesDiscount = product.discount > 0
-      else if (discountFilter === "no-discount") matchesDiscount = product.discount === 0
-      else if (discountFilter === "high-discount") matchesDiscount = product.discount >= 20
+      let matchesDiscount = true;
+      if (discountFilter === "with-discount")
+        matchesDiscount = product.discount > 0;
+      else if (discountFilter === "no-discount")
+        matchesDiscount = product.discount === 0;
+      else if (discountFilter === "high-discount")
+        matchesDiscount = product.discount >= 20;
 
-      return matchesSearch && matchesBrand && matchesCategory && matchesDiscount
-    })
+      return (
+        matchesSearch && matchesBrand && matchesCategory && matchesDiscount
+      );
+    });
 
     // Sort by price
     if (priceSort === "low-to-high") {
-      filtered.sort((a, b) => a.price - b.price)
+      filtered.sort((a, b) => a.price - b.price);
     } else if (priceSort === "high-to-low") {
-      filtered.sort((a, b) => b.price - a.price)
+      filtered.sort((a, b) => b.price - a.price);
     }
 
-    return filtered
-  }, [searchTerm, brandFilter, categoryFilter, priceSort, discountFilter])
+    return filtered;
+  }, [searchTerm, brandFilter, categoryFilter, priceSort, discountFilter]);
 
   // Pagination
-  const totalPages = Math.ceil(filteredAndSortedProducts.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedProducts = filteredAndSortedProducts.slice(startIndex, startIndex + itemsPerPage)
+  const totalPages = Math.ceil(filteredAndSortedProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = filteredAndSortedProducts.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
 
   const resetFilters = () => {
-    setSearchTerm("")
-    setBrandFilter("all")
-    setCategoryFilter("all")
-    setPriceSort("none")
-    setDiscountFilter("all")
-    setCurrentPage(1)
-  }
+    setSearchTerm("");
+    setBrandFilter("all");
+    setCategoryFilter("all");
+    setPriceSort("none");
+    setDiscountFilter("all");
+    setCurrentPage(1);
+  };
 
   // Summary statistics
-  const totalProducts = allProducts.length
-  const inStock = allProducts.filter((p) => p.quantity > 10).length
-  const lowStock = allProducts.filter((p) => p.quantity > 0 && p.quantity <= 10).length
-  const outOfStock = allProducts.filter((p) => p.quantity === 0).length
+  const totalProducts = products.length;
+  const inStock = products.filter((p) => p.quantity > 10).length;
+  const lowStock = products.filter(
+    (p) => p.quantity > 0 && p.quantity <= 10
+  ).length;
+  const outOfStock = products.filter((p) => p.quantity === 0).length;
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Inventory Management</h1>
-        <p className="text-muted-foreground">Manage and track all your products and stock levels</p>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Inventory Management
+        </h1>
+        <p className="text-muted-foreground">
+          Manage and track all your products and stock levels
+        </p>
       </div>
 
       {/* Summary Stats */}
@@ -241,8 +307,12 @@ export function Inventory() {
         <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-lg border border-blue-200">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold text-blue-800">{totalProducts}</div>
-              <div className="text-sm text-blue-600 font-medium">Total Products</div>
+              <div className="text-2xl font-bold text-blue-800">
+                {totalProducts}
+              </div>
+              <div className="text-sm text-blue-600 font-medium">
+                Total Products
+              </div>
             </div>
             <Package className="h-8 w-8 text-blue-600" />
           </div>
@@ -259,8 +329,12 @@ export function Inventory() {
         <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 p-6 rounded-lg border border-yellow-200">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold text-yellow-800">{lowStock}</div>
-              <div className="text-sm text-yellow-600 font-medium">Low Stock</div>
+              <div className="text-2xl font-bold text-yellow-800">
+                {lowStock}
+              </div>
+              <div className="text-sm text-yellow-600 font-medium">
+                Low Stock
+              </div>
             </div>
             <AlertTriangle className="h-8 w-8 text-yellow-600" />
           </div>
@@ -268,8 +342,12 @@ export function Inventory() {
         <div className="bg-gradient-to-r from-red-50 to-red-100 p-6 rounded-lg border border-red-200">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold text-red-800">{outOfStock}</div>
-              <div className="text-sm text-red-600 font-medium">Out of Stock</div>
+              <div className="text-2xl font-bold text-red-800">
+                {outOfStock}
+              </div>
+              <div className="text-sm text-red-600 font-medium">
+                Out of Stock
+              </div>
             </div>
             <XCircle className="h-8 w-8 text-red-600" />
           </div>
@@ -279,7 +357,9 @@ export function Inventory() {
       <Card>
         <CardHeader>
           <CardTitle>Product Inventory</CardTitle>
-          <CardDescription>View and manage all your products with advanced filtering options</CardDescription>
+          <CardDescription>
+            View and manage all your products with advanced filtering options
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {/* Search and Filter Controls */}
@@ -334,8 +414,12 @@ export function Inventory() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">No Sorting</SelectItem>
-                  <SelectItem value="low-to-high">Price: Low to High</SelectItem>
-                  <SelectItem value="high-to-low">Price: High to Low</SelectItem>
+                  <SelectItem value="low-to-high">
+                    Price: Low to High
+                  </SelectItem>
+                  <SelectItem value="high-to-low">
+                    Price: High to Low
+                  </SelectItem>
                 </SelectContent>
               </Select>
 
@@ -347,7 +431,9 @@ export function Inventory() {
                   <SelectItem value="all">All Products</SelectItem>
                   <SelectItem value="with-discount">With Discount</SelectItem>
                   <SelectItem value="no-discount">No Discount</SelectItem>
-                  <SelectItem value="high-discount">High Discount (20%+)</SelectItem>
+                  <SelectItem value="high-discount">
+                    High Discount (20%+)
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -370,16 +456,20 @@ export function Inventory() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedProducts.length === 0 ? (
+                {products.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
+                    <TableCell
+                      colSpan={9}
+                      className="text-center py-8 text-muted-foreground"
+                    >
                       No products found matching your criteria
                     </TableCell>
                   </TableRow>
                 ) : (
-                  paginatedProducts.map((product) => {
-                    const stockInfo = getStockStatus(product.quantity)
-                    const discountedPrice = product.price * (1 - product.discount / 100)
+                  products.map((product) => {
+                    const stockInfo = getStockStatus(product.quantity);
+                    const discountedPrice =
+                      product.price * (1 - product.discount / 100);
 
                     return (
                       <TableRow key={product.id}>
@@ -392,47 +482,69 @@ export function Inventory() {
                             />
                             <div>
                               <div className="font-medium">{product.name}</div>
-                              <div className="text-sm text-muted-foreground">{product.id}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {product.id}
+                              </div>
                             </div>
                           </div>
                         </TableCell>
                         <TableCell>{product.category}</TableCell>
-                        <TableCell>{product.subcategory}</TableCell>
-                        <TableCell className="font-medium">{product.brand}</TableCell>
+                        <TableCell>{/* {product.subcategory} */}</TableCell>
+                        <TableCell className="font-medium">
+                          {product.brand}
+                        </TableCell>
                         <TableCell>
                           <div className="space-y-1">
                             {product.discount > 0 ? (
                               <>
-                                <div className="font-medium">₦{discountedPrice.toLocaleString()}</div>
+                                <div className="font-medium">
+                                  ₦{discountedPrice.toLocaleString()}
+                                </div>
                                 <div className="text-sm text-muted-foreground line-through">
                                   ₦{product.price.toLocaleString()}
                                 </div>
                               </>
                             ) : (
-                              <div className="font-medium">₦{product.price.toLocaleString()}</div>
+                              <div className="font-medium">
+                                ₦{product.price.toLocaleString()}
+                              </div>
                             )}
                           </div>
                         </TableCell>
                         <TableCell>
                           {product.discount > 0 ? (
-                            <Badge variant="secondary" className={getDiscountColor(product.discount)}>
+                            <Badge
+                              variant="secondary"
+                              className={getDiscountColor(product.discount)}
+                            >
                               {product.discount}% OFF
                             </Badge>
                           ) : (
-                            <span className="text-muted-foreground">No discount</span>
+                            <span className="text-muted-foreground">
+                              No discount
+                            </span>
                           )}
                         </TableCell>
-                        <TableCell className="font-medium">{product.quantity}</TableCell>
+                        <TableCell className="font-medium">
+                          {product.quantity}
+                        </TableCell>
                         <TableCell>
-                          <Badge variant="secondary" className={stockInfo.color}>
+                          <Badge
+                            variant="secondary"
+                            className={stockInfo.color}
+                          >
                             <stockInfo.icon className="w-3 h-3 mr-1" />
                             {stockInfo.status}
                           </Badge>
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-wrap gap-1">
-                            {product.colors.slice(0, 3).map((color, index) => (
-                              <Badge key={index} variant="outline" className="text-xs">
+                            {/* {product.colors.slice(0, 3).map((color, index) => (
+                              <Badge
+                                key={index}
+                                variant="outline"
+                                className="text-xs"
+                              >
                                 {color}
                               </Badge>
                             ))}
@@ -440,11 +552,11 @@ export function Inventory() {
                               <Badge variant="outline" className="text-xs">
                                 +{product.colors.length - 3}
                               </Badge>
-                            )}
+                            )} */}
                           </div>
                         </TableCell>
                       </TableRow>
-                    )
+                    );
                   })
                 )}
               </TableBody>
@@ -455,14 +567,20 @@ export function Inventory() {
           {totalPages > 1 && (
             <div className="flex items-center justify-between pt-6">
               <div className="text-sm text-muted-foreground">
-                Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredAndSortedProducts.length)} of{" "}
-                {filteredAndSortedProducts.length} products
+                Showing {startIndex + 1} to{" "}
+                {Math.min(
+                  startIndex + itemsPerPage,
+                  filteredAndSortedProducts.length
+                )}{" "}
+                of {filteredAndSortedProducts.length} products
               </div>
               <div className="flex items-center space-x-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
                   disabled={currentPage === 1}
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -470,25 +588,30 @@ export function Inventory() {
                 </Button>
                 <div className="flex items-center space-x-1">
                   {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    const pageNum = currentPage <= 3 ? i + 1 : currentPage - 2 + i
-                    if (pageNum > totalPages) return null
+                    const pageNum =
+                      currentPage <= 3 ? i + 1 : currentPage - 2 + i;
+                    if (pageNum > totalPages) return null;
                     return (
                       <Button
                         key={pageNum}
-                        variant={currentPage === pageNum ? "default" : "outline"}
+                        variant={
+                          currentPage === pageNum ? "default" : "outline"
+                        }
                         size="sm"
                         onClick={() => setCurrentPage(pageNum)}
                         className="w-8 h-8 p-0"
                       >
                         {pageNum}
                       </Button>
-                    )
+                    );
                   })}
                 </div>
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
                   disabled={currentPage === totalPages}
                 >
                   Next
@@ -500,5 +623,5 @@ export function Inventory() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

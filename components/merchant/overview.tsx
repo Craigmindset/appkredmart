@@ -31,6 +31,7 @@ import {
   AlertCircle,
   Upload,
 } from "lucide-react";
+import { useMerchantOverview } from "@/lib/services/dashboard/merchant-overview";
 
 // Demo data for merchant overview
 const demoMerchantData = {
@@ -149,6 +150,7 @@ function getStatusIcon(status: string) {
 
 export function Overview() {
   const [activeTab, setActiveTab] = useState<"orders" | "products">("orders");
+  const { data: overview } = useMerchantOverview();
 
   return (
     <div className="space-y-8">
@@ -194,7 +196,7 @@ export function Overview() {
             </CardHeader>
             <CardContent className="py-6">
               <div className="text-xl font-semibold mb-2">
-                {formatNaira(demoMerchantData.revenue)}
+                {formatNaira(overview?.totalSales || 0)}
               </div>
               <div className="flex items-center text-sm text-emerald-600">
                 <TrendingUp className="h-4 w-4 mr-2" />
@@ -216,7 +218,7 @@ export function Overview() {
             </CardHeader>
             <CardContent className="py-6">
               <div className="text-xl font-semibold mb-2">
-                {demoMerchantData.orders}
+                {overview?.totalOrders}
               </div>
               <div className="flex items-center text-sm text-blue-600">
                 <TrendingUp className="h-4 w-4 mr-2" />
@@ -238,7 +240,7 @@ export function Overview() {
             </CardHeader>
             <CardContent className="py-6">
               <div className="text-xl font-semibold mb-2">
-                {demoMerchantData.products}
+                {overview?.totalProducts}
               </div>
               <div className="text-sm text-muted-foreground">
                 +3 new products this month

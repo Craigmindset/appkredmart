@@ -20,6 +20,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Upload, X, Plus, FileText, ImageIcon, Save, Eye } from "lucide-react";
 import { toast } from "sonner";
+import { useMerchantCreateProduct } from "@/lib/services/products/use-merchant-create-product";
+import { uploadMedia } from "@/lib/services/upload/useUploadMedia";
 
 const categories = [
   "Phones and Tablets",
@@ -62,9 +64,14 @@ const brands = [
 export default function ProductUploadAdminPage() {
   const [activeTab, setActiveTab] = useState("form");
   const [isLoading, setIsLoading] = useState(false);
-  const [mainImage, setMainImage] = useState<string | null>(null);
-  const [galleryImages, setGalleryImages] = useState<string[]>([]);
+  const [mainImage, setMainImage] = useState<File | null>(null);
+  const [galleryImages, setGalleryImages] = useState<File[]>([]);
   const [csvFile, setCsvFile] = useState<File | null>(null);
+  const {
+    mutateAsync,
+    loading: productCreating,
+    error,
+  } = useMerchantCreateProduct();
 
   // Color options and their hex codes
   const colorOptions = [
@@ -92,20 +99,27 @@ export default function ProductUploadAdminPage() {
     type: "main" | "gallery"
   ) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        if (type === "main") {
-          setMainImage(result);
-        } else {
-          setGalleryImages((prev) => [...prev, result]);
-        }
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+    if (type === "main") {
+      setMainImage(file);
+    } else {
+      setGalleryImages((prev) => [...prev, file]);
     }
+    // if (file) {
+    //   const reader = new FileReader();
+    //   reader.onload = (e) => {
+    //     const result = e.target?.result as string;
+    //     if (type === "main") {
+    //       setMainImage(result);
+    //     } else {
+    //       setGalleryImages((prev) => [...prev, result]);
+    //     }
+    //   };
+    //   reader.readAsDataURL(file);
+    // }
   };
 
+  console.log({ error });
   const removeGalleryImage = (index: number) => {
     setGalleryImages((prev) => prev.filter((_, i) => i !== index));
   };
@@ -119,37 +133,61 @@ export default function ProductUploadAdminPage() {
     }
   };
 
-  const handleFormSubmit = async (action: "save" | "publish") => {
+  const handleFormSubmit = async (action: "draft" | "publish") => {
     if (!formData.name || !formData.category || !formData.price) {
       toast.error("Please fill in all required fields");
       return;
     }
 
-    setIsLoading(true);
+    console.log("Handling Form Submit");
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // let image: string | undefined;
+    // let images: string[] = [];
 
-    toast.success(
-      `Product ${
-        action === "save" ? "saved as draft" : "published"
-      } successfully!`
-    );
+    // if (mainImage) {
+    //   image = await uploadMedia(mainImage);
+    // }
 
-    // Reset form
-    setFormData({
-      name: "",
-      category: "",
-      color: "",
-      brand: "",
-      description: "",
-      price: "",
-      discountPrice: "",
-      isDeal: false,
-    });
-    setMainImage(null);
-    setGalleryImages([]);
-    setIsLoading(false);
+    // if (galleryImages.length > 0) {
+    //   images = await Promise.all(
+    //     galleryImages.map((file) => uploadMedia(file))
+    //   );
+    // }
+
+    // console.log({ images });
+    // await mutateAsync({
+    //   name: formData.name,
+    //   brand: formData.name,
+    //   category: [formData.category],
+    //   color: formData.color,
+    //   description: formData.description,
+    //   image: image || "",
+    //   images,
+    //   discountPrice: Number(formData.discountPrice),
+    //   price: Number(formData.price),
+    //   status: action,
+    // }).then((response) => {
+    //   console.log({ response });
+    //   toast.success(
+    //     `Product ${
+    //       action === "draft" ? "saved as draft" : "published"
+    //     } successfully!`
+    //   );
+
+    //   // // Reset form
+    //   // setFormData({
+    //   //   name: "",
+    //   //   category: "",
+    //   //   color: "",
+    //   //   brand: "",
+    //   //   description: "",
+    //   //   price: "",
+    //   //   discountPrice: "",
+    //   //   isDeal: false,
+    //   // });
+    //   // setMainImage(null);
+    //   // setGalleryImages([]);
+    // });
   };
 
   const handleCsvSubmit = async () => {
@@ -388,7 +426,10 @@ export default function ProductUploadAdminPage() {
                       {mainImage ? (
                         <div className="relative">
                           <img
-                            src={mainImage || "/placeholder.svg"}
+                            src={
+                              URL.createObjectURL(mainImage) ||
+                              "/placeholder.svg"
+                            }
                             alt="Main product"
                             className="w-full h-32 object-cover rounded"
                           />
@@ -425,7 +466,9 @@ export default function ProductUploadAdminPage() {
                       {galleryImages.map((image, index) => (
                         <div key={index} className="relative">
                           <img
-                            src={image || "/placeholder.svg"}
+                            src={
+                              URL.createObjectURL(image) || "/placeholder.svg"
+                            }
                             alt={`Gallery ${index + 1}`}
                             className="w-full h-20 object-cover rounded"
                           />
@@ -459,7 +502,7 @@ export default function ProductUploadAdminPage() {
               <div className="space-y-2">
                 <Button
                   onClick={() => handleFormSubmit("publish")}
-                  disabled={isLoading}
+                  disabled={isLoading || productCreating}
                   className="w-full bg-green-600 hover:bg-green-700"
                 >
                   {isLoading ? "Publishing..." : "Save & Publish"}
@@ -467,8 +510,8 @@ export default function ProductUploadAdminPage() {
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => handleFormSubmit("save")}
-                  disabled={isLoading}
+                  onClick={() => handleFormSubmit("draft")}
+                  disabled={isLoading || productCreating}
                   className="w-full"
                 >
                   Save as Draft

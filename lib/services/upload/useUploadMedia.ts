@@ -1,13 +1,22 @@
 import { backendAxios } from "@/lib/backendaxios";
 import { useMutation } from "@tanstack/react-query";
-import { AxiosError } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { toast } from "sonner";
+
+interface UploadMediaResponseDto {
+  id: string;
+  original: string;
+  thumbnail: string;
+}
 
 export const uploadMedia = async (file: File) => {
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = await backendAxios.post("/upload", formData, {
+  const response = await backendAxios.post<
+    UploadMediaResponseDto,
+    AxiosResponse<UploadMediaResponseDto>
+  >("/upload", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 

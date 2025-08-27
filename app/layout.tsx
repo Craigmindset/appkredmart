@@ -24,8 +24,17 @@ export default async function RootLayout({
   await queryClient.prefetchQuery({
     queryKey: ["USER"],
     queryFn: async () => {
-      const response = await serverAxios.get("/user/me");
-      return response.data;
+      try {
+        const response = await serverAxios.get("/user/me");
+        return response.data;
+      } catch (err: any) {
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          await serverAxios.post("/auth/refresh"); // refresh cookies
+          const response = await serverAxios.get("/user/me");
+          return response.data;
+        }
+        throw err;
+      }
     },
   });
 
