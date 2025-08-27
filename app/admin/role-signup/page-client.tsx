@@ -47,6 +47,14 @@ export default function AdminCreateAccountFromInvite() {
     confirmPassword: "",
   });
 
+  // Track if passwords match and are valid
+  const passwordsMatch =
+    formData.password.length >= 6 &&
+    formData.password.length <= 11 &&
+    formData.confirmPassword.length >= 6 &&
+    formData.confirmPassword.length <= 11 &&
+    formData.password === formData.confirmPassword;
+
   // For memoized fallback payload when no token
   const fallbackInvite = useMemo<InvitePayload | null>(() => {
     if (qpEmail) {
@@ -76,10 +84,10 @@ export default function AdminCreateAccountFromInvite() {
       return;
     }
 
-    if (password.length < 8) {
+    if (password.length < 6 || password.length > 11) {
       toast({
-        title: "Weak password",
-        description: "Password must be at least 8 characters.",
+        title: "Password length",
+        description: "Password must be between 6 and 11 characters.",
         variant: "destructive",
       });
       return;
@@ -234,8 +242,8 @@ export default function AdminCreateAccountFromInvite() {
                   }
                   className="pr-10"
                   required
-                  minLength={8}
-                  maxLength={64}
+                  minLength={6}
+                  maxLength={11}
                   autoComplete="new-password"
                   disabled={resolvingInvite}
                 />
@@ -273,8 +281,8 @@ export default function AdminCreateAccountFromInvite() {
                   }
                   className="pr-10"
                   required
-                  minLength={8}
-                  maxLength={64}
+                  minLength={6}
+                  maxLength={11}
                   autoComplete="new-password"
                   disabled={resolvingInvite}
                 />
@@ -298,7 +306,12 @@ export default function AdminCreateAccountFromInvite() {
             <Button
               type="submit"
               className="w-full"
-              disabled={loading || resolvingInvite || adminRegistering}
+              disabled={
+                loading ||
+                resolvingInvite ||
+                adminRegistering ||
+                !passwordsMatch
+              }
             >
               {loading || adminRegistering || resolvingInvite ? (
                 <>
