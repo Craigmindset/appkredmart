@@ -6,6 +6,8 @@ import { useSearchParams } from "next/navigation";
 import LayoutShell from "@/components/layout-shell";
 import ProductsGrid from "@/components/products-grid";
 import HeroSlider from "@/components/hero-slider";
+import StoreBanner from "@/components/StoreBanner";
+
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -72,12 +74,12 @@ export default function StorePage() {
 
   return (
     <LayoutShell>
-      <section className="container mx-auto px-4 pt-6">
-        {/* Top: Categories (20%), Slider (50%) */}
-        <div className="grid gap-4 md:grid-cols-7">
-          <aside className="md:col-span-2 rounded-lg border bg-card p-4">
+      <section className="container mx-auto px-4 pt-6 ">
+        {/* Top: Categories (20%), StoreBanner (80%) */}
+        <div className="grid gap-2 md:grid-cols-[20%_80%] mx-4 items-stretch">
+          <aside className="hidden md:block md:col-span-1 rounded-lg  bg-blue-100 p-4 h-[400px]">
             <h4 className="mb-3 text-sm font-semibold">Categories</h4>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-0.2 text-sm">
               {allCategories.map((c) => (
                 <li key={c}>
                   <Link
@@ -98,57 +100,8 @@ export default function StorePage() {
             </ul>
           </aside>
 
-          <div className="md:col-span-5 rounded-lg border bg-card">
-            <HeroSlider />
-          </div>
-        </div>
-
-        {/* Inline toolbar filters (deals, sort, brand) */}
-        <div className="mt-6 rounded-lg border bg-card p-4">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Switch
-                id="deals"
-                checked={onlyDeals}
-                onCheckedChange={(v) => setOnlyDeals(Boolean(v))}
-              />
-              <Label htmlFor="deals">Deals</Label>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Label className="text-sm">Sort</Label>
-              <Select
-                onValueChange={(v: "htl" | "lth" | "none") => setSort(v)}
-                defaultValue="none"
-                value={sort}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">Default</SelectItem>
-                  <SelectItem value="htl">High to Low</SelectItem>
-                  <SelectItem value="lth">Low to High</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Label className="text-sm">Brand</Label>
-              <Select value={brand} onValueChange={(v) => setBrand(v)}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="All brands" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All brands</SelectItem>
-                  {allBrands.map((b) => (
-                    <SelectItem key={b} value={b}>
-                      {b}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="md:col-span-1 rounded-lg border bg-card h-[600px] md:h-[400px]">
+            <StoreBanner />
           </div>
         </div>
       </section>
