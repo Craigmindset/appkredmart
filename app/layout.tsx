@@ -5,9 +5,6 @@ import "./globals.css";
 
 import RootProviders from "@/components/providers";
 import { Toaster } from "@/components/ui/sonner";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { getQueryClient } from "@/lib/query-client";
-import { serverAxios } from "@/lib/backendaxios";
 
 export const metadata: Metadata = {
   title: "KredMart",
@@ -19,25 +16,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const queryClient = getQueryClient();
-
-  await queryClient.prefetchQuery({
-    queryKey: ["USER"],
-    queryFn: async () => {
-      try {
-        const response = await serverAxios.get("/user/me");
-        return response.data;
-      } catch (err: any) {
-        if (err.response?.status === 401 || err.response?.status === 403) {
-          await serverAxios.post("/auth/refresh"); // refresh cookies
-          const response = await serverAxios.get("/user/me");
-          return response.data;
-        }
-        throw err;
-      }
-    },
-  });
-
   return (
     <html lang="en">
       <head>
@@ -51,10 +29,8 @@ html {
       </head>
       <body>
         <RootProviders>
-          <HydrationBoundary state={dehydrate(queryClient)}>
-            {children}
-            <Toaster />
-          </HydrationBoundary>
+          {children}
+          <Toaster />
         </RootProviders>
       </body>
     </html>
