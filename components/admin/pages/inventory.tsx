@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -24,16 +24,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import {
-  Search,
-  Package,
-  AlertTriangle,
-  TrendingUp,
-  TrendingDown,
-} from "lucide-react";
 import { useAdminFetchProducts } from "@/lib/services/products/use-admin-fetch-products";
 import { formatDate } from "date-fns";
+import {
+  AlertTriangle,
+  Package,
+  Search,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import { useState } from "react";
 
 // Demo inventory data with Slot and Gbam Inc. merchants
 const mockInventoryData = Array.from({ length: 50 }, (_, i) => {
@@ -126,47 +126,41 @@ export default function InventoryAdminPage() {
   const { data } = useAdminFetchProducts({ search: searchQuery });
   const inventories = data?.data || [];
 
-  const filteredData = useMemo(() => {
-    return mockInventoryData.filter((item) => {
-      const matchesSearch =
-        item.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.merchant.toLowerCase().includes(searchQuery.toLowerCase());
+  // const filteredData = useMemo(() => {
+  //   return mockInventoryData.filter((item) => {
+  //     const matchesSearch =
+  //       item.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //       item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //       item.merchant.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesMerchant =
-        merchantFilter === "All" || item.merchant === merchantFilter;
-      const matchesCategory =
-        categoryFilter === "All" || item.category === categoryFilter;
-      const matchesDeals =
-        dealFilter === "All" ||
-        (dealFilter === "No Deals" && !item.deals) ||
-        (dealFilter !== "No Deals" && item.deals === dealFilter);
-      const matchesPrice =
-        priceFilter === "All" ||
-        (priceFilter === "Best Price" && item.bestPrice) ||
-        (priceFilter === "Regular Price" && !item.bestPrice);
+  //     const matchesMerchant =
+  //       merchantFilter === "All" || item.merchant === merchantFilter;
+  //     const matchesCategory =
+  //       categoryFilter === "All" || item.category === categoryFilter;
+  //     const matchesDeals =
+  //       dealFilter === "All" ||
+  //       (dealFilter === "No Deals" && !item.deals) ||
+  //       (dealFilter !== "No Deals" && item.deals === dealFilter);
+  //     const matchesPrice =
+  //       priceFilter === "All" ||
+  //       (priceFilter === "Best Price" && item.bestPrice) ||
+  //       (priceFilter === "Regular Price" && !item.bestPrice);
 
-      return (
-        matchesSearch &&
-        matchesMerchant &&
-        matchesCategory &&
-        matchesDeals &&
-        matchesPrice
-      );
-    });
-  }, [searchQuery, merchantFilter, categoryFilter, dealFilter, priceFilter]);
+  //     return (
+  //       matchesSearch &&
+  //       matchesMerchant &&
+  //       matchesCategory &&
+  //       matchesDeals &&
+  //       matchesPrice
+  //     );
+  //   });
+  // }, [searchQuery, merchantFilter, categoryFilter, dealFilter, priceFilter]);
 
   // Calculate summary stats
-  const totalProducts = filteredData.length;
-  const outOfStock = filteredData.filter(
-    (item) => item.status === "Out of Stock"
-  ).length;
-  const lowStock = filteredData.filter(
-    (item) => item.status === "Low Stock"
-  ).length;
-  const wellStocked = filteredData.filter(
-    (item) => item.status === "Well Stocked"
-  ).length;
+  const totalProducts = inventories.length;
+  const outOfStock = inventories.filter((item) => item.quantity < 0).length;
+  const lowStock = inventories.filter((item) => item.quantity < 10).length;
+  const wellStocked = inventories.filter((item) => item.quantity >= 10).length;
 
   const getStatusBadge = (status: string) => {
     switch (status) {

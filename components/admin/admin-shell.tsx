@@ -1,29 +1,36 @@
 "use client";
 
-import type * as React from "react";
 import {
   BarChart3,
-  Users,
-  Store,
-  Package,
-  Upload,
-  FileText,
-  ShoppingCart,
-  Truck,
-  Settings,
-  User,
-  LogOut,
-  Wallet,
-  Radio,
   DollarSign,
+  FileText,
   HeadphonesIcon,
   Loader2,
+  LogOut,
+  Package,
+  Radio,
+  Settings,
+  ShoppingCart,
+  Store,
+  Truck,
+  Upload,
+  User,
+  Users,
+  Wallet,
 } from "lucide-react";
+import type * as React from "react";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarInset,
   SidebarMenu,
@@ -31,20 +38,13 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
 } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
-import { useWallet } from "@/store/wallet-store";
-import { redirect, usePathname, useRouter } from "next/navigation";
-import { useAdminRBACStore, type Permission } from "@/store/admin-rbac-store";
-import { useUser } from "@/lib/services/user/user";
 import { useLogout } from "@/lib/services/auth/use-logout";
+import { useUser } from "@/lib/services/user/user";
+import { useAdminWallet } from "@/lib/services/wallet/use-admin-wallet";
+import { type Permission } from "@/store/admin-rbac-store";
+import Link from "next/link";
+import { redirect, usePathname } from "next/navigation";
 
 interface AdminNavItem {
   title: string;
@@ -142,11 +142,10 @@ const adminNavItems: AdminNavItem[] = [
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
   // const { currentUser, hasAnyPermission } = useAdminRBACStore();
   const { mutateAsync: signOut } = useLogout();
   const { user, loading } = useUser();
-  const { balance } = useWallet();
+  const { data: wallet } = useAdminWallet();
 
   const handleLogout = async () => {
     await signOut().then(() => {
@@ -234,7 +233,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <SidebarFooter className="border-t border-blue-700 bg-blue-900 p-4">
           <div className="flex items-center gap-3 mb-3">
             <Avatar className="h-8 w-8">
-              <AvatarImage src="/placeholder.svg?height=32&width=32" />
+              <AvatarImage
+                src={user?.picture || "/placeholder.svg?height=32&width=32"}
+              />
               <AvatarFallback className="bg-blue-600 text-white text-sm">
                 {`${user?.firstname} ${user?.lastname}`
                   .split(" ")
@@ -305,7 +306,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 >
                   <Wallet className="h-4 w-4 text-green-600" />
                   <span className="hidden sm:inline text-sm font-medium text-gray-900">
-                    ₦{balance.toLocaleString()}
+                    ₦{(wallet?.balance || 0).toLocaleString()}
                   </span>
                 </Button>
               </Link>
@@ -322,7 +323,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 className="gap-2 hover:bg-gray-100"
               >
                 <Avatar className="h-7 w-7">
-                  <AvatarImage src="/placeholder.svg?height=28&width=28" />
+                  <AvatarImage
+                    src={user?.picture || "/placeholder.svg?height=28&width=28"}
+                  />
                   <AvatarFallback className="bg-blue-600 text-white text-xs">
                     {`${user?.firstname} ${user?.lastname}`
                       .split(" ")

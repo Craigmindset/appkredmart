@@ -47,6 +47,7 @@ import {
 import { toast } from "sonner";
 
 import { useWallet } from "@/store/wallet-store";
+import { useAdminWallet } from "@/lib/services/wallet/use-admin-wallet";
 
 // Demo transaction data
 const demoTransactions = [
@@ -135,11 +136,11 @@ export function AdminWallet() {
     receiverName: "",
     amount: "",
   });
-  const [transferPin, setTransferPin] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   // Wallet state from store
-  const { balance, accountName, accountNumber, bankName } = useWallet();
+  const { data: wallet } = useAdminWallet();
+  const [transferPin, setTransferPin] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -156,7 +157,7 @@ export function AdminWallet() {
       return;
     }
 
-    if (Number.parseFloat(withdrawalData.amount) > balance) {
+    if (Number.parseFloat(withdrawalData.amount) > (wallet?.balance || 0)) {
       toast.error("Insufficient balance");
       return;
     }
@@ -238,7 +239,9 @@ export function AdminWallet() {
               <div>
                 <div className="flex items-center gap-3">
                   <div className="text-2xl font-bold">
-                    {showBalance ? `₦${balance.toLocaleString()}` : "₦****"}
+                    {showBalance
+                      ? `₦${(wallet?.balance || 0).toLocaleString()}`
+                      : "₦****"}
                   </div>
                   <Button
                     variant="ghost"
@@ -286,12 +289,14 @@ export function AdminWallet() {
               </Label>
               <div className="flex items-center justify-between mt-1 p-2 bg-muted rounded-md">
                 <span className="text-sm font-medium truncate">
-                  {accountName}
+                  {wallet?.accountName || ""}
                 </span>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => copyToClipboard(accountName, "Account name")}
+                  onClick={() =>
+                    copyToClipboard(wallet?.accountName || "", "Account name")
+                  }
                   className="h-6 w-6 p-0 ml-2"
                 >
                   <Copy className="h-3 w-3" />
@@ -305,13 +310,16 @@ export function AdminWallet() {
               </Label>
               <div className="flex items-center justify-between mt-1 p-2 bg-muted rounded-md">
                 <span className="text-sm font-mono font-medium">
-                  {accountNumber}
+                  {wallet?.accountNumber || ""}
                 </span>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() =>
-                    copyToClipboard(accountNumber, "Account number")
+                    copyToClipboard(
+                      wallet?.accountNumber || "",
+                      "Account number"
+                    )
                   }
                   className="h-6 w-6 p-0 ml-2"
                 >
@@ -325,7 +333,7 @@ export function AdminWallet() {
                 Bank Name
               </Label>
               <div className="mt-1 p-2 bg-muted rounded-md">
-                <span className="text-sm font-medium">{bankName}</span>
+                <span className="text-sm font-medium">{wallet?.bankName}</span>
               </div>
             </div>
           </CardContent>
@@ -528,7 +536,7 @@ export function AdminWallet() {
                 }
               />
               <div className="text-sm text-muted-foreground mt-1">
-                Available: ₦{balance.toLocaleString()}
+                Available: ₦{(wallet?.balance || 0).toLocaleString()}
               </div>
             </div>
 

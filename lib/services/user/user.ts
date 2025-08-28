@@ -13,6 +13,8 @@ interface UserResponse {
   position?: string;
   company?: string;
   role?: "user" | "merchant" | "admin";
+  address?: string; // For role admin only
+  bio?: string; // For role admin only
 }
 
 export const fetchUser = async () => {

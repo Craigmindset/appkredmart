@@ -25,6 +25,7 @@ import {
   Eye,
   EyeOff,
   Key,
+  Loader2,
   Mail,
   MapPin,
   Phone,
@@ -35,26 +36,42 @@ import {
   UserPlus,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useFetchAdminTeam } from "@/lib/services/admin/fetch-admin-team";
+import { useUser } from "@/lib/services/user/user";
+import { useUpdateAdminAccount } from "@/lib/services/admin/use-update-admin-account";
+import { useUploadMedia } from "@/lib/services/upload/useUploadMedia";
 
 export default function AccountAdminPage() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
-
+  const { user } = useUser();
+  const { mutateAsync, loading: isUpdatingProfile } = useUpdateAdminAccount();
+  const { mutateAsync: uploadMedia, isPending: pictureLoading } =
+    useUploadMedia();
   // Profile form state
   const [profileData, setProfileData] = useState({
-    firstName: "Admin",
+    firstName: user?.firstname || "",
     lastName: "User",
-    email: "admin@kredmart.com",
-    phone: "+234 801 234 5678",
-    address: "Lagos, Nigeria",
+    email: user?.email || "",
+    phone: user?.phone || "",
+    address: user?.address || "",
     bio: "System Administrator for KredMart platform",
   });
+
+  useEffect(() => {
+    if (user) {
+      setProfileData((prev) => ({ ...prev, firstName: user.firstname }));
+      setProfileData((prev) => ({ ...prev, lastName: user.lastname }));
+      setProfileData((prev) => ({ ...prev, email: user.email }));
+      setProfileData((prev) => ({ ...prev, phone: user.phone }));
+      setProfileData((prev) => ({ ...prev, address: user.address || "" }));
+      setProfileData((prev) => ({ ...prev, bio: user.bio || "" }));
+    }
+  }, [user]);
 
   // Password form state
   const [passwordData, setPasswordData] = useState({
@@ -63,46 +80,43 @@ export default function AccountAdminPage() {
     confirmPassword: "",
   });
 
-  // Team members (demo data)
-  const teamMembers = [
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john@kredmart.com",
-      role: "Manager",
-      status: "Active",
-      joinDate: "2024-01-15",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane@kredmart.com",
-      role: "Marketer",
-      status: "Active",
-      joinDate: "2024-02-20",
-    },
-    {
-      id: 3,
-      name: "Mike Johnson",
-      email: "mike@kredmart.com",
-      role: "Finance",
-      status: "Pending",
-      joinDate: "2024-03-10",
-    },
-  ];
+  const onAvatarChange: React.ChangeEventHandler<HTMLInputElement> = async (
+    e
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) return;
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("File too large", {
+        description: "Max 2MB",
+      });
+      return;
+    }
+
+    await uploadMedia(file).then(async (response) => {
+      await mutateAsync({ picture: response.original }).then(() => {
+        toast.success("Profile image updated successfully");
+      });
+    });
+
+    // const reader = new FileReader();
+    // reader.onload = () => setAvatarUrl(String(reader.result || ""));
+    // reader.readAsDataURL(file);
+  };
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsUpdatingProfile(true);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    toast.success("Profile Updated", {
-      description: "Your profile has been successfully updated.",
+    await mutateAsync({
+      firstname: profileData.firstName,
+      lastname: profileData.lastName,
+      bio: profileData.bio,
+      address: profileData.bio,
+      phone: profileData.phone,
+    }).then(() => {
+      toast.success("Profile Updated", {
+        description: "Your profile has been successfully updated.",
+      });
     });
-
-    setIsUpdatingProfile(false);
   };
 
   const handlePasswordChange = async (e: React.FormEvent) => {
@@ -182,19 +196,37 @@ export default function AccountAdminPage() {
                 <div className="flex items-center gap-6">
                   <div className="relative">
                     <Avatar className="h-24 w-24">
-                      <AvatarImage src="/placeholder.svg?height=96&width=96" />
+                      <AvatarImage
+                        src={
+                          user?.picture || "/placeholder.svg?height=96&width=96"
+                        }
+                      />
                       <AvatarFallback className="bg-blue-600 text-white text-xl">
                         {profileData.firstName[0]}
                         {profileData.lastName[0]}
                       </AvatarFallback>
                     </Avatar>
-                    <Button
+                    {/* <Button
                       type="button"
                       size="sm"
                       className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full"
                     >
                       <Camera className="h-4 w-4" />
-                    </Button>
+                    </Button> */}
+                    <label className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full px-1 bg-primary text-primary-foreground inline-flex items-center justify-center">
+                      {pictureLoading ? (
+                        <Loader2 className="animate-spin" />
+                      ) : (
+                        <Camera className="h-4 w-4" />
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={onAvatarChange}
+                        disabled={pictureLoading}
+                        className="hidden"
+                      />
+                    </label>
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold">
@@ -244,12 +276,14 @@ export default function AccountAdminPage() {
                         id="email"
                         type="email"
                         value={profileData.email}
-                        onChange={(e) =>
-                          setProfileData((prev) => ({
-                            ...prev,
-                            email: e.target.value,
-                          }))
-                        }
+                        // onChange={(e) =>
+                        //   setProfileData((prev) => ({
+                        //     ...prev,
+                        //     email: e.target.value,
+                        //   }))
+                        // }
+                        disabled={true}
+                        readOnly
                         className="pl-10"
                       />
                     </div>
