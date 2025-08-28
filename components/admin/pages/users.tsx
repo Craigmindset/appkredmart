@@ -178,7 +178,6 @@ export default function UsersAdminPage() {
   };
 
   // Summary statistics
-  console.log({ users });
   const totalUsers = users.length;
   const activeUsers = users.filter((u) => u.status === "ACTIVE").length;
   const totalOrders = users.reduce((sum, u) => sum + u._count.orders, 0);

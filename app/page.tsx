@@ -13,7 +13,7 @@ import { ProductDeals } from "./page-client";
 
 export default async function Page() {
   const queryClient = getQueryClient();
-  const params = { offset: 0, limit: 5 };
+  const params = { offset: 0, limit: 5, page: 1 };
   await queryClient.prefetchQuery({
     queryKey: ["PRODUCTS", params],
     queryFn: async () => await getProducts(params),

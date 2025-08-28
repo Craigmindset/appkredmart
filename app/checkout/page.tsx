@@ -132,6 +132,9 @@ export default function CheckoutPage() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
     "paystack" | "bnpl" | "wallet"
   >("paystack");
+
+  const [deliveryFetched, setDeliveryFetched] = useState(false);
+
   const [selectedBnplDuration, setSelectedBnplDuration] = useState("6months");
   const [selectedLoanProvider, setSelectedLoanProvider] =
     useState("creditloan");
@@ -505,176 +508,206 @@ export default function CheckoutPage() {
               </section>
             )}
 
+            {!deliveryFetched && (
+              <section className="hidden lg:block bg-white rounded-xl border shadow-sm p-4">
+                <h2 className="text-base font-semibold text-gray-900 mb-3">
+                  Get Delivery Fee
+                </h2>
+
+                {/* <DeliveryForm
+                guestInfo={guestInfo}
+                onChange={handleGuestInfoChange}
+              /> */}
+                <div className="flex items-center gap-3">
+                  <Button
+                    onClick={() => setDeliveryFetched(true)}
+                    // disabled={isProcessing || !isFormValid()}
+                    className="w-full bg-[#466cf4] hover:bg-[#3a5ce0] text-white h-10 text-sm font-semibold"
+                  >
+                    Get Delivery
+                  </Button>
+                </div>
+              </section>
+            )}
+
             {/* Payment */}
-            <section className="bg-white rounded-xl border shadow-sm p-4">
-              <h2 className="text-base font-semibold text-gray-900 mb-3">
-                Payment
-              </h2>
+            {deliveryFetched && (
+              <>
+                <section className="bg-white rounded-xl border shadow-sm p-4">
+                  <h2 className="text-base font-semibold text-gray-900 mb-3">
+                    Payment
+                  </h2>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {paymentMethods.includes("paystack") && (
-                  <PaymentCard
-                    active={selectedPaymentMethod === "paystack"}
-                    onClick={() => setSelectedPaymentMethod("paystack")}
-                    icon={<CreditCard className="h-5 w-5" />}
-                    title="Pay Now"
-                    subtitle="Paystack"
-                    color="blue"
-                  />
-                )}
-                {paymentMethods.includes("bnpl") && (
-                  <PaymentCard
-                    active={selectedPaymentMethod === "bnpl"}
-                    onClick={() => setSelectedPaymentMethod("bnpl")}
-                    icon={<Calendar className="h-5 w-5" />}
-                    title="BNPL"
-                    subtitle="Pay monthly"
-                    color="green"
-                  />
-                )}
-                {paymentMethods.includes("wallet") && (
-                  <PaymentCard
-                    active={selectedPaymentMethod === "wallet"}
-                    onClick={() => setSelectedPaymentMethod("wallet")}
-                    icon={<Wallet className="h-5 w-5" />}
-                    title="Wallet Loan"
-                    subtitle="Instant loan"
-                    color="purple"
-                  />
-                )}
-              </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {paymentMethods.includes("paystack") && (
+                      <PaymentCard
+                        active={selectedPaymentMethod === "paystack"}
+                        onClick={() => setSelectedPaymentMethod("paystack")}
+                        icon={<CreditCard className="h-5 w-5" />}
+                        title="Pay Now"
+                        subtitle="Paystack"
+                        color="blue"
+                      />
+                    )}
+                    {paymentMethods.includes("bnpl") && (
+                      <PaymentCard
+                        active={selectedPaymentMethod === "bnpl"}
+                        onClick={() => setSelectedPaymentMethod("bnpl")}
+                        icon={<Calendar className="h-5 w-5" />}
+                        title="BNPL"
+                        subtitle="Pay monthly"
+                        color="green"
+                      />
+                    )}
+                    {paymentMethods.includes("wallet") && (
+                      <PaymentCard
+                        active={selectedPaymentMethod === "wallet"}
+                        onClick={() => setSelectedPaymentMethod("wallet")}
+                        icon={<Wallet className="h-5 w-5" />}
+                        title="Wallet Loan"
+                        subtitle="Instant loan"
+                        color="purple"
+                      />
+                    )}
+                  </div>
 
-              {/* BNPL inline options */}
-              {selectedPaymentMethod === "bnpl" && (
-                <div className="mt-4">
-                  <h4 className="text-sm font-medium mb-2">Select duration</h4>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {bnplDurations.map((d) => (
-                      <button
-                        key={d.id}
-                        type="button"
-                        onClick={() => setSelectedBnplDuration(d.id)}
-                        className={`border rounded-lg px-2 py-2 text-sm text-left transition
+                  {/* BNPL inline options */}
+                  {selectedPaymentMethod === "bnpl" && (
+                    <div className="mt-4">
+                      <h4 className="text-sm font-medium mb-2">
+                        Select duration
+                      </h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {bnplDurations.map((d) => (
+                          <button
+                            key={d.id}
+                            type="button"
+                            onClick={() => setSelectedBnplDuration(d.id)}
+                            className={`border rounded-lg px-2 py-2 text-sm text-left transition
                           ${
                             selectedBnplDuration === d.id
                               ? "border-[#466cf4] bg-blue-50"
                               : "border-gray-200 hover:border-gray-300"
                           }`}
-                      >
-                        <div className="font-medium">{d.label}</div>
-                        <div className="text-xs text-gray-600">
-                          {d.interestRate}% interest
-                        </div>
-                        <div className="text-xs font-semibold text-[#466cf4]">
-                          {money(calculateBnplPayment())}/mo
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+                          >
+                            <div className="font-medium">{d.label}</div>
+                            <div className="text-xs text-gray-600">
+                              {d.interestRate}% interest
+                            </div>
+                            <div className="text-xs font-semibold text-[#466cf4]">
+                              {money(calculateBnplPayment())}/mo
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
-              {/* Wallet providers */}
-              {selectedPaymentMethod === "wallet" && (
-                <div className="mt-4">
-                  <h4 className="text-sm font-medium mb-2">Choose provider</h4>
-                  <div className="space-y-2">
-                    {loanProviders.map((p) => (
-                      <button
-                        key={p.id}
-                        type="button"
-                        onClick={() => setSelectedLoanProvider(p.id)}
-                        className={`w-full border rounded-lg p-3 text-left transition
+                  {/* Wallet providers */}
+                  {selectedPaymentMethod === "wallet" && (
+                    <div className="mt-4">
+                      <h4 className="text-sm font-medium mb-2">
+                        Choose provider
+                      </h4>
+                      <div className="space-y-2">
+                        {loanProviders.map((p) => (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => setSelectedLoanProvider(p.id)}
+                            className={`w-full border rounded-lg p-3 text-left transition
                           ${
                             selectedLoanProvider === p.id
                               ? "border-[#466cf4] bg-blue-50"
                               : "border-gray-200 hover:border-gray-300"
                           }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <Image
-                              src={p.logo || "/placeholder.svg"}
-                              alt={p.name}
-                              width={60}
-                              height={30}
-                              className="h-6 w-auto object-contain"
-                            />
-                            <div>
-                              <div className="text-sm font-semibold">
-                                {p.name}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <Image
+                                  src={p.logo || "/placeholder.svg"}
+                                  alt={p.name}
+                                  width={60}
+                                  height={30}
+                                  className="h-6 w-auto object-contain"
+                                />
+                                <div>
+                                  <div className="text-sm font-semibold">
+                                    {p.name}
+                                  </div>
+                                  <div className="text-xs text-gray-600">
+                                    Up to {money(p.maxAmount)} •{" "}
+                                    {p.interestRate}% interest
+                                  </div>
+                                </div>
                               </div>
-                              <div className="text-xs text-gray-600">
-                                Up to {money(p.maxAmount)} • {p.interestRate}%
-                                interest
+                              <div className="text-xs font-medium text-green-600">
+                                {p.processingTime}
                               </div>
                             </div>
-                          </div>
-                          <div className="text-xs font-medium text-green-600">
-                            {p.processingTime}
-                          </div>
-                        </div>
-                        <div className="mt-2 flex flex-wrap gap-1.5">
-                          {p.features.map((f, i) => (
-                            <span
-                              key={i}
-                              className="text-[11px] bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full"
-                            >
-                              {f}
-                            </span>
-                          ))}
-                        </div>
-                      </button>
-                    ))}
+                            <div className="mt-2 flex flex-wrap gap-1.5">
+                              {p.features.map((f, i) => (
+                                <span
+                                  key={i}
+                                  className="text-[11px] bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full"
+                                >
+                                  {f}
+                                </span>
+                              ))}
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </section>
+
+                {/* Notices */}
+                {selectedPaymentMethod === "bnpl" && (
+                  <Notice
+                    color="yellow"
+                    title="BNPL Terms"
+                    items={[
+                      "Account creation required",
+                      "Credit check may be performed",
+                      "Late payment fees may apply",
+                    ]}
+                  />
+                )}
+                {selectedPaymentMethod === "wallet" && (
+                  <Notice
+                    color="purple"
+                    title="Loan Requirements"
+                    items={[
+                      "Valid ID and BVN required",
+                      "Minimum age: 18 years",
+                      "Credit assessment will be conducted",
+                    ]}
+                  />
+                )}
+
+                {/* Pay button */}
+                <div className="flex items-center gap-3">
+                  <Button
+                    onClick={handlePayment}
+                    disabled={isProcessing || !isFormValid()}
+                    className="w-full bg-[#466cf4] hover:bg-[#3a5ce0] text-white h-10 text-sm font-semibold"
+                  >
+                    {isProcessing
+                      ? "Processing..."
+                      : selectedPaymentMethod === "paystack"
+                      ? "Pay Now"
+                      : selectedPaymentMethod === "bnpl"
+                      ? "Setup BNPL"
+                      : "Apply for Loan"}
+                  </Button>
+                  <div className="hidden sm:flex items-center justify-center gap-1 text-[11px] text-gray-600">
+                    <Shield className="h-3.5 w-3.5" />
+                    <span>Secure & encrypted</span>
                   </div>
                 </div>
-              )}
-            </section>
-
-            {/* Notices */}
-            {selectedPaymentMethod === "bnpl" && (
-              <Notice
-                color="yellow"
-                title="BNPL Terms"
-                items={[
-                  "Account creation required",
-                  "Credit check may be performed",
-                  "Late payment fees may apply",
-                ]}
-              />
+              </>
             )}
-            {selectedPaymentMethod === "wallet" && (
-              <Notice
-                color="purple"
-                title="Loan Requirements"
-                items={[
-                  "Valid ID and BVN required",
-                  "Minimum age: 18 years",
-                  "Credit assessment will be conducted",
-                ]}
-              />
-            )}
-
-            {/* Pay button */}
-            <div className="flex items-center gap-3">
-              <Button
-                onClick={handlePayment}
-                disabled={isProcessing || !isFormValid()}
-                className="w-full bg-[#466cf4] hover:bg-[#3a5ce0] text-white h-10 text-sm font-semibold"
-              >
-                {isProcessing
-                  ? "Processing..."
-                  : selectedPaymentMethod === "paystack"
-                  ? "Pay Now"
-                  : selectedPaymentMethod === "bnpl"
-                  ? "Setup BNPL"
-                  : "Apply for Loan"}
-              </Button>
-              <div className="hidden sm:flex items-center justify-center gap-1 text-[11px] text-gray-600">
-                <Shield className="h-3.5 w-3.5" />
-                <span>Secure & encrypted</span>
-              </div>
-            </div>
           </div>
 
           {/* Right: Order Summary (sticky on desktop) */}

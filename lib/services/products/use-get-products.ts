@@ -12,6 +12,9 @@ export type ProductsResponseDto = {
 type GetProductsParams = {
   offset?: number;
   limit?: number;
+  category?: string | null;
+  page?: number;
+  brand?: string;
 };
 
 export const getProducts = async (params?: GetProductsParams) => {
@@ -20,11 +23,18 @@ export const getProducts = async (params?: GetProductsParams) => {
 };
 
 export const useGetProducts = (params?: GetProductsParams) => {
-  const { offset = 0, limit = 20 } = params || {};
-
+  const { offset = 0, limit = 20, page = 1, category, brand } = params || {};
+  const formattedParams = {
+    offset,
+    limit,
+    category,
+    page,
+    ...(category ? { category } : {}),
+    ...(brand ? { brand } : {}),
+  };
   return useQuery<ProductsResponseDto>({
-    queryKey: ["PRODUCTS", { offset, limit }],
-    queryFn: async () => await getProducts({ offset, limit }),
+    queryKey: ["PRODUCTS", formattedParams],
+    queryFn: async () => await getProducts(formattedParams),
     staleTime: 5 * 60 * 1000, // 5 minutes cache
   });
 };

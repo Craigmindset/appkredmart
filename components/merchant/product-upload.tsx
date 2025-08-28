@@ -169,7 +169,6 @@ export default function ProductUploadAdminPage() {
         price: Number(formData.price),
         status: action,
       }).then((response) => {
-        console.log({ response });
         toast.success(
           `Product ${
             action === "draft" ? "saved as draft" : "published"

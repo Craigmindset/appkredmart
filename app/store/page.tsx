@@ -6,7 +6,7 @@ import { getQueryClient } from "@/lib/query-client";
 
 const Page = async () => {
   const queryClient = getQueryClient();
-  const params = { offset: 0, limit: 20 };
+  const params = { offset: 0, limit: 20, page: 1 };
   await queryClient.prefetchQuery({
     queryKey: ["PRODUCTS", params],
     queryFn: async () => await getProducts(params),

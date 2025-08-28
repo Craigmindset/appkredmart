@@ -119,7 +119,6 @@ export default function ProductUploadAdminPage() {
     // }
   };
 
-  console.log({ error });
   const removeGalleryImage = (index: number) => {
     setGalleryImages((prev) => prev.filter((_, i) => i !== index));
   };
@@ -138,8 +137,6 @@ export default function ProductUploadAdminPage() {
       toast.error("Please fill in all required fields");
       return;
     }
-
-    console.log("Handling Form Submit");
 
     // let image: string | undefined;
     // let images: string[] = [];

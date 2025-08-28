@@ -47,6 +47,7 @@ export interface ProductsResponse {
 
 export interface ProductsQueryParams {
   search?: string;
+  category?: string | null;
   sortBy?: "createdAt" | "updatedAt";
   limit?: number;
   page?: number;

@@ -1,16 +1,24 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useMemo, useState } from "react"
-import { useParams, useRouter, useSearchParams } from "next/navigation"
-import LayoutShell from "@/components/layout-shell"
-import HeroSlider from "@/components/hero-slider"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
-import ProductCard from "@/components/product-card"
-import { products } from "@/lib/products"
-import { getCategoryFromSlug } from "@/lib/categories"
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import LayoutShell from "@/components/layout-shell";
+import HeroSlider from "@/components/hero-slider";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import ProductCard from "@/components/product-card";
+import { products } from "@/lib/products";
+import { getCategoryFromSlug } from "@/lib/categories";
+import { useProducts } from "@/lib/services/products/use-products";
+import { useGetProducts } from "@/lib/services/products/use-get-products";
 
 const BRAND_OPTIONS = [
   "Apple",
@@ -45,7 +53,7 @@ const BRAND_OPTIONS = [
   "Casio",
   "Fitbit",
   "Garmin",
-] as const
+] as const;
 
 // Category-specific banner content
 const CATEGORY_BANNERS = {
@@ -112,57 +120,68 @@ const CATEGORY_BANNERS = {
     bgColor: "bg-gradient-to-r from-black to-gray-800",
     textColor: "text-white",
   },
-}
+};
 
 export default function CategoryPage() {
-  const params = useParams<{ category: string }>()
-  const slug = params.category
-  const category = getCategoryFromSlug(slug)
+  const params = useParams<{ category: string }>();
+  const slug = params.category;
+  const category = getCategoryFromSlug(slug);
 
-  const router = useRouter()
-  const qs = useSearchParams()
-  const q = (qs.get("search") || "").toString().trim()
+  const router = useRouter();
+  const qs = useSearchParams();
+  const q = (qs.get("search") || "").toString().trim();
 
-  const [brand, setBrand] = useState<string | "all">("all")
-  const [onlyDeals, setOnlyDeals] = useState(false)
-  const [sort, setSort] = useState<"htl" | "lth" | "none">("none")
-
-  const list = useMemo(() => {
-    let list = products.filter((p) => p.category === category)
-    if (q) {
-      const s = q.toLowerCase()
-      list = list.filter(
-        (p) =>
-          p.title.toLowerCase().includes(s) ||
-          p.brand.toLowerCase().includes(s) ||
-          p.category.toLowerCase().includes(s),
-      )
-    }
-    if (brand !== "all") list = list.filter((p) => p.brand.toLowerCase() === brand.toLowerCase())
-    if (onlyDeals) list = list.filter((p) => p.deal)
-    if (sort === "htl") list.sort((a, b) => b.price - a.price)
-    if (sort === "lth") list.sort((a, b) => a.price - b.price)
-    return list
-  }, [category, q, brand, onlyDeals, sort])
+  const [brand, setBrand] = useState<string | "all">("all");
+  const [onlyDeals, setOnlyDeals] = useState(false);
+  const [sort, setSort] = useState<"htl" | "lth" | "none">("none");
+  const { data } = useGetProducts({
+    category,
+    limit: 20,
+    page: 1,
+    brand: brand === "all" ? undefined : brand,
+  });
+  const products = data?.data || [];
+  // const list = useMemo(() => {
+  //   let list = products.filter((p) => p.category === category);
+  //   if (q) {
+  //     const s = q.toLowerCase();
+  //     list = list.filter(
+  //       (p) =>
+  //         p.title.toLowerCase().includes(s) ||
+  //         p.brand.toLowerCase().includes(s) ||
+  //         p.category.toLowerCase().includes(s)
+  //     );
+  //   }
+  //   if (brand !== "all")
+  //     list = list.filter((p) => p.brand.toLowerCase() === brand.toLowerCase());
+  //   if (onlyDeals) list = list.filter((p) => p.deal);
+  //   if (sort === "htl") list.sort((a, b) => b.price - a.price);
+  //   if (sort === "lth") list.sort((a, b) => a.price - b.price);
+  //   return list;
+  // }, [category, q, brand, onlyDeals, sort]);
 
   const resetFilters = () => {
-    setBrand("all")
-    setOnlyDeals(false)
-    setSort("none")
-  }
+    setBrand("all");
+    setOnlyDeals(false);
+    setSort("none");
+  };
 
   if (!category) {
-    if (typeof window !== "undefined") router.replace("/store")
-    return null
+    if (typeof window !== "undefined") router.replace("/store");
+    return null;
   }
 
-  const bannerConfig = CATEGORY_BANNERS[slug as keyof typeof CATEGORY_BANNERS] || {
+  const bannerConfig = CATEGORY_BANNERS[
+    slug as keyof typeof CATEGORY_BANNERS
+  ] || {
     title: category,
     subtitle: `Explore our ${category.toLowerCase()} collection`,
-    image: `/placeholder.svg?height=340&width=600&query=${encodeURIComponent(category + " promo")}`,
+    image: `/placeholder.svg?height=340&width=600&query=${encodeURIComponent(
+      category + " promo"
+    )}`,
     bgColor: "bg-gradient-to-r from-blue-600 to-purple-600",
     textColor: "text-white",
-  }
+  };
 
   return (
     <LayoutShell>
@@ -172,7 +191,9 @@ export default function CategoryPage() {
           <div className="md:col-span-6 rounded-lg border bg-card">
             <HeroSlider />
           </div>
-          <div className={`md:col-span-4 rounded-lg border ${bannerConfig.bgColor} p-6 flex flex-col justify-center`}>
+          <div
+            className={`md:col-span-4 rounded-lg border ${bannerConfig.bgColor} p-6 flex flex-col justify-center`}
+          >
             <div className={bannerConfig.textColor}>
               <h2 className="text-2xl font-bold mb-2">{bannerConfig.title}</h2>
               <p className="text-sm opacity-90 mb-4">{bannerConfig.subtitle}</p>
@@ -226,7 +247,11 @@ export default function CategoryPage() {
             </div>
 
             <div className="mb-4 flex items-center gap-2">
-              <Switch id="deals" checked={onlyDeals} onCheckedChange={(v) => setOnlyDeals(Boolean(v))} />
+              <Switch
+                id="deals"
+                checked={onlyDeals}
+                onCheckedChange={(v) => setOnlyDeals(Boolean(v))}
+              />
               <Label htmlFor="deals" className="text-sm">
                 Deals only
               </Label>
@@ -234,7 +259,10 @@ export default function CategoryPage() {
 
             <div className="mb-4">
               <div className="text-sm font-medium mb-2">Pricing</div>
-              <Select onValueChange={(v: "htl" | "lth" | "none") => setSort(v)} value={sort}>
+              <Select
+                onValueChange={(v: "htl" | "lth" | "none") => setSort(v)}
+                value={sort}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
@@ -257,19 +285,30 @@ export default function CategoryPage() {
           {/* Products */}
           <div className="md:col-span-8">
             <div className="mb-3">
-              <h2 className="text-xl md:text-2xl font-semibold tracking-tight">{category}</h2>
-              {q && <p className="text-sm text-muted-foreground">Showing results for "{q}"</p>}
-              <p className="text-sm text-muted-foreground mt-1">{list.length} products found</p>
+              <h2 className="text-xl md:text-2xl font-semibold tracking-tight">
+                {category}
+              </h2>
+              {q && (
+                <p className="text-sm text-muted-foreground">
+                  Showing results for "{q}"
+                </p>
+              )}
+              <p className="text-sm text-muted-foreground mt-1">
+                {products.length} products found
+              </p>
             </div>
             {/* 5 per row on desktop, 3 per row on mobile */}
             <div className="grid grid-cols-3 md:grid-cols-5 gap-4">
-              {list.map((p) => (
+              {products.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}
-              {list.length === 0 && (
+              {products.length === 0 && (
                 <div className="col-span-3 md:col-span-5 text-center py-8">
                   <p className="text-muted-foreground">No products found.</p>
-                  <button onClick={resetFilters} className="mt-2 text-sm text-blue-600 hover:underline">
+                  <button
+                    onClick={resetFilters}
+                    className="mt-2 text-sm text-blue-600 hover:underline"
+                  >
                     Clear filters
                   </button>
                 </div>
@@ -279,5 +318,5 @@ export default function CategoryPage() {
         </div>
       </section>
     </LayoutShell>
-  )
+  );
 }
