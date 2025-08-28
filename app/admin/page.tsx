@@ -1,12 +1,14 @@
-import React from "react";
+import React, { Suspense } from "react";
 import AdminSignIn from "./page-client";
 import AdminGuest from "@/components/admin-guest";
 
 const Page = () => {
   return (
-    <AdminGuest>
-      <AdminSignIn />
-    </AdminGuest>
+    <Suspense>
+      <AdminGuest>
+        <AdminSignIn />
+      </AdminGuest>
+    </Suspense>
   );
 };
 
