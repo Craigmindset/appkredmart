@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 
 let animationData: any;
 if (typeof window !== "undefined") {
-  animationData = require("../../public/result page success motion design.json");
+  animationData = require("../../../public/result page success motion design.json");
 }
 
 const Lottie = (props: any) => {
