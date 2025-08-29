@@ -27,7 +27,6 @@ export const useGetProducts = (params?: GetProductsParams) => {
   const formattedParams = {
     offset,
     limit,
-    category,
     page,
     ...(category ? { category } : {}),
     ...(brand ? { brand } : {}),
