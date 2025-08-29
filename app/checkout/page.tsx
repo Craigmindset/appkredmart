@@ -14,6 +14,7 @@ import {
   ChevronDown,
   ChevronUp,
   X,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +23,9 @@ import { useAuth } from "@/store/auth-store";
 import { useRouter } from "next/navigation";
 import Header from "@/components/site-header";
 import Insurance, { insuranceOptions } from "./insurance";
+import { useGetShipment } from "@/lib/services/order/use-get-shipment";
+import { formatNaira } from "@/lib/currency";
+import { useCreateOrder } from "@/lib/services/order/use-create-order";
 
 /** -----------------------------------------------------------------------
  * Data
@@ -125,6 +129,7 @@ export default function CheckoutPage() {
   const cartCount = useCart(cartSelectors.count);
   const cartItems = useCart((s) => s.items);
   const getCartTotal = useCart(cartSelectors.total);
+  const setCart = useCart((s) => s.setCart);
 
   /** Payments */
   const paymentMethods =
@@ -139,6 +144,9 @@ export default function CheckoutPage() {
   const [selectedLoanProvider, setSelectedLoanProvider] =
     useState("creditloan");
   const [isProcessing, setIsProcessing] = useState(false);
+
+  /** Shipment */
+  const [shipmentPrice, setShipmentPrice] = useState(0);
 
   /** Mobile toggles */
   const [showSummaryMobile, setShowSummaryMobile] = useState(false);
@@ -160,6 +168,12 @@ export default function CheckoutPage() {
   const [selectedInsurance, setSelectedInsurance] = useState<string | null>(
     null
   );
+
+  const { mutateAsync: getShipmentAsync, loading: shipmentLoading } =
+    useGetShipment();
+
+  const { mutateAsync: createOrderAsync, loading: createOrderLoading } =
+    useCreateOrder();
 
   /** UI: reveal/hide Device Protection section on demand (from upsell) */
   const [showProtection, setShowProtection] = useState(false);
@@ -221,31 +235,40 @@ export default function CheckoutPage() {
 
   /** ------------------------ Payment flows ------------------------ */
   const processPaystackPayment = async () => {
-    setIsProcessing(true);
-    try {
-      const response = await fetch("/api/payments/paystack/initialize", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: total * 100, // kobo
-          email: guestInfo.email || "user@example.com",
-          metadata: {
-            cartItems,
-            customerInfo: guestInfo,
-            insurance: selectedInsurance
-              ? insuranceOptions.find((o) => o.id === selectedInsurance)
-              : null,
-          },
-        }),
-      });
-      const data = await response.json();
-      if (data.status) window.location.href = data.data.authorization_url;
-    } catch (error) {
-      console.error("Paystack payment error:", error);
-      alert("Payment initialization failed. Please try again.");
-    } finally {
-      setIsProcessing(false);
-    }
+    await createOrderAsync({
+      user: guestInfo,
+      items: cartItems,
+      paymentMethod: "PAYSTACK",
+    }).then((response) => {
+      if (response.redirect_url) {
+        router.push(response.redirect_url);
+      }
+    });
+    // setIsProcessing(true);
+    // try {
+    //   const response = await fetch("/api/payments/paystack/initialize", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({
+    //       amount: total * 100, // kobo
+    //       email: guestInfo.email || "user@example.com",
+    //       metadata: {
+    //         cartItems,
+    //         customerInfo: guestInfo,
+    //         insurance: selectedInsurance
+    //           ? insuranceOptions.find((o) => o.id === selectedInsurance)
+    //           : null,
+    //       },
+    //     }),
+    //   });
+    //   const data = await response.json();
+    //   if (data.status) window.location.href = data.data.authorization_url;
+    // } catch (error) {
+    //   console.error("Paystack payment error:", error);
+    //   alert("Payment initialization failed. Please try again.");
+    // } finally {
+    //   setIsProcessing(false);
+    // }
   };
 
   const processBnplPayment = async () => {
@@ -361,6 +384,19 @@ export default function CheckoutPage() {
     );
   }
 
+  const handleGetShipment = async () => {
+    await getShipmentAsync({ user: guestInfo, items: cartItems }).then(
+      (response) => {
+        console.log({ response });
+        if (response) {
+          setCart(response.cart);
+          setShipmentPrice(response.deliveryPrice);
+          setDeliveryFetched(true);
+        }
+      }
+    );
+  };
+
   /** -----------------------------------------------------------------------
    * Render
    * ----------------------------------------------------------------------*/
@@ -439,6 +475,8 @@ export default function CheckoutPage() {
                 selectedLoanProvider={selectedLoanProvider}
                 insurance={insuranceObj}
                 onToggleProtection={() => setShowProtection(true)}
+                shipmentLoading={shipmentLoading}
+                shipmentPrice={shipmentPrice}
               />
 
               {/* Device Protection (collapsible on mobile) */}
@@ -509,7 +547,7 @@ export default function CheckoutPage() {
             )}
 
             {!deliveryFetched && (
-              <section className="hidden lg:block bg-white rounded-xl border shadow-sm p-4">
+              <section className="bg-white rounded-xl border shadow-sm p-4">
                 <h2 className="text-base font-semibold text-gray-900 mb-3">
                   Get Delivery Fee
                 </h2>
@@ -520,7 +558,7 @@ export default function CheckoutPage() {
               /> */}
                 <div className="flex items-center gap-3">
                   <Button
-                    onClick={() => setDeliveryFetched(true)}
+                    onClick={handleGetShipment}
                     // disabled={isProcessing || !isFormValid()}
                     className="w-full bg-[#466cf4] hover:bg-[#3a5ce0] text-white h-10 text-sm font-semibold"
                   >
@@ -690,10 +728,12 @@ export default function CheckoutPage() {
                 <div className="flex items-center gap-3">
                   <Button
                     onClick={handlePayment}
-                    disabled={isProcessing || !isFormValid()}
+                    disabled={
+                      isProcessing || !isFormValid() || createOrderLoading
+                    }
                     className="w-full bg-[#466cf4] hover:bg-[#3a5ce0] text-white h-10 text-sm font-semibold"
                   >
-                    {isProcessing
+                    {isProcessing || createOrderLoading
                       ? "Processing..."
                       : selectedPaymentMethod === "paystack"
                       ? "Pay Now"
@@ -724,6 +764,8 @@ export default function CheckoutPage() {
                 selectedLoanProvider={selectedLoanProvider}
                 insurance={insuranceObj}
                 onToggleProtection={() => setShowProtection(true)}
+                shipmentLoading={shipmentLoading}
+                shipmentPrice={shipmentPrice}
               />
 
               {/* Device Protection (collapsible on desktop via button) */}
@@ -1027,6 +1069,8 @@ function OrderSummary({
   selectedLoanProvider,
   insurance,
   onToggleProtection,
+  shipmentLoading,
+  shipmentPrice,
 }: {
   cartItems: any[];
   subtotal: number;
@@ -1045,6 +1089,10 @@ function OrderSummary({
   } | null;
   /** When the upsell is clicked */
   onToggleProtection: () => void;
+
+  /**Shipment */
+  shipmentLoading: boolean;
+  shipmentPrice: number;
 }) {
   return (
     <div className="bg-white rounded-xl border shadow-sm p-4">
@@ -1081,7 +1129,16 @@ function OrderSummary({
         <Row label="Subtotal" value={money(subtotal)} />
         <Row
           label="Delivery"
-          value={<span className="text-green-600 font-semibold">Free</span>}
+          // value={<span className="text-green-600 font-semibold">Free</span>}
+          value={
+            <span className="text-green-600 font-semibold">
+              {shipmentLoading ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                formatNaira(shipmentPrice || 0)
+              )}
+            </span>
+          }
         />
         <Row label="VAT" value={money(vat)} />
 
