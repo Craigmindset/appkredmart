@@ -1,5 +1,5 @@
-import AccountAdminPage from "@/components/admin/pages/account"
+import AccountAdminPage from "@/components/admin/pages/account";
 
 export default function AccountRoutePage() {
-  return <AccountAdminPage />
+  return <AccountAdminPage />;
 }

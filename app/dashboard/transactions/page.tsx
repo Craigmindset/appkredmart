@@ -1,38 +1,49 @@
-"use client"
+"use client";
 
-import { useMemo, useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { useOrders, orderTotal, type Order } from "@/store/orders-store"
-import { useLoans, type Loan } from "@/store/loans-store"
-import { useAuth } from "@/store/auth-store"
-import { formatNaira } from "@/lib/currency"
+import { useMemo, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { useOrders, orderTotal, type Order } from "@/store/orders-store";
+import { useLoans, type Loan } from "@/store/loans-store";
+import { useAuth } from "@/store/auth-store";
+import { formatNaira } from "@/lib/currency";
+import { useGetTransactions } from "@/lib/services/transactions/use-get-transactions";
+import { safeParseJson, upperCaseText } from "@/lib/utils";
 
-type TxKind = "ORDER" | "LOAN" | "AIRTIME" | "DATA" | "WALLET_PAYMENT"
+type TxKind = "ORDER" | "LOAN" | "AIRTIME" | "DATA" | "WALLET_PAYMENT";
 
 type Tx = {
-  id: string
-  kind: TxKind
-  ref: string
-  details: string
-  amount: number
-  method?: string
-  status: string
-  createdAt: string // ISO
-}
+  id: string;
+  kind: TxKind;
+  ref: string;
+  details: string;
+  amount: number;
+  method?: string;
+  status: string;
+  createdAt: string; // ISO
+};
 
 function mapOrders(orders: Order[]): Tx[] {
   return orders.map((o) => ({
     id: "TX-" + o.id,
     kind: "ORDER",
     ref: o.id,
-    details: (o.items[0]?.title ?? "Order") + (o.items.length > 1 ? ` (+${o.items.length - 1} more)` : ""),
+    details:
+      (o.items[0]?.title ?? "Order") +
+      (o.items.length > 1 ? ` (+${o.items.length - 1} more)` : ""),
     amount: orderTotal(o),
     method: o.paymentMethod,
     status: o.paymentStatus,
     createdAt: o.createdAt,
-  }))
+  }));
 }
 
 function mapLoans(loans: Loan[]): Tx[] {
@@ -44,48 +55,52 @@ function mapLoans(loans: Loan[]): Tx[] {
     amount: l.loanAmount,
     method: "BNPL",
     status: l.status,
-    createdAt: l.startDate || new Date(Date.now() - idx * 3600_000).toISOString(),
-  }))
+    createdAt:
+      l.startDate || new Date(Date.now() - idx * 3600_000).toISOString(),
+  }));
 }
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 10;
 
 export default function TransactionsPage() {
-  const user = useAuth((s) => s.user)
-  const orders = useOrders((s) => s.orders)
-  const seedOrders = useOrders((s) => s.seedDemo)
-  const loans = useLoans((s) => s.loans)
-  const seedLoans = useLoans((s) => s.seedDemo)
+  const user = useAuth((s) => s.user);
+  const orders = useOrders((s) => s.orders);
+
+  const loans = useLoans((s) => s.loans);
+
+  const { data, isLoading } = useGetTransactions({ limit: PAGE_SIZE });
+  const transactions = data?.data || [];
 
   const rows = useMemo(() => {
-    const arr = [...mapOrders(orders), ...mapLoans(loans)]
-    return arr.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))
-  }, [orders, loans])
+    const arr = [...mapOrders(orders), ...mapLoans(loans)];
+    return arr.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
+  }, [orders, loans]);
 
-  const [page, setPage] = useState(1)
-  const pageCount = Math.max(1, Math.ceil(rows.length / PAGE_SIZE))
-  const start = (page - 1) * PAGE_SIZE
-  const pageRows = rows.slice(start, start + PAGE_SIZE)
+  const [page, setPage] = useState(1);
+
+  const pageCount = Math.ceil((data?.total ?? 0) / PAGE_SIZE);
 
   const downloadStatement = () => {
-    const fullName = user ? `${user.firstName} ${user.lastName}`.trim() : "Guest User"
-    const email = user?.email ?? "N/A"
-    const printed = new Date().toLocaleString()
+    const fullName = user
+      ? `${user.firstName} ${user.lastName}`.trim()
+      : "Guest User";
+    const email = user?.email ?? "N/A";
+    const printed = new Date().toLocaleString();
 
-    const bodyRows = rows
+    const bodyRows = transactions
       .map(
         (r) => `
       <tr>
         <td>${new Date(r.createdAt).toLocaleString()}</td>
-        <td>${r.kind}</td>
+        <td>${upperCaseText(r.type)}</td>
         <td>${r.ref}</td>
-        <td>${r.details}</td>
+        <td>${r.meta ? safeParseJson(r.meta)?.details ?? "" : ""}</td>
         <td style="text-align:right">${r.amount}</td>
         <td>${r.method ?? "-"}</td>
         <td>${r.status}</td>
-      </tr>`,
+      </tr>`
       )
-      .join("")
+      .join("");
 
     const html = `
 <!doctype html>
@@ -127,44 +142,48 @@ export default function TransactionsPage() {
     </tbody>
   </table>
 </body>
-</html>`.trim()
+</html>`.trim();
 
-    const blob = new Blob([html], { type: "text/html;charset=utf-8" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = `kredmart-statement-${Date.now()}.html`
-    document.body.appendChild(a)
-    a.click()
-    a.remove()
-    URL.revokeObjectURL(url)
-  }
+    const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `kredmart-statement-${Date.now()}.html`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <Card>
       <CardHeader className="flex-row items-center justify-between space-y-0">
         <CardTitle>Transactions</CardTitle>
         <div className="flex items-center gap-2">
-          <Button variant="outline" className="bg-transparent" onClick={downloadStatement}>
+          <Button
+            variant="outline"
+            className="bg-transparent"
+            onClick={downloadStatement}
+          >
             Download Statement
           </Button>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {rows.length === 0 && (
+        {transactions.length === 0 && (
           <div className="text-sm text-muted-foreground">
             No transactions yet.{" "}
-            <button onClick={seedOrders} className="underline">
+            {/* <button onClick={seedOrders} className="underline">
               Load demo orders
             </button>{" "}
             ·{" "}
             <button onClick={seedLoans} className="underline">
               Load demo loans
-            </button>
+            </button> */}
           </div>
         )}
 
-        {rows.length > 0 && (
+        {transactions.length > 0 && (
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
@@ -179,17 +198,25 @@ export default function TransactionsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {pageRows.map((r) => (
+                {transactions.map((r) => (
                   <TableRow key={r.id}>
                     <TableCell className="whitespace-nowrap text-sm">
                       {new Date(r.createdAt).toLocaleString()}
                     </TableCell>
-                    <TableCell className="text-sm">{r.kind}</TableCell>
+                    <TableCell className="text-sm">
+                      {upperCaseText(r.type)}
+                    </TableCell>
                     <TableCell className="text-sm">{r.ref}</TableCell>
-                    <TableCell className="max-w-[380px] truncate text-sm">{r.details}</TableCell>
-                    <TableCell className="text-right font-medium">{formatNaira(r.amount)}</TableCell>
+                    <TableCell className="max-w-[380px] truncate text-sm">
+                      {r.meta ? safeParseJson(r.meta)?.details ?? "" : ""}
+                    </TableCell>
+                    <TableCell className="text-right font-medium">
+                      {formatNaira(r.amount)}
+                    </TableCell>
                     <TableCell className="text-sm">{r.method ?? "—"}</TableCell>
-                    <TableCell className="text-sm">{r.status}</TableCell>
+                    <TableCell className="text-sm">
+                      {upperCaseText(r.status)}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -224,5 +251,5 @@ export default function TransactionsPage() {
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

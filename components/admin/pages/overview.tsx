@@ -15,6 +15,8 @@ import Link from "next/link";
 import { useAdminRBACStore } from "@/store/admin-rbac-store";
 import { useUser } from "@/lib/services/user/user";
 import { useAdminOverview } from "@/lib/services/dashboard/admin-overview";
+import { useAdminGetOrders } from "@/lib/services/order/use-admin-get-orders";
+import { upperCaseText } from "@/lib/utils";
 
 // Demo data
 const recentOrders = [
@@ -65,7 +67,8 @@ const topProducts = [
 export default function OverviewAdminPage() {
   const { user } = useUser();
   const { data } = useAdminOverview();
-
+  const { data: ordersData, isPending: orderLoading } = useAdminGetOrders();
+  const orders = ordersData?.data || [];
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
@@ -188,15 +191,23 @@ export default function OverviewAdminPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {recentOrders.map((order) => (
+                {orders.map((order) => (
                   <TableRow key={order.id}>
-                    <TableCell className="font-medium">{order.id}</TableCell>
-                    <TableCell>{order.customer}</TableCell>
-                    <TableCell>{order.date}</TableCell>
-                    <TableCell>₦{order.amount.toLocaleString()}</TableCell>
-                    <TableCell>{order.paymentMethod}</TableCell>
+                    <TableCell className="font-medium">
+                      {order.orderId}
+                    </TableCell>
                     <TableCell>
-                      <Badge variant="secondary">{order.status}</Badge>
+                      {order.user.firstname} {order.user.lastname}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(order.createdAt).toLocaleString()}
+                    </TableCell>
+                    <TableCell>₦{order?.total?.toLocaleString()}</TableCell>
+                    <TableCell>{upperCaseText(order.paymentMethod)}</TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">
+                        {upperCaseText(order.fulfillment)}
+                      </Badge>
                     </TableCell>
                   </TableRow>
                 ))}

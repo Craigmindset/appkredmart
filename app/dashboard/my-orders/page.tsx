@@ -42,6 +42,7 @@ import {
   CustomerOrderItemResponseDto,
   useGetOrders,
 } from "@/lib/services/order/use-get-orders";
+import { upperCaseText } from "@/lib/utils";
 
 type SortKey = "newest" | "oldest" | "total";
 
@@ -325,6 +326,12 @@ export default function MyOrdersPage() {
                 {filtered.map((o) => {
                   const first = o.items[0];
                   const more = o.items.length - 1;
+                  const paymentStatus =
+                    o.paymentStatus.charAt(0) +
+                    o.paymentStatus.slice(1).toLowerCase();
+                  const fulfillment =
+                    o.fulfillment.charAt(0) +
+                    o.fulfillment.slice(1).toLowerCase();
                   return (
                     <TableRow key={o.id}>
                       <TableCell className="font-medium max-w-40 truncate">
@@ -355,18 +362,22 @@ export default function MyOrdersPage() {
                       <TableCell>
                         <Badge
                           className={`px-2 py-0.5 text-[10px] ${
-                            payStatusVariant[o.paymentStatus]
+                            payStatusVariant[paymentStatus as PaymentStatus]
                           }`}
                         >
-                          {o.paymentStatus}
+                          {paymentStatus}
                         </Badge>
                       </TableCell>
                       <TableCell
-                        className={`${fulfillVariant[o.fulfillment]} text-sm`}
+                        className={`${
+                          fulfillVariant[fulfillment as Fulfillment]
+                        } text-sm`}
                       >
-                        {o.fulfillment}
+                        {fulfillment}
                       </TableCell>
-                      <TableCell className="text-sm">{o.delivery}</TableCell>
+                      <TableCell className="text-sm">
+                        {upperCaseText(o.delivery)}
+                      </TableCell>
                       <TableCell className="text-right">
                         {formatNaira(o.total)}
                       </TableCell>
@@ -393,7 +404,9 @@ export default function MyOrdersPage() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Receipt {active ? "— " + active.id : ""}</DialogTitle>
+            <DialogTitle>
+              Receipt {active ? "— " + active.orderId : ""}
+            </DialogTitle>
           </DialogHeader>
           {active && (
             <div className="space-y-3">

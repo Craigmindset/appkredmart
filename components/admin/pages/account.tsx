@@ -42,16 +42,20 @@ import { useFetchAdminTeam } from "@/lib/services/admin/fetch-admin-team";
 import { useUser } from "@/lib/services/user/user";
 import { useUpdateAdminAccount } from "@/lib/services/admin/use-update-admin-account";
 import { useUploadMedia } from "@/lib/services/upload/useUploadMedia";
+import { useUpdatePassword } from "@/lib/services/user/use-update-password";
 
 export default function AccountAdminPage() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
+
   const { user } = useUser();
   const { mutateAsync, loading: isUpdatingProfile } = useUpdateAdminAccount();
   const { mutateAsync: uploadMedia, isPending: pictureLoading } =
     useUploadMedia();
+
+  const { mutateAsync: updatePassword, loading: isChangingPassword } =
+    useUpdatePassword();
   // Profile form state
   const [profileData, setProfileData] = useState({
     firstName: user?.firstname || "",
@@ -136,21 +140,17 @@ export default function AccountAdminPage() {
       return;
     }
 
-    setIsChangingPassword(true);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    toast.success("Password Changed", {
-      description: "Your password has been successfully updated.",
+    await updatePassword({
+      currentPassword: passwordData.currentPassword,
+      newPassword: passwordData.newPassword,
+      confirmPassword: passwordData.confirmPassword,
+    }).then(() => {
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
     });
-
-    setPasswordData({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
-    setIsChangingPassword(false);
   };
 
   return (

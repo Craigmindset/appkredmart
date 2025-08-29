@@ -54,7 +54,7 @@ export default function AdminSignIn() {
         title: "Welcome!",
         description: `Signed in as ${formData.role.replace("-", " ")}`,
       });
-      router.replace("/admin/dashboard/overview");
+      router.push("/admin/dashboard/overview");
     });
   };
 

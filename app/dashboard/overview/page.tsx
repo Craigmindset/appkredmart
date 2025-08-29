@@ -17,6 +17,8 @@ import Link from "next/link";
 import { useUser } from "@/lib/services/user/user";
 import { useUserOverview } from "@/lib/services/dashboard/user-overview";
 import { formatNaira } from "@/lib/currency";
+import { useGetTransactions } from "@/lib/services/transactions/use-get-transactions";
+import { safeParseJson, upperCaseText } from "@/lib/utils";
 
 export default function OverviewPage() {
   const { data: overview } = useUserOverview();
@@ -103,7 +105,8 @@ export default function OverviewPage() {
   ];
 
   const { user } = useUser();
-
+  const { data } = useGetTransactions({ limit: 4 });
+  const transactions = data?.data || [];
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
@@ -198,7 +201,7 @@ export default function OverviewPage() {
         </CardHeader>
         <CardContent className="p-0">
           <div className="divide-y divide-slate-100">
-            {recentTransactions.map((transaction, index) => (
+            {transactions.map((transaction, index) => (
               <div
                 key={index}
                 className="p-4 hover:bg-slate-50 transition-colors"
@@ -216,31 +219,35 @@ export default function OverviewPage() {
                             : "bg-emerald-100 text-emerald-700"
                         }`}
                       >
-                        {transaction.type}
+                        {upperCaseText(transaction.type)}
                       </Badge>
                       <span className="text-sm font-medium text-slate-900">
-                        {transaction.description}
+                        {transaction.meta
+                          ? safeParseJson(transaction.meta)?.details ?? ""
+                          : ""}
                       </span>
                     </div>
                     <div className="flex items-center gap-4 text-xs text-slate-600">
-                      <span>{transaction.id}</span>
-                      <span>{transaction.date}</span>
+                      <span>{transaction.ref}</span>
+                      <span>
+                        {new Date(transaction.createdAt).toLocaleString()}
+                      </span>
                       <span>{transaction.method}</span>
                     </div>
                   </div>
                   <div className="text-right">
                     <div
-                      className={`font-semibold ${
-                        transaction.amount.startsWith("+")
-                          ? "text-emerald-600"
-                          : "text-slate-900"
-                      }`}
+                    // className={`font-semibold ${
+                    //   transaction.amount.startsWith("+")
+                    //     ? "text-emerald-600"
+                    //     : "text-slate-900"
+                    // }`}
                     >
-                      {transaction.amount}
+                      {formatNaira(transaction.amount)}
                     </div>
                     <Badge
                       variant={
-                        transaction.status === "Completed"
+                        upperCaseText(transaction.status) === "Completed"
                           ? "default"
                           : "secondary"
                       }
@@ -250,7 +257,7 @@ export default function OverviewPage() {
                           : "bg-orange-100 text-orange-700"
                       }`}
                     >
-                      {transaction.status}
+                      {upperCaseText(transaction.status)}
                     </Badge>
                   </div>
                 </div>
