@@ -79,14 +79,14 @@ export default function HeroSection() {
           {/* Left Column - Content */}
           <div className="space-y-4 md:space-y-6 flex flex-col justify-center pt-2 md:pt-4 px-0 md:px-4">
             <div className="space-y-1">
-                <h1
+              <h1
                 className={`${poppins.className} text-3xl sm:text-6xl md:text-7xl lg:text-6xl font-black text-gray-900 leading-tight tracking-tighter drop-shadow-lg whitespace-nowrap text-center lg:text-left`}
-                >
+              >
                 {slide.headline}
-                </h1>
-                <h2
+              </h1>
+              <h2
                 className={`${poppins.className} text-2xl sm:text-3xl lg:text-4xl font-semibold text-gray-900 leading-tight tracking-tighter text-center lg:text-left`}
-                >
+              >
                 {slide.subheadline}
               </h2>
             </div>

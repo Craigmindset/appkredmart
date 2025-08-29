@@ -88,35 +88,40 @@ export default function ProductUploadAdminPage() {
     category: "",
     color: "",
     brand: "",
+    merchant: "",
     description: "",
     price: "",
     discountPrice: "",
     isDeal: false,
   });
 
+  const MAX_IMAGE_SIZE_MB = 2;
   const handleImageUpload = (
     e: React.ChangeEvent<HTMLInputElement>,
     type: "main" | "gallery"
   ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
     if (type === "main") {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      if (file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+        toast.error(`Image must be less than ${MAX_IMAGE_SIZE_MB}MB`);
+        return;
+      }
       setMainImage(file);
     } else {
-      setGalleryImages((prev) => [...prev, file]);
+      const files = Array.from(e.target.files || []);
+      if (galleryImages.length + files.length > 4) {
+        toast.error("You can only upload up to 4 gallery images.");
+        return;
+      }
+      const validFiles = files.filter(
+        (file) => file.size <= MAX_IMAGE_SIZE_MB * 1024 * 1024
+      );
+      if (validFiles.length < files.length) {
+        toast.error(`All images must be less than ${MAX_IMAGE_SIZE_MB}MB`);
+      }
+      setGalleryImages((prev) => [...prev, ...validFiles].slice(0, 4));
     }
-    // if (file) {
-    //   const reader = new FileReader();
-    //   reader.onload = (e) => {
-    //     const result = e.target?.result as string;
-    //     if (type === "main") {
-    //       setMainImage(result);
-    //     } else {
-    //       setGalleryImages((prev) => [...prev, result]);
-    //     }
-    //   };
-    //   reader.readAsDataURL(file);
-    // }
   };
 
   const removeGalleryImage = (index: number) => {
@@ -213,16 +218,6 @@ export default function ProductUploadAdminPage() {
             Add new products to your inventory
           </p>
         </div>
-        <div className="flex gap-2">
-          <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-            <FileText className="h-3 w-3 mr-1" />
-            Draft: 12
-          </Badge>
-          <Badge variant="secondary" className="bg-green-100 text-green-800">
-            <Eye className="h-3 w-3 mr-1" />
-            Published: 1,247
-          </Badge>
-        </div>
       </div>
 
       {/* Upload Methods */}
@@ -287,7 +282,6 @@ export default function ProductUploadAdminPage() {
                       </Select>
                     </div>
                   </div>
-
                   <div className="space-y-2">
                     <Label htmlFor="category">Category *</Label>
                     <Select
@@ -308,7 +302,24 @@ export default function ProductUploadAdminPage() {
                       </SelectContent>
                     </Select>
                   </div>
-
+                  {/* Merchant Dropdown */}
+                  <div className="space-y-2">
+                    <Label htmlFor="merchant">Merchant *</Label>
+                    <Select
+                      value={formData.merchant}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, merchant: value }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select merchant" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Slot">Slot</SelectItem>
+                        <SelectItem value="Kredmart">Kredmart</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                   {/* Color Dropdown */}
                   <div className="space-y-2">
                     <Label htmlFor="color">Color</Label>
@@ -340,7 +351,6 @@ export default function ProductUploadAdminPage() {
                       </SelectContent>
                     </Select>
                   </div>
-
                   <div className="space-y-2">
                     <Label htmlFor="description">Product Description</Label>
                     <Textarea
@@ -356,7 +366,6 @@ export default function ProductUploadAdminPage() {
                       }
                     />
                   </div>
-
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="price">Product Price (₦) *</Label>
@@ -389,7 +398,6 @@ export default function ProductUploadAdminPage() {
                       />
                     </div>
                   </div>
-
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="isDeal"
