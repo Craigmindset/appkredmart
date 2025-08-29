@@ -32,7 +32,7 @@ export type Order = {
 };
 
 export function orderTotal(o: Order) {
-  return o.items.reduce((sum, it) => sum + it.qty * it.price, 0);
+  return o.items.reduce((sum, it) => sum + it.quantity * it.price, 0);
 }
 
 type OrdersState = {
