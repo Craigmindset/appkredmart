@@ -515,54 +515,62 @@ const TeamMembersPanel = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {teamMembers?.map((member) => (
-            <div
-              key={member.id}
-              className="flex items-center justify-between p-4 border rounded-lg"
-            >
-              <div className="flex items-center gap-4">
-                <Avatar>
-                  <AvatarImage src={`/placeholder.svg?height=40&width=40`} />
-                  <AvatarFallback>
-                    {`${member.firstname} ${member.lastname}`
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <h4 className="font-medium">
-                    {member.firstname} {member.lastname}
-                  </h4>
-                  <p className="text-sm text-gray-600">{member.email}</p>
-                  <p className="text-xs text-gray-500">
-                    Joined {formatDate(member.createdAt, "yyyy-MM-dd")}
-                  </p>
+          {teamMembers?.map((member) => {
+            let bg = "bg-white";
+            if (member.position === "Manager") bg = "bg-red-50";
+            else if (member.position === "Marketer") bg = "bg-orange-50";
+            else if (member.position === "Finance") bg = "bg-blue-50";
+            return (
+              <div
+                key={member.id}
+                className={`flex items-center justify-between p-3 border rounded-md text-sm ${bg}`}
+                style={{ minHeight: 64 }}
+              >
+                <div className="flex items-center gap-3">
+                  <Avatar className="w-8 h-8">
+                    <AvatarImage src={`/placeholder.svg?height=32&width=32`} />
+                    <AvatarFallback>
+                      {`${member.firstname} ${member.lastname}`
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h4 className="font-medium text-sm">
+                      {member.firstname} {member.lastname}
+                    </h4>
+                    <p className="text-xs text-gray-600">{member.email}</p>
+                    <p className="text-xs text-gray-400">
+                      Joined {formatDate(member.createdAt, "yyyy-MM-dd")}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`px-2 py-1 rounded text-xs font-semibold ${
+                      member.position === "Manager"
+                        ? "bg-red-100 text-red-700"
+                        : member.position === "Marketer"
+                        ? "bg-orange-100 text-orange-700"
+                        : member.position === "Finance"
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-gray-100 text-gray-700"
+                    }`}
+                  >
+                    {member.position}
+                  </span>
+                  <Badge
+                    variant={
+                      member.firstname === "Active" ? "default" : "secondary"
+                    }
+                  >
+                    {member.firstname ? "Active" : "Pending"}
+                  </Badge>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <Badge
-                  variant={
-                    member.position === "Manager"
-                      ? "default"
-                      : member.position === "Marketer"
-                      ? "secondary"
-                      : "outline"
-                  }
-                >
-                  {member.position?.charAt(0).toUpperCase()}
-                  {member?.position?.slice(1).replace("-", " ")}
-                </Badge>
-                <Badge
-                  variant={
-                    member.firstname === "Active" ? "default" : "secondary"
-                  }
-                >
-                  {member.firstname ? "Active" : "Pending"}
-                </Badge>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </CardContent>
     </Card>
