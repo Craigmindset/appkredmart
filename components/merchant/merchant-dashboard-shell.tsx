@@ -79,9 +79,7 @@ export function MerchantDashboardShell({
     (user?.lastname?.[0] ?? (user?.firstname ? "" : "M"));
 
   const handleLogout = async () => {
-    await logout().then(() => {
-      redirect("/admindesk");
-    });
+    await logout();
   };
 
   return (

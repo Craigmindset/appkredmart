@@ -174,7 +174,7 @@ export default function AccountPage() {
                 First name
               </label>
               <Input
-                value={firstName}
+                value={firstName || ""}
                 onChange={(e) => setFirstName(e.target.value)}
               />
             </div>
@@ -183,7 +183,7 @@ export default function AccountPage() {
                 Last name
               </label>
               <Input
-                value={lastName}
+                value={lastName || ""}
                 onChange={(e) => setLastName(e.target.value)}
               />
             </div>
@@ -191,7 +191,7 @@ export default function AccountPage() {
               <label className="mb-1 block text-sm font-medium">Email</label>
               <Input
                 type="email"
-                value={email}
+                value={email || ""}
                 // onChange={(e) => setEmail(e.target.value)}
                 disabled={true}
                 readOnly
@@ -200,7 +200,7 @@ export default function AccountPage() {
             <div>
               <label className="mb-1 block text-sm font-medium">Phone</label>
               <Input
-                value={phone}
+                value={phone || ""}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+234 800 000 0000"
               />
