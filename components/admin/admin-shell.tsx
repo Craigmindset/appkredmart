@@ -142,15 +142,13 @@ const adminNavItems: AdminNavItem[] = [
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  // const { currentUser, hasAnyPermission } = useAdminRBACStore();
+
   const { mutateAsync: signOut } = useLogout();
   const { user, loading } = useUser();
   const { data: wallet } = useAdminWallet();
 
   const handleLogout = async () => {
-    await signOut().then(() => {
-      return redirect("/admin");
-    });
+    await signOut();
   };
 
   if (loading) {

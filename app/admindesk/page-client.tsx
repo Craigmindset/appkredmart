@@ -6,13 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useMerchantLogin } from "@/lib/services/auth/use-merchant-login";
 import { Eye, EyeOff } from "lucide-react";
-import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
 
 export default function MerchantSignInPage() {
-  const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
   const [showPwd, setShowPwd] = useState(false);
@@ -21,10 +18,7 @@ export default function MerchantSignInPage() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    await mutateAsync({ email, password: pwd }).then(() => {
-      router.push("/admindesk/dashboard/overview");
-    });
-    // Direct redirect to merchant dashboard
+    await mutateAsync({ email, password: pwd });
   }
 
   return (

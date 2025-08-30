@@ -125,7 +125,7 @@ export default function AdminCreateAccountFromInvite() {
         description: `Welcome!`,
       });
 
-      router.replace("/admin/dashboard/overview");
+      router.push("/admin/dashboard/overview");
     });
   };
 
