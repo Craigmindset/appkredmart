@@ -1,10 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { useMemo, useState } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import LayoutShell from "@/components/layout-shell";
 import HeroSlider from "@/components/hero-slider";
+import LayoutShell from "@/components/layout-shell";
+import ProductCard from "@/components/product-card";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -14,11 +12,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import ProductCard from "@/components/product-card";
-import { products } from "@/lib/products";
 import { getCategoryFromSlug } from "@/lib/categories";
-import { useProducts } from "@/lib/services/products/use-products";
 import { useGetProducts } from "@/lib/services/products/use-get-products";
+import Link from "next/link";
+import {
+  redirect,
+  useParams,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
+import { useState } from "react";
 
 const BRAND_OPTIONS = [
   "Apple",
@@ -167,7 +170,7 @@ export default function CategoryPage() {
   };
 
   if (!category) {
-    if (typeof window !== "undefined") router.replace("/store");
+    if (typeof window !== "undefined") redirect("/store");
     return null;
   }
 

@@ -244,31 +244,6 @@ export default function CheckoutPage() {
         router.push(response.redirect_url);
       }
     });
-    // setIsProcessing(true);
-    // try {
-    //   const response = await fetch("/api/payments/paystack/initialize", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({
-    //       amount: total * 100, // kobo
-    //       email: guestInfo.email || "user@example.com",
-    //       metadata: {
-    //         cartItems,
-    //         customerInfo: guestInfo,
-    //         insurance: selectedInsurance
-    //           ? insuranceOptions.find((o) => o.id === selectedInsurance)
-    //           : null,
-    //       },
-    //     }),
-    //   });
-    //   const data = await response.json();
-    //   if (data.status) window.location.href = data.data.authorization_url;
-    // } catch (error) {
-    //   console.error("Paystack payment error:", error);
-    //   alert("Payment initialization failed. Please try again.");
-    // } finally {
-    //   setIsProcessing(false);
-    // }
   };
 
   const processBnplPayment = async () => {
@@ -664,9 +639,9 @@ export default function CheckoutPage() {
                               <div className="flex items-center gap-3">
                                 <Image
                                   src={p.logo || "/placeholder.svg"}
-                                  alt={p.name}
                                   width={60}
                                   height={30}
+                                  alt={p.name}
                                   className="h-6 w-auto object-contain"
                                 />
                                 <div>
@@ -1106,14 +1081,14 @@ function OrderSummary({
           <div key={item.product.id} className="flex items-center gap-3">
             <Image
               src={item.product.image || "/placeholder.svg"}
-              alt={item.product.title}
+              alt={item.product.name}
               width={60}
               height={60}
               className="w-14 h-14 object-cover rounded-md"
             />
             <div className="flex-1 min-w-0">
               <h4 className="text-sm font-medium text-gray-900 truncate">
-                {item.product.title}
+                {item.product.name}
               </h4>
               <p className="text-xs text-gray-600">Qty: {item.quantity}</p>
             </div>

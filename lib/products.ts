@@ -1,133 +1,168 @@
 export type Product = {
-  id: string
-  title: string
-  price: number
-  image: string
-  images?: string[]
-  brand: string
-  category: string
-  description: string
-  specs: string[]
-  label?: "Hot Deal" | "New" | "Sale"
-  deal?: boolean
-}
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  images?: string[];
+  brand: string;
+  category: string;
+  description: string;
+  specs: string[];
+  label?: "Hot Deal" | "New" | "Sale" | "Premium";
+  deal?: boolean;
+};
 
 export const products: Product[] = [
   {
     id: "p-1",
-    title: "Smartphone X Pro",
+    name: "Smartphone X Pro",
     price: 799,
     brand: "AcmePhone",
     category: "Phones and Tablets",
     image: "/placeholder.svg?height=600&width=800",
-    images: ["/placeholder.svg?height=600&width=800", "/placeholder.svg?height=600&width=800"],
-    description: "Powerful flagship smartphone with stunning display and long-lasting battery life.",
+    images: [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+    ],
+    description:
+      "Powerful flagship smartphone with stunning display and long-lasting battery life.",
     specs: ["6.7' OLED 120Hz", "8GB RAM", "256GB Storage", "5000mAh"],
     label: "Hot Deal",
     deal: true,
   },
   {
     id: "p-2",
-    title: "Noise-Canceling Headphones",
+    name: "Noise-Canceling Headphones",
     price: 199,
     brand: "SoundMax",
     category: "Electronics",
     image: "/placeholder.svg?height=600&width=800",
-    images: ["/placeholder.svg?height=600&width=800", "/placeholder.svg?height=600&width=800"],
-    description: "Immersive over-ear headphones with adaptive noise cancelation and crystal clear audio.",
+    images: [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+    ],
+    description:
+      "Immersive over-ear headphones with adaptive noise cancelation and crystal clear audio.",
     specs: ["ANC", "Bluetooth 5.3", "30h Battery", "USB-C Fast Charge"],
     label: "Sale",
     deal: true,
   },
   {
     id: "p-3",
-    title: '4K Ultra HD TV 55"',
+    name: '4K Ultra HD TV 55"',
     price: 599,
     brand: "VisioLux",
     category: "Electronics",
     image: "/placeholder.svg?height=600&width=800",
-    images: ["/placeholder.svg?height=600&width=800", "/placeholder.svg?height=600&width=800"],
+    images: [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+    ],
     description: "Cinematic 4K HDR picture with smart OS and voice control.",
     specs: ['55" 4K HDR', "Dolby Vision/Atmos", "120Hz", "Wi‑Fi 6"],
     deal: true,
   },
   {
     id: "p-4",
-    title: "Gaming Laptop 15",
+    name: "Gaming Laptop 15",
     price: 1299,
     brand: "NitroTech",
     category: "Computing",
     image: "/placeholder.svg?height=600&width=800",
-    images: ["/placeholder.svg?height=600&width=800", "/placeholder.svg?height=600&width=800"],
+    images: [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+    ],
     description: "High performance laptop for gaming and content creation.",
     specs: ["RTX 4070", "16GB RAM", "1TB NVMe", "QHD 165Hz"],
     label: "New",
   },
   {
     id: "p-5",
-    title: "Smartwatch Active",
+    name: "Smartwatch Active",
     price: 249,
     brand: "AcmeWatch",
     category: "Watches",
     image: "/placeholder.svg?height=600&width=800",
-    images: ["/placeholder.svg?height=600&width=800", "/placeholder.svg?height=600&width=800"],
-    description: "Track your health with GPS, heart-rate monitor and 7-day battery life.",
+    images: [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+    ],
+    description:
+      "Track your health with GPS, heart-rate monitor and 7-day battery life.",
     specs: ["GPS", "SpO2", "Water-Resistant", "7-day Battery"],
     deal: true,
   },
   {
     id: "p-6",
-    title: "Bluetooth Speaker Mini",
+    name: "Bluetooth Speaker Mini",
     price: 79,
     brand: "SoundMax",
     category: "Electronics",
     image: "/placeholder.svg?height=600&width=800",
-    images: ["/placeholder.svg?height=600&width=800", "/placeholder.svg?height=600&width=800"],
+    images: [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+    ],
     description: "Compact speaker with deep bass and waterproof design.",
     specs: ["IP67", "12h Battery", "USB‑C", "Stereo Pair"],
   },
   {
     id: "p-7",
-    title: "Wireless Earbuds Pro",
+    name: "Wireless Earbuds Pro",
     price: 149,
     brand: "AcmeAudio",
     category: "Electronics",
     image: "/placeholder.svg?height=600&width=800",
-    images: ["/placeholder.svg?height=600&width=800", "/placeholder.svg?height=600&width=800"],
-    description: "Active noise canceling with transparency mode and low latency.",
+    images: [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+    ],
+    description:
+      "Active noise canceling with transparency mode and low latency.",
     specs: ["ANC", "Transparency", "Wireless Charging", "BT 5.3"],
     deal: true,
   },
   {
     id: "p-8",
-    title: "Mirrorless Camera 24MP",
+    name: "Mirrorless Camera 24MP",
     price: 899,
     brand: "Photonix",
     category: "Electronics",
     image: "/placeholder.svg?height=600&width=800",
-    images: ["/placeholder.svg?height=600&width=800", "/placeholder.svg?height=600&width=800"],
-    description: "Lightweight body with 4K video, fast autofocus and dual pixel.",
+    images: [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+    ],
+    description:
+      "Lightweight body with 4K video, fast autofocus and dual pixel.",
     specs: ["24MP", "4K/60", "IBIS", "Fast AF"],
   },
   {
     id: "p-9",
-    title: "Mechanical Keyboard TKL",
+    name: "Mechanical Keyboard TKL",
     price: 129,
     brand: "KeyForge",
     category: "Accessories",
     image: "/placeholder.svg?height=600&width=800",
-    images: ["/placeholder.svg?height=600&width=800", "/placeholder.svg?height=600&width=800"],
+    images: [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+    ],
     description: "Hot-swappable switches, PBT keycaps and RGB underglow.",
     specs: ["Hot-swap", "PBT", "USB‑C", "RGB"],
   },
   {
     id: "p-10",
-    title: "Robot Vacuum",
+    name: "Robot Vacuum",
     price: 349,
     brand: "CleanBot",
     category: "Home & Kitchen",
     image: "/placeholder.svg?height=600&width=800",
-    images: ["/placeholder.svg?height=600&width=800", "/placeholder.svg?height=600&width=800"],
+    images: [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+    ],
     description: "Smart mapping, powerful suction and auto dock recharging.",
     specs: ["LiDAR", "APP Control", "120min", "Auto Dock"],
     label: "Hot Deal",
@@ -135,78 +170,107 @@ export const products: Product[] = [
   },
   {
     id: "p-11",
-    title: 'iPad Pro 12.9"',
+    name: 'iPad Pro 12.9"',
     price: 1099,
     brand: "Apple",
     category: "Phones and Tablets",
     image: "/placeholder.svg?height=600&width=800",
-    images: ["/placeholder.svg?height=600&width=800", "/placeholder.svg?height=600&width=800"],
-    description: "Professional tablet with M2 chip and Liquid Retina XDR display.",
+    images: [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+    ],
+    description:
+      "Professional tablet with M2 chip and Liquid Retina XDR display.",
     specs: ["M2 Chip", '12.9" XDR', "128GB", "Wi-Fi 6E"],
     label: "Premium",
   },
   {
     id: "p-12",
-    title: "Desktop PC Gaming Rig",
+    name: "Desktop PC Gaming Rig",
     price: 1899,
     brand: "CustomBuild",
     category: "Computing",
     image: "/placeholder.svg?height=600&width=800",
-    images: ["/placeholder.svg?height=600&width=800", "/placeholder.svg?height=600&width=800"],
-    description: "High-end gaming desktop with RGB lighting and liquid cooling.",
+    images: [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+    ],
+    description:
+      "High-end gaming desktop with RGB lighting and liquid cooling.",
     specs: ["RTX 4080", "32GB DDR5", "2TB NVMe", "850W PSU"],
     label: "New",
   },
   {
     id: "p-13",
-    title: "Portable Generator 5KW",
+    name: "Portable Generator 5KW",
     price: 899,
     brand: "PowerMax",
     category: "Generators",
     image: "/placeholder.svg?height=600&width=800",
-    images: ["/placeholder.svg?height=600&width=800", "/placeholder.svg?height=600&width=800"],
+    images: [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+    ],
     description: "Reliable backup power for home and outdoor use.",
     specs: ["5000W", "Electric Start", "8hr Runtime", "Dual Fuel"],
     deal: true,
   },
   {
     id: "p-14",
-    title: "Coffee Maker Deluxe",
+    name: "Coffee Maker Deluxe",
     price: 299,
     brand: "BrewMaster",
     category: "Home & Kitchen",
     image: "/placeholder.svg?height=600&width=800",
-    images: ["/placeholder.svg?height=600&width=800", "/placeholder.svg?height=600&width=800"],
-    description: "Premium coffee maker with built-in grinder and programmable settings.",
+    images: [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+    ],
+    description:
+      "Premium coffee maker with built-in grinder and programmable settings.",
     specs: ["Built-in Grinder", "12-Cup", "Programmable", "Auto Clean"],
   },
   {
     id: "p-15",
-    title: "Luxury Watch Collection",
+    name: "Luxury Watch Collection",
     price: 2499,
     brand: "TimeElite",
     category: "Premium Devices",
     image: "/placeholder.svg?height=600&width=800",
-    images: ["/placeholder.svg?height=600&width=800", "/placeholder.svg?height=600&width=800"],
-    description: "Swiss-made luxury timepiece with sapphire crystal and leather strap.",
-    specs: ["Swiss Movement", "Sapphire Crystal", "Leather Strap", "Water Resistant"],
+    images: [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+    ],
+    description:
+      "Swiss-made luxury timepiece with sapphire crystal and leather strap.",
+    specs: [
+      "Swiss Movement",
+      "Sapphire Crystal",
+      "Leather Strap",
+      "Water Resistant",
+    ],
     label: "Premium",
   },
   {
     id: "p-16",
-    title: "Fitness Tracker Band",
+    name: "Fitness Tracker Band",
     price: 79,
     brand: "FitLife",
     category: "Lifestyle",
     image: "/placeholder.svg?height=600&width=800",
-    images: ["/placeholder.svg?height=600&width=800", "/placeholder.svg?height=600&width=800"],
+    images: [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+    ],
     description: "Track your daily activities, sleep, and heart rate.",
     specs: ["Heart Rate", "Sleep Tracking", "7-day Battery", "Water Resistant"],
     deal: true,
   },
-]
+];
 
-export const allBrands = Array.from(new Set(products.map((p) => p.brand))).sort()
+export const allBrands = Array.from(
+  new Set(products.map((p) => p.brand))
+).sort();
 export const allCategories = [
   "Phones and Tablets",
   "Computing",
@@ -217,4 +281,4 @@ export const allCategories = [
   "Lifestyle",
   "Watches",
   "Premium Devices",
-]
+];

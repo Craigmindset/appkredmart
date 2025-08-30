@@ -17,7 +17,7 @@ export default function CartPage() {
 
   return (
     <LayoutShell>
-      <section className="container mx-auto px-4 py-10">
+      <section className="container mx-auto px-4 py-10 min-h-[56vh]">
         <h1 className="text-2xl font-semibold tracking-tight">Your Cart</h1>
         {items.length === 0 ? (
           <div className="mt-8">
@@ -36,12 +36,12 @@ export default function CartPage() {
                 >
                   <img
                     src={i.product.image || "/placeholder.svg"}
-                    alt={i.product.title}
+                    alt={i.product.name}
                     className="h-14 w-16 rounded-lg object-cover border"
                   />
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold text-sm truncate">
-                      {i.product.title}
+                      {i.product.name}
                     </div>
                     <div className="text-xs text-muted-foreground truncate">
                       {i.product.brand}

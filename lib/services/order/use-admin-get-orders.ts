@@ -1,7 +1,6 @@
 import { backendAxios } from "@/lib/backendaxios";
-import { useQuery } from "@tanstack/react-query";
-import { GetProductDto } from "../products/products";
 import { Fulfillment, PaymentStatus } from "@/store/orders-store";
+import { useQuery } from "@tanstack/react-query";
 
 export type CustomerOrderItemResponseDto = {
   id: string;
