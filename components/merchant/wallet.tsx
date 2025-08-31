@@ -48,6 +48,8 @@ import { toast } from "sonner";
 
 import { useMerchantWallet } from "@/lib/services/wallet/use-merchant-wallet";
 import { useMerchantWalletTransactions } from "@/lib/services/wallet/use-merchant-wallet-history";
+import { formatDate } from "date-fns";
+import { upperCaseText } from "@/lib/utils";
 
 // Demo transaction data
 const demoTransactions = [
@@ -363,18 +365,23 @@ export function Wallet() {
                   <TableRow key={transaction.id} className="hover:bg-muted/30">
                     <TableCell>
                       <div>
-                        <div className="font-medium">{transaction.date}</div>
+                        {/* <div className="font-medium">{transaction.date}</div> */}
+                        <div className="font-medium">
+                          {formatDate(transaction.createdAt, "yyyy-MM-dd")}
+                        </div>
                         <div className="text-sm text-muted-foreground">
-                          {transaction.time}
+                          {formatDate(transaction.createdAt, "HH:mm")}
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <Badge
                         variant="secondary"
-                        className={getTransactionColor(transaction.type)}
+                        className={getTransactionColor(
+                          upperCaseText(transaction.type)
+                        )}
                       >
-                        {transaction.type}
+                        {upperCaseText(transaction.type)}
                       </Badge>
                     </TableCell>
                     <TableCell className="max-w-[200px]">

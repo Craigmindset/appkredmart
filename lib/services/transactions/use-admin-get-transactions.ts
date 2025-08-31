@@ -10,6 +10,25 @@ export type CustomerTransactionResponseDto = {
   ref: string;
   status: string;
   type: string;
+  user: {
+    firstname: string;
+    lastname: string;
+  };
+  order: {
+    items: {
+      quantity: number;
+    };
+    merchantOrders: {
+      merchant: {
+        company: string;
+      };
+    }[];
+    paymentMethod: string;
+    paymentStatus: string;
+    orderId: string;
+    transaction: { ref: string }[];
+    delivery: string;
+  };
 };
 
 export type CustomerTransactionsResponseDto = {

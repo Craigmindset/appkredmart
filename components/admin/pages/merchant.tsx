@@ -244,7 +244,7 @@ export default function MerchantAdminPage() {
                   <TableHead>Contact</TableHead>
                   <TableHead>Total Inventory</TableHead>
                   <TableHead>Total Sold</TableHead>
-                  <TableHead>Total Markup</TableHead>
+                  <TableHead>Total Markup (%)</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -271,8 +271,9 @@ export default function MerchantAdminPage() {
                       {/* {merchant?.totalSold?.toLocaleString()} */}0
                     </TableCell>
                     <TableCell>
-                      ₦
+                      {/* ₦ */}
                       {merchant?.products.reduce((sum, p) => sum + p.markup, 0)}
+                      %
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>

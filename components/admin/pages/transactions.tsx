@@ -1,32 +1,46 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenuSubContent,
   DropdownMenuPortal,
-} from "@/components/ui/dropdown-menu"
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
-import { Badge } from "@/components/ui/badge"
-import { Search, Download, MoreHorizontal, Send } from "lucide-react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAdminGetTransactions } from "@/lib/services/transactions/use-admin-get-transactions";
+import { safeParseJson, upperCaseText } from "@/lib/utils";
+import { Download, MoreHorizontal, Search, Send } from "lucide-react";
+import { useMemo, useState } from "react";
 
 // --- MOCK DATA ---
 const mockOrdersData = Array.from({ length: 50 }, (_, i) => ({
@@ -38,9 +52,10 @@ const mockOrdersData = Array.from({ length: 50 }, (_, i) => ({
   qty: (i % 5) + 1,
   paymentStatus: i % 3 === 0 ? "Paid" : i % 3 === 1 ? "Pending" : "Failed",
   paymentMethod: i % 3 === 0 ? "Wallet" : i % 3 === 1 ? "BNPL" : "Card",
-  deliveryStatus: i % 3 === 0 ? "Delivered" : i % 3 === 1 ? "Shipped" : "Processing",
+  deliveryStatus:
+    i % 3 === 0 ? "Delivered" : i % 3 === 1 ? "Shipped" : "Processing",
   amount: 5000 + i * 100,
-}))
+}));
 
 const mockLoansData = Array.from({ length: 30 }, (_, i) => ({
   loanId: `LOAN${3000 + i}`,
@@ -49,8 +64,15 @@ const mockLoansData = Array.from({ length: 30 }, (_, i) => ({
   loanAmount: 50000 + i * 1000,
   repaymentAmount: 55000 + i * 1100,
   interest: "10%",
-  status: i % 4 === 0 ? "Approved" : i % 4 === 1 ? "Pending" : i % 4 === 2 ? "Rejected" : "Disbursed",
-}))
+  status:
+    i % 4 === 0
+      ? "Approved"
+      : i % 4 === 1
+      ? "Pending"
+      : i % 4 === 2
+      ? "Rejected"
+      : "Disbursed",
+}));
 
 const mockMerchantsData = Array.from({ length: 40 }, (_, i) => ({
   transactionId: `TRNM${4000 + i}`,
@@ -59,22 +81,38 @@ const mockMerchantsData = Array.from({ length: 40 }, (_, i) => ({
   productSold: `Smartwatch Series ${i + 1}`,
   category: `Electronics`,
   amount: 10000 + i * 1000,
-  transactionDate: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toLocaleDateString(),
-  settleStatus: i % 4 === 0 ? "Paid" : i % 4 === 1 ? "Unpaid" : i % 4 === 2 ? "Pending" : "Dispute",
-}))
+  transactionDate: new Date(
+    Date.now() - i * 24 * 60 * 60 * 1000
+  ).toLocaleDateString(),
+  settleStatus:
+    i % 4 === 0
+      ? "Paid"
+      : i % 4 === 1
+      ? "Unpaid"
+      : i % 4 === 2
+      ? "Pending"
+      : "Dispute",
+}));
 
 const mockWalletsData = Array.from({ length: 60 }, (_, i) => ({
   transactionId: `TRNW${6000 + i}`,
   username: `user${i + 1}`,
-  transactionType: i % 4 === 0 ? "Airtime" : i % 4 === 1 ? "Data" : i % 4 === 2 ? "Purchase" : "Funding",
+  transactionType:
+    i % 4 === 0
+      ? "Airtime"
+      : i % 4 === 1
+      ? "Data"
+      : i % 4 === 2
+      ? "Purchase"
+      : "Funding",
   amount: 500 + i * 50,
   date: new Date(Date.now() - i * 12 * 60 * 60 * 1000).toLocaleString(),
   status: i % 3 === 0 ? "Success" : i % 3 === 1 ? "Failed" : "Pending",
-}))
+}));
 
-const loanProviders = ["All", "Provider A", "Provider B", "Provider C"]
-const merchantNames = ["All", "Slot", "Gbam Inc."]
-const ITEMS_PER_PAGE = 20
+const loanProviders = ["All", "Provider A", "Provider B", "Provider C"];
+const merchantNames = ["All", "Slot", "Gbam Inc."];
+const ITEMS_PER_PAGE = 20;
 
 // Currency formatter for Naira
 const formatNaira = (amount: number) => {
@@ -82,23 +120,25 @@ const formatNaira = (amount: number) => {
     style: "currency",
     currency: "NGN",
     minimumFractionDigits: 0,
-  }).format(amount)
-}
+  }).format(amount);
+};
 
 // --- TABLE COMPONENTS ---
 
-const OrdersTable = ({ data, searchQuery, currentPage }) => {
-  const filteredData = useMemo(
-    () =>
-      data.filter(
-        (item) =>
-          item.transactionId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.orderId.toLowerCase().includes(searchQuery.toLowerCase()),
-      ),
-    [data, searchQuery],
-  )
+const OrdersTable = ({
+  searchQuery,
+  currentPage,
+}: {
+  searchQuery: string;
+  currentPage: number;
+}) => {
+  const { data: transationData, isPending } = useAdminGetTransactions({
+    search: searchQuery,
+    page: currentPage,
+    limit: ITEMS_PER_PAGE,
+  });
 
-  const paginatedData = filteredData.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+  const orderTransactions = transationData?.data || [];
 
   return (
     <Table>
@@ -117,42 +157,75 @@ const OrdersTable = ({ data, searchQuery, currentPage }) => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {paginatedData.map((order) => (
-          <TableRow key={order.transactionId}>
-            <TableCell>{order.transactionId}</TableCell>
-            <TableCell>{order.orderId}</TableCell>
-            <TableCell>{order.merchant}</TableCell>
-            <TableCell>{order.username}</TableCell>
-            <TableCell>{order.productName}</TableCell>
-            <TableCell>{order.qty}</TableCell>
-            <TableCell className="font-medium">{formatNaira(order.amount)}</TableCell>
+        {isPending &&
+          !orderTransactions.length &&
+          Array.from({ length: 5 }).map((_, i) => (
+            <TableRow key={i} className="border-b">
+              {Array.from({ length: 10 }).map((_, j) => (
+                <TableCell key={j} className="p-2">
+                  <Skeleton className="h-8 w-full" />
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        {orderTransactions.map((order) => (
+          <TableRow key={order.id}>
+            <TableCell>{order.order.transaction[0]?.ref}</TableCell>
+            <TableCell>{order.order.orderId}</TableCell>
             <TableCell>
-              <Badge
-                variant={
-                  order.paymentStatus === "Paid"
-                    ? "default"
-                    : order.paymentStatus === "Pending"
-                      ? "secondary"
-                      : "destructive"
-                }
-                className={
-                  order.paymentStatus === "Paid"
-                    ? "bg-green-100 text-green-800 hover:bg-green-200"
-                    : order.paymentStatus === "Pending"
-                      ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
-                      : ""
-                }
-              >
-                {order.paymentStatus}
-              </Badge>
-              <div className="text-xs text-muted-foreground">{order.paymentMethod}</div>
+              <div className="flex gap-1">
+                {order.order.merchantOrders.map((merchant) => (
+                  <Badge>{merchant.merchant.company}</Badge>
+                ))}
+              </div>
+            </TableCell>
+            <TableCell>
+              {order.user.firstname} {order.user.lastname}
+            </TableCell>
+            <TableCell>{safeParseJson(order.meta)?.details}</TableCell>
+            <TableCell>
+              {order.order.items.reduce((acc, item) => item.quantity + acc, 0)}
+            </TableCell>
+            <TableCell className="font-medium">
+              {formatNaira(order.amount)}
             </TableCell>
             <TableCell>
               <Badge
-                variant={order.deliveryStatus === "Delivered" ? "default" : "outline"}
-                className={order.deliveryStatus === "Delivered" ? "bg-green-100 text-green-800 hover:bg-green-200" : ""}
+                variant={
+                  upperCaseText(order.order.paymentStatus) === "Paid"
+                    ? "default"
+                    : upperCaseText(order.order.paymentStatus) === "Pending"
+                    ? "secondary"
+                    : "destructive"
+                }
+                className={
+                  upperCaseText(order.order.paymentStatus) === "Paid"
+                    ? "bg-green-100 text-green-800 hover:bg-green-200"
+                    : upperCaseText(order.order.paymentStatus) === "Pending"
+                    ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+                    : ""
+                }
               >
-                {order.deliveryStatus}
+                {upperCaseText(order.order.paymentStatus)}
+              </Badge>
+              <div className="text-xs text-muted-foreground">
+                {upperCaseText(order.order.paymentMethod)}
+              </div>
+            </TableCell>
+            <TableCell>
+              <Badge
+                variant={
+                  upperCaseText(order.order.delivery) === "Delivered"
+                    ? "default"
+                    : "outline"
+                }
+                className={
+                  upperCaseText(order.order.delivery) === "Delivered"
+                    ? "bg-green-100 text-green-800 hover:bg-green-200"
+                    : ""
+                }
+              >
+                {upperCaseText(order.order.delivery)}
               </Badge>
             </TableCell>
             <TableCell>
@@ -163,10 +236,18 @@ const OrdersTable = ({ data, searchQuery, currentPage }) => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => alert(`Resending receipt for ${order.orderId}`)}>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      alert(`Resending receipt for ${order.order.orderId}`)
+                    }
+                  >
                     Resend Receipt
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => alert(`Downloading receipt for ${order.orderId}`)}>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      alert(`Downloading receipt for ${order.order.orderId}`)
+                    }
+                  >
                     Download Receipt
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -176,22 +257,25 @@ const OrdersTable = ({ data, searchQuery, currentPage }) => {
         ))}
       </TableBody>
     </Table>
-  )
-}
+  );
+};
 
 const LoansTable = ({ data, searchQuery, currentPage }) => {
-  const [providerFilter, setProviderFilter] = useState("All")
+  const [providerFilter, setProviderFilter] = useState("All");
   const filteredData = useMemo(
     () =>
       data.filter(
         (item) =>
           (providerFilter === "All" || item.provider === providerFilter) &&
-          item.loanId.toLowerCase().includes(searchQuery.toLowerCase()),
+          item.loanId.toLowerCase().includes(searchQuery.toLowerCase())
       ),
-    [data, searchQuery, providerFilter],
-  )
+    [data, searchQuery, providerFilter]
+  );
 
-  const paginatedData = filteredData.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
     <div>
@@ -227,23 +311,27 @@ const LoansTable = ({ data, searchQuery, currentPage }) => {
               <TableCell>{loan.loanId}</TableCell>
               <TableCell>{loan.applicantName}</TableCell>
               <TableCell>{loan.provider}</TableCell>
-              <TableCell className="font-medium">{formatNaira(loan.loanAmount)}</TableCell>
-              <TableCell className="font-medium">{formatNaira(loan.repaymentAmount)}</TableCell>
+              <TableCell className="font-medium">
+                {formatNaira(loan.loanAmount)}
+              </TableCell>
+              <TableCell className="font-medium">
+                {formatNaira(loan.repaymentAmount)}
+              </TableCell>
               <TableCell>
                 <Badge
                   variant={
                     loan.status === "Approved" || loan.status === "Disbursed"
                       ? "default"
                       : loan.status === "Pending"
-                        ? "secondary"
-                        : "destructive"
+                      ? "secondary"
+                      : "destructive"
                   }
                   className={
                     loan.status === "Approved" || loan.status === "Disbursed"
                       ? "bg-green-100 text-green-800 hover:bg-green-200"
                       : loan.status === "Pending"
-                        ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
-                        : ""
+                      ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+                      : ""
                   }
                 >
                   {loan.status}
@@ -264,11 +352,19 @@ const LoansTable = ({ data, searchQuery, currentPage }) => {
                       </DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
                         <DropdownMenuSubContent>
-                          <DropdownMenuItem onClick={() => alert(`Broadcast sent to ${loan.applicantName}`)}>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              alert(`Broadcast sent to ${loan.applicantName}`)
+                            }
+                          >
                             To this user
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            onClick={() => alert(`Broadcast sent to all users with loans from ${loan.provider}`)}
+                            onClick={() =>
+                              alert(
+                                `Broadcast sent to all users with loans from ${loan.provider}`
+                              )
+                            }
                           >
                             To all users
                           </DropdownMenuItem>
@@ -283,23 +379,33 @@ const LoansTable = ({ data, searchQuery, currentPage }) => {
         </TableBody>
       </Table>
     </div>
-  )
-}
+  );
+};
 
-const MerchantsTable = ({ data, searchQuery, currentPage, onFilterByMerchant }) => {
-  const [merchantFilter, setMerchantFilter] = useState("All")
+const MerchantsTable = ({
+  data,
+  searchQuery,
+  currentPage,
+  onFilterByMerchant,
+}) => {
+  const [merchantFilter, setMerchantFilter] = useState("All");
   const filteredData = useMemo(
     () =>
       data.filter(
         (item) =>
           (merchantFilter === "All" || item.merchantName === merchantFilter) &&
-          (item.transactionId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.merchantId.toLowerCase().includes(searchQuery.toLowerCase())),
+          (item.transactionId
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+            item.merchantId.toLowerCase().includes(searchQuery.toLowerCase()))
       ),
-    [data, searchQuery, merchantFilter],
-  )
+    [data, searchQuery, merchantFilter]
+  );
 
-  const paginatedData = filteredData.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
     <div>
@@ -335,13 +441,19 @@ const MerchantsTable = ({ data, searchQuery, currentPage, onFilterByMerchant }) 
               <TableCell>{merchant.transactionId}</TableCell>
               <TableCell>
                 <div>{merchant.merchantName}</div>
-                <div className="text-xs text-muted-foreground">{merchant.merchantId}</div>
+                <div className="text-xs text-muted-foreground">
+                  {merchant.merchantId}
+                </div>
               </TableCell>
               <TableCell>
                 <div>{merchant.productSold}</div>
-                <div className="text-xs text-muted-foreground">{merchant.category}</div>
+                <div className="text-xs text-muted-foreground">
+                  {merchant.category}
+                </div>
               </TableCell>
-              <TableCell className="font-medium">{formatNaira(merchant.amount)}</TableCell>
+              <TableCell className="font-medium">
+                {formatNaira(merchant.amount)}
+              </TableCell>
               <TableCell>{merchant.transactionDate}</TableCell>
               <TableCell>
                 <Badge
@@ -349,24 +461,28 @@ const MerchantsTable = ({ data, searchQuery, currentPage, onFilterByMerchant }) 
                     merchant.settleStatus === "Paid"
                       ? "default"
                       : merchant.settleStatus === "Pending"
-                        ? "secondary"
-                        : merchant.settleStatus === "Unpaid"
-                          ? "outline"
-                          : "destructive"
+                      ? "secondary"
+                      : merchant.settleStatus === "Unpaid"
+                      ? "outline"
+                      : "destructive"
                   }
                   className={
                     merchant.settleStatus === "Paid"
                       ? "bg-green-100 text-green-800 hover:bg-green-200"
                       : merchant.settleStatus === "Pending"
-                        ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
-                        : ""
+                      ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+                      : ""
                   }
                 >
                   {merchant.settleStatus}
                 </Badge>
               </TableCell>
               <TableCell>
-                <Button variant="outline" size="sm" onClick={() => onFilterByMerchant(merchant.merchantId)}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onFilterByMerchant(merchant.merchantId)}
+                >
                   View Merchant
                 </Button>
               </TableCell>
@@ -375,21 +491,26 @@ const MerchantsTable = ({ data, searchQuery, currentPage, onFilterByMerchant }) 
         </TableBody>
       </Table>
     </div>
-  )
-}
+  );
+};
 
 const WalletsTable = ({ data, searchQuery, currentPage }) => {
   const filteredData = useMemo(
     () =>
       data.filter(
         (item) =>
-          item.transactionId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.username.toLowerCase().includes(searchQuery.toLowerCase()),
+          item.transactionId
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          item.username.toLowerCase().includes(searchQuery.toLowerCase())
       ),
-    [data, searchQuery],
-  )
+    [data, searchQuery]
+  );
 
-  const paginatedData = filteredData.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
     <Table>
@@ -409,19 +530,25 @@ const WalletsTable = ({ data, searchQuery, currentPage }) => {
             <TableCell>{wallet.transactionId}</TableCell>
             <TableCell>{wallet.username}</TableCell>
             <TableCell>{wallet.transactionType}</TableCell>
-            <TableCell className="font-medium">{formatNaira(wallet.amount)}</TableCell>
+            <TableCell className="font-medium">
+              {formatNaira(wallet.amount)}
+            </TableCell>
             <TableCell>{wallet.date}</TableCell>
             <TableCell>
               <Badge
                 variant={
-                  wallet.status === "Success" ? "default" : wallet.status === "Pending" ? "secondary" : "destructive"
+                  wallet.status === "Success"
+                    ? "default"
+                    : wallet.status === "Pending"
+                    ? "secondary"
+                    : "destructive"
                 }
                 className={
                   wallet.status === "Success"
                     ? "bg-green-100 text-green-800 hover:bg-green-200"
                     : wallet.status === "Pending"
-                      ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
-                      : ""
+                    ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+                    : ""
                 }
               >
                 {wallet.status}
@@ -431,45 +558,51 @@ const WalletsTable = ({ data, searchQuery, currentPage }) => {
         ))}
       </TableBody>
     </Table>
-  )
-}
+  );
+};
 
 // --- MAIN COMPONENT ---
 
 export default function TransactionsAdminPage() {
-  const [activeTab, setActiveTab] = useState("orders")
-  const [searchQuery, setSearchQuery] = useState("")
-  const [currentPage, setCurrentPage] = useState(1)
-  const [merchantIdFilter, setMerchantIdFilter] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState("orders");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [merchantIdFilter, setMerchantIdFilter] = useState<string | null>(null);
 
   const handleDownloadStatement = () => {
     // For a real implementation, you would use a library like `react-csv` or `jspdf`
     // to generate a downloadable file from the currently filtered data.
     // The file would be stamped with the current date and a "KREDMART" logo/watermark.
-    alert("Statement download initiated. This would generate a CSV/PDF of the current view.")
-  }
+    alert(
+      "Statement download initiated. This would generate a CSV/PDF of the current view."
+    );
+  };
 
   const handleFilterByMerchant = (merchantId: string) => {
-    setActiveTab("merchants")
-    setSearchQuery(merchantId)
-    alert(`Filtering all transactions for Merchant ID: ${merchantId}`)
-  }
+    setActiveTab("merchants");
+    setSearchQuery(merchantId);
+    alert(`Filtering all transactions for Merchant ID: ${merchantId}`);
+  };
 
   const dataMap = {
     orders: mockOrdersData,
     loans: mockLoansData,
     merchants: mockMerchantsData,
     wallets: mockWalletsData,
-  }
+  };
 
-  const totalPages = Math.ceil((dataMap[activeTab]?.length || 0) / ITEMS_PER_PAGE)
+  const totalPages = Math.ceil(
+    (dataMap[activeTab]?.length || 0) / ITEMS_PER_PAGE
+  );
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle>Transactions</CardTitle>
-          <CardDescription>Search, filter, and manage all transactions across the platform.</CardDescription>
+          <CardDescription>
+            Search, filter, and manage all transactions across the platform.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4 md:flex-row md:items-center">
@@ -480,12 +613,15 @@ export default function TransactionsAdminPage() {
                 className="pl-10"
                 value={searchQuery}
                 onChange={(e) => {
-                  setSearchQuery(e.target.value)
-                  setCurrentPage(1)
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
                 }}
               />
             </div>
-            <Button onClick={handleDownloadStatement} className="w-full md:w-auto">
+            <Button
+              onClick={handleDownloadStatement}
+              className="w-full md:w-auto"
+            >
               <Download className="mr-2 h-4 w-4" />
               Download Statement
             </Button>
@@ -496,23 +632,35 @@ export default function TransactionsAdminPage() {
       <Tabs
         value={activeTab}
         onValueChange={(value) => {
-          setActiveTab(value)
-          setCurrentPage(1)
-          setSearchQuery("")
+          setActiveTab(value);
+          setCurrentPage(1);
+          setSearchQuery("");
         }}
         className="w-full"
       >
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
-          <TabsTrigger value="orders" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+          <TabsTrigger
+            value="orders"
+            className="data-[state=active]:bg-blue-500 data-[state=active]:text-white"
+          >
             Orders
           </TabsTrigger>
-          <TabsTrigger value="loans" className="data-[state=active]:bg-green-500 data-[state=active]:text-white">
+          <TabsTrigger
+            value="loans"
+            className="data-[state=active]:bg-green-500 data-[state=active]:text-white"
+          >
             Loans
           </TabsTrigger>
-          <TabsTrigger value="merchants" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+          <TabsTrigger
+            value="merchants"
+            className="data-[state=active]:bg-purple-500 data-[state=active]:text-white"
+          >
             Merchants
           </TabsTrigger>
-          <TabsTrigger value="wallets" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white">
+          <TabsTrigger
+            value="wallets"
+            className="data-[state=active]:bg-orange-500 data-[state=active]:text-white"
+          >
             Wallets
           </TabsTrigger>
         </TabsList>
@@ -520,10 +668,17 @@ export default function TransactionsAdminPage() {
         <Card className="mt-4">
           <CardContent className="p-0">
             <TabsContent value="orders" className="m-0">
-              <OrdersTable data={mockOrdersData} searchQuery={searchQuery} currentPage={currentPage} />
+              <OrdersTable
+                searchQuery={searchQuery}
+                currentPage={currentPage}
+              />
             </TabsContent>
             <TabsContent value="loans" className="m-0">
-              <LoansTable data={mockLoansData} searchQuery={searchQuery} currentPage={currentPage} />
+              <LoansTable
+                data={mockLoansData}
+                searchQuery={searchQuery}
+                currentPage={currentPage}
+              />
             </TabsContent>
             <TabsContent value="merchants" className="m-0">
               <MerchantsTable
@@ -534,20 +689,24 @@ export default function TransactionsAdminPage() {
               />
             </TabsContent>
             <TabsContent value="wallets" className="m-0">
-              <WalletsTable data={mockWalletsData} searchQuery={searchQuery} currentPage={currentPage} />
+              <WalletsTable
+                data={mockWalletsData}
+                searchQuery={searchQuery}
+                currentPage={currentPage}
+              />
             </TabsContent>
           </CardContent>
         </Card>
       </Tabs>
 
-      <Pagination>
+      {/* <Pagination>
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
               href="#"
               onClick={(e) => {
-                e.preventDefault()
-                setCurrentPage((p) => Math.max(1, p - 1))
+                e.preventDefault();
+                setCurrentPage((p) => Math.max(1, p - 1));
               }}
             />
           </PaginationItem>
@@ -557,8 +716,8 @@ export default function TransactionsAdminPage() {
                 href="#"
                 isActive={currentPage === i + 1}
                 onClick={(e) => {
-                  e.preventDefault()
-                  setCurrentPage(i + 1)
+                  e.preventDefault();
+                  setCurrentPage(i + 1);
                 }}
               >
                 {i + 1}
@@ -569,13 +728,13 @@ export default function TransactionsAdminPage() {
             <PaginationNext
               href="#"
               onClick={(e) => {
-                e.preventDefault()
-                setCurrentPage((p) => Math.min(totalPages, p + 1))
+                e.preventDefault();
+                setCurrentPage((p) => Math.min(totalPages, p + 1));
               }}
             />
           </PaginationItem>
         </PaginationContent>
-      </Pagination>
+      </Pagination> */}
     </div>
-  )
+  );
 }

@@ -9,6 +9,7 @@ interface MerchantWalletTransactionsResponse {
   type: string;
   description: string;
   reference: string;
+  createdAt: Date;
 }
 
 export const fetchMerchantWalletTransactions = async () => {

@@ -31,6 +31,7 @@ import {
   Download,
 } from "lucide-react";
 import { useFetchUsers } from "@/lib/services/merchant/use-fetch-users";
+import { upperCaseText } from "@/lib/utils";
 
 // Demo user data
 const demoUsers = [
@@ -323,8 +324,10 @@ export default function UsersAdminPage() {
                       {user.wallet.accountNumber || "None"}
                     </TableCell>
                     <TableCell>
-                      <Badge className={getStatusColor(user.status)}>
-                        {user.status}
+                      <Badge
+                        className={getStatusColor(upperCaseText(user.status))}
+                      >
+                        {upperCaseText(user.status)}
                       </Badge>
                     </TableCell>
                     <TableCell>
