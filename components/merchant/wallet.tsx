@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -10,6 +10,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -27,13 +33,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Copy,
   Download,
@@ -44,10 +43,11 @@ import {
   Send,
   WalletIcon,
 } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
-import { demoMerchant } from "@/lib/merchant-demo";
 import { useMerchantWallet } from "@/lib/services/wallet/use-merchant-wallet";
+import { useMerchantWalletTransactions } from "@/lib/services/wallet/use-merchant-wallet-history";
 
 // Demo transaction data
 const demoTransactions = [
@@ -131,6 +131,7 @@ export function Wallet() {
   const [showPinModal, setShowPinModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { data: wallet } = useMerchantWallet();
+  const { data: transactions } = useMerchantWalletTransactions();
   const [withdrawalData, setWithdrawalData] = useState({
     receiverBank: "",
     receiverAccount: "",
@@ -212,7 +213,7 @@ export function Wallet() {
       ? "bg-green-100 text-green-800 hover:bg-green-200"
       : "bg-red-100 text-red-800 hover:bg-red-200";
   };
-
+  console.log({ transactions });
   return (
     <div className="space-y-8">
       <div>
@@ -358,7 +359,7 @@ export function Wallet() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {demoTransactions.map((transaction) => (
+                {(transactions || []).map((transaction) => (
                   <TableRow key={transaction.id} className="hover:bg-muted/30">
                     <TableCell>
                       <div>
