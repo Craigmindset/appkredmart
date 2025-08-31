@@ -48,6 +48,8 @@ import {
   Share2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useMerchantGetOrders } from "@/lib/services/order/use-merchant-get-orders";
+import { upperCaseText } from "@/lib/utils";
 
 // Demo transactions data
 const demoTransactions = [
@@ -245,6 +247,7 @@ export function Transactions() {
   // Pagination state
   const [page, setPage] = useState(1);
   const rowsPerPage = 50;
+  const { data } = useMerchantGetOrders({ limit: rowsPerPage });
   const totalRows = filteredTransactions.length;
   const totalPages = Math.ceil(totalRows / rowsPerPage);
   const paginatedTransactions = filteredTransactions.slice(
@@ -278,7 +281,7 @@ export function Transactions() {
     }
   };
 
-  const categories = [...new Set(demoTransactions.map((t) => t.category))];
+  // const categories = [...new Set(demoTransactions.map((t) => t.category))];
 
   return (
     <div className="space-y-4 px-2">
@@ -324,7 +327,7 @@ export function Transactions() {
         </div>
       </div>
 
-      <Card className="w-[1000px]">
+      <Card className="w-full">
         <CardHeader className="pb-2">
           <CardTitle className="text-lg">Transaction Management</CardTitle>
           <CardDescription className="text-sm">
@@ -344,7 +347,7 @@ export function Transactions() {
               />
             </div>
             <div className="flex flex-col sm:flex-row gap-2">
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              {/* <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                 <SelectTrigger className="w-full sm:w-[180px] h-11">
                   <SelectValue placeholder="Filter by Category" />
                 </SelectTrigger>
@@ -356,7 +359,7 @@ export function Transactions() {
                     </SelectItem>
                   ))}
                 </SelectContent>
-              </Select>
+              </Select> */}
               <Select
                 value={deliveryStatusFilter}
                 onValueChange={setDeliveryStatusFilter}
@@ -378,7 +381,7 @@ export function Transactions() {
           </div>
 
           {/* Transactions Table */}
-          <div className="rounded border w-full">
+          <div className="rounded border !w-full">
             <div className="w-full">
               <div
                 className="overflow-x-auto overflow-y-auto"
@@ -394,7 +397,7 @@ export function Transactions() {
                       </TableHead>
                       <TableHead className="font-semibold">Username</TableHead>
                       <TableHead className="font-semibold">Item Sold</TableHead>
-                      <TableHead className="font-semibold">Category</TableHead>
+                      {/* <TableHead className="font-semibold">Category</TableHead> */}
                       <TableHead className="font-semibold">Amount</TableHead>
                       <TableHead className="font-semibold">
                         Payment Status
@@ -406,109 +409,91 @@ export function Transactions() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {paginatedTransactions.length === 0 ? (
-                      <TableRow>
+                    {(data?.data || []).map((order, index) => (
+                      <TableRow
+                        key={order.id}
+                        className="hover:bg-muted/30 h-8"
+                      >
+                        <TableCell className="font-medium">
+                          {/* {order.sn} */}
+                          {String(index + 1).padStart(3, "0")}
+                        </TableCell>
+                        <TableCell className="font-mono text-sm">
+                          {order.order.orderId}
+                        </TableCell>
+                        <TableCell className="font-mono text-sm">
+                          {order.order.transaction.ref}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {order.order.user.firstname}{" "}
+                          {order.order.user.lastname}
+                        </TableCell>
                         <TableCell
-                          colSpan={10}
-                          className="text-center py-12 text-muted-foreground"
+                          className="max-w-[200px] truncate"
+                          title={order.items[0]?.title}
                         >
-                          <div className="flex flex-col items-center gap-2">
-                            <Search className="h-8 w-8 text-muted-foreground/50" />
-                            <p>No transactions found matching your criteria</p>
-                          </div>
+                          {order.items[0]?.title}
+                        </TableCell>
+                        {/* <TableCell>
+                          <Badge variant="outline" className="font-medium">
+                            Electronics
+                          </Badge>
+                        </TableCell> */}
+                        <TableCell className="font-semibold">
+                          ₦{order.subtotal.toLocaleString("en-NG")}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant="secondary"
+                            className={getPaymentStatusColor(
+                              upperCaseText(order.order.paymentStatus)
+                            )}
+                          >
+                            {upperCaseText(order.order.paymentStatus)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant="secondary"
+                            className={getDeliveryStatusColor(
+                              upperCaseText(order.order.delivery)
+                            )}
+                          >
+                            {upperCaseText(order.order.delivery)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-56">
+                              <DropdownMenuItem
+                                onClick={() => handlePickupLocation(order)}
+                              >
+                                <MapPin className="mr-2 h-4 w-4" />
+                                See Pick Location
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => handleCustomerAddress(order)}
+                              >
+                                <User className="mr-2 h-4 w-4" />
+                                Customer Address
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => handleProceedToDelivery(order)}
+                              >
+                                <Truck className="mr-2 h-4 w-4" />
+                                Proceed to Delivery
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </TableCell>
                       </TableRow>
-                    ) : (
-                      paginatedTransactions.map((transaction) => (
-                        <TableRow
-                          key={transaction.id}
-                          className="hover:bg-muted/30 h-8"
-                        >
-                          <TableCell className="font-medium">
-                            {transaction.sn}
-                          </TableCell>
-                          <TableCell className="font-mono text-sm">
-                            {transaction.orderId}
-                          </TableCell>
-                          <TableCell className="font-mono text-sm">
-                            {transaction.transactionId}
-                          </TableCell>
-                          <TableCell className="font-medium">
-                            {transaction.username}
-                          </TableCell>
-                          <TableCell
-                            className="max-w-[200px] truncate"
-                            title={transaction.itemSold}
-                          >
-                            {transaction.itemSold}
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className="font-medium">
-                              {transaction.category}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="font-semibold">
-                            ₦{transaction.amount.toLocaleString("en-NG")}
-                          </TableCell>
-                          <TableCell>
-                            <Badge
-                              variant="secondary"
-                              className={getPaymentStatusColor(
-                                transaction.paymentStatus
-                              )}
-                            >
-                              {transaction.paymentStatus}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Badge
-                              variant="secondary"
-                              className={getDeliveryStatusColor(
-                                transaction.deliveryStatus
-                              )}
-                            >
-                              {transaction.deliveryStatus}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                  <span className="sr-only">Open menu</span>
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end" className="w-56">
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    handlePickupLocation(transaction)
-                                  }
-                                >
-                                  <MapPin className="mr-2 h-4 w-4" />
-                                  See Pick Location
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    handleCustomerAddress(transaction)
-                                  }
-                                >
-                                  <User className="mr-2 h-4 w-4" />
-                                  Customer Address
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    handleProceedToDelivery(transaction)
-                                  }
-                                >
-                                  <Truck className="mr-2 h-4 w-4" />
-                                  Proceed to Delivery
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
+                    ))}
                   </TableBody>
                 </Table>
               </div>

@@ -27,6 +27,7 @@ import {
   Boxes,
   Home,
   LayoutList,
+  Loader2,
   LogOut,
   PackageSearch,
   Settings,
@@ -69,10 +70,18 @@ export function MerchantDashboardShell({
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = useUser();
+  const { user, loading } = useUser();
   const { data: wallet } = useMerchantWallet();
   const { mutateAsync: logout } = useLogout();
   const pathname = usePathname();
+
+  if (loading) {
+    return <Loader2 className="animate-spin" />;
+  }
+
+  if (!loading && (!user || user?.role !== "merchant")) {
+    redirect("/admindesk");
+  }
 
   const initials =
     (user?.firstname?.[0] ?? "") +

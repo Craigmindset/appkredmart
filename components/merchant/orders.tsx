@@ -319,7 +319,7 @@ export function MerchantOrders() {
                             </div>
                           </TableCell>
                           <TableCell className="font-medium text-xs md:text-sm">
-                            ₦{order.total.toLocaleString()}
+                            ₦{order.subtotal.toLocaleString()}
                           </TableCell>
                           <TableCell className="hidden xl:table-cell">
                             <Badge

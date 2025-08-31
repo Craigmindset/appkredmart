@@ -2,12 +2,12 @@
 
 import type React from "react";
 
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -15,13 +15,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Upload, X, Plus, FileText, ImageIcon, Save, Eye } from "lucide-react";
-import { toast } from "sonner";
+import { Textarea } from "@/components/ui/textarea";
 import { useMerchantCreateProduct } from "@/lib/services/products/use-merchant-create-product";
 import { uploadMedia } from "@/lib/services/upload/useUploadMedia";
+import { Eye, FileText, ImageIcon, Plus, Save, Upload, X } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const categories = [
   "Phones and Tablets",

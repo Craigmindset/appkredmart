@@ -32,6 +32,9 @@ import {
   Upload,
 } from "lucide-react";
 import { useMerchantOverview } from "@/lib/services/dashboard/merchant-overview";
+import { useGetOrders } from "@/lib/services/order/use-get-orders";
+import { useMerchantGetOrders } from "@/lib/services/order/use-merchant-get-orders";
+import { upperCaseText } from "@/lib/utils";
 
 // Demo data for merchant overview
 const demoMerchantData = {
@@ -151,6 +154,7 @@ function getStatusIcon(status: string) {
 export function Overview() {
   const [activeTab, setActiveTab] = useState<"orders" | "products">("orders");
   const { data: overview } = useMerchantOverview();
+  const { data: orders } = useMerchantGetOrders({ limit: 5 });
 
   return (
     <div className="space-y-8">
@@ -374,39 +378,42 @@ export function Overview() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {demoMerchantData.recentOrders.map((order) => (
+                    {(orders?.data || []).map((order) => (
                       <TableRow key={order.id} className="hover:bg-emerald-50">
                         <TableCell className="font-medium">
-                          {order.id}
+                          {order.orderId}
                         </TableCell>
                         <TableCell className="font-medium">
-                          {order.customer}
+                          {order.order.user.firstname}{" "}
+                          {order.order.user.lastname}
                         </TableCell>
                         <TableCell className="max-w-[200px] truncate">
-                          {order.product}
+                          {order.items[0]?.title}
                         </TableCell>
                         <TableCell className="text-left font-semibold">
-                          {formatNaira(order.amount)}
+                          {formatNaira(order.subtotal)}
                         </TableCell>
                         <TableCell>
                           <Badge variant="outline" className="font-medium">
-                            {order.paymentMethod}
+                            {upperCaseText(order.order.paymentMethod)}
                           </Badge>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            {getStatusIcon(order.status)}
+                            {getStatusIcon(
+                              upperCaseText(order.order.fulfillment)
+                            )}
                             <Badge
                               className={`font-medium ${getStatusColor(
-                                order.status
+                                upperCaseText(order.order.fulfillment)
                               )}`}
                             >
-                              {order.status}
+                              {upperCaseText(order.order.fulfillment)}
                             </Badge>
                           </div>
                         </TableCell>
                         <TableCell className="text-muted-foreground">
-                          {new Date(order.date).toLocaleDateString()}
+                          {new Date(order.createdAt).toLocaleDateString()}
                         </TableCell>
                       </TableRow>
                     ))}
