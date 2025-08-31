@@ -1,18 +1,45 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { MapPin, Phone, Truck, Package, CheckCircle, Clock, Navigation } from "lucide-react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { toast } from "@/hooks/use-toast"
+import { useState, useMemo } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  MapPin,
+  Phone,
+  Truck,
+  Package,
+  CheckCircle,
+  Clock,
+  Navigation,
+} from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { toast } from "@/hooks/use-toast";
+import { useAdminGetOrders } from "@/lib/services/order/use-admin-get-orders";
+import { upperCaseText } from "@/lib/utils";
 
 // Demo data for tracking orders
 const generateTrackingOrders = () => {
-  const statuses = ["Order Confirmed", "Order Processing", "Order Set for Delivery", "Order Delivered"]
+  const statuses = [
+    "Order Confirmed",
+    "Order Processing",
+    "Order Set for Delivery",
+    "Order Delivered",
+  ];
   const customers = [
     "John Doe",
     "Jane Smith",
@@ -22,7 +49,7 @@ const generateTrackingOrders = () => {
     "Lisa Davis",
     "Tom Wilson",
     "Emma Jones",
-  ]
+  ];
   const products = [
     "iPhone 14 Pro",
     "Samsung Galaxy S23",
@@ -32,18 +59,38 @@ const generateTrackingOrders = () => {
     "AirPods Pro",
     "Sony WH-1000XM4",
     "Nintendo Switch",
-  ]
+  ];
   const riders = [
-    { name: "Ahmed Musa", phone: "+234 801 234 5678", location: { lat: 6.5244, lng: 3.3792 } },
-    { name: "Kemi Adebayo", phone: "+234 802 345 6789", location: { lat: 6.4281, lng: 3.4219 } },
-    { name: "Chidi Okafor", phone: "+234 803 456 7890", location: { lat: 6.6018, lng: 3.3515 } },
-    { name: "Fatima Ibrahim", phone: "+234 804 567 8901", location: { lat: 6.5795, lng: 3.3211 } },
-    { name: "Tunde Bakare", phone: "+234 805 678 9012", location: { lat: 6.4698, lng: 3.5852 } },
-  ]
+    {
+      name: "Ahmed Musa",
+      phone: "+234 801 234 5678",
+      location: { lat: 6.5244, lng: 3.3792 },
+    },
+    {
+      name: "Kemi Adebayo",
+      phone: "+234 802 345 6789",
+      location: { lat: 6.4281, lng: 3.4219 },
+    },
+    {
+      name: "Chidi Okafor",
+      phone: "+234 803 456 7890",
+      location: { lat: 6.6018, lng: 3.3515 },
+    },
+    {
+      name: "Fatima Ibrahim",
+      phone: "+234 804 567 8901",
+      location: { lat: 6.5795, lng: 3.3211 },
+    },
+    {
+      name: "Tunde Bakare",
+      phone: "+234 805 678 9012",
+      location: { lat: 6.4698, lng: 3.5852 },
+    },
+  ];
 
   return Array.from({ length: 150 }, (_, i) => {
-    const status = statuses[Math.floor(Math.random() * statuses.length)]
-    const rider = riders[Math.floor(Math.random() * riders.length)]
+    const status = statuses[Math.floor(Math.random() * statuses.length)];
+    const rider = riders[Math.floor(Math.random() * riders.length)];
 
     return {
       sn: i + 1,
@@ -52,46 +99,58 @@ const generateTrackingOrders = () => {
       customer: customers[Math.floor(Math.random() * customers.length)],
       product: products[Math.floor(Math.random() * products.length)],
       deliveryStatus: status,
-      rider: status === "Order Set for Delivery" || status === "Order Delivered" ? rider : null,
-      estimatedDelivery: new Date(Date.now() + Math.random() * 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
-      orderDate: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toLocaleDateString(),
-    }
-  })
-}
+      rider:
+        status === "Order Set for Delivery" || status === "Order Delivered"
+          ? rider
+          : null,
+      estimatedDelivery: new Date(
+        Date.now() + Math.random() * 7 * 24 * 60 * 60 * 1000
+      ).toLocaleDateString(),
+      orderDate: new Date(
+        Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
+      ).toLocaleDateString(),
+    };
+  });
+};
 
 const getStatusIcon = (status: string) => {
   switch (status) {
     case "Order Confirmed":
-      return <CheckCircle className="h-4 w-4" />
+      return <CheckCircle className="h-4 w-4" />;
     case "Order Processing":
-      return <Clock className="h-4 w-4" />
+      return <Clock className="h-4 w-4" />;
     case "Order Set for Delivery":
-      return <Truck className="h-4 w-4" />
+      return <Truck className="h-4 w-4" />;
     case "Order Delivered":
-      return <Package className="h-4 w-4" />
+      return <Package className="h-4 w-4" />;
     default:
-      return <Clock className="h-4 w-4" />
+      return <Clock className="h-4 w-4" />;
   }
-}
+};
 
 const getStatusColor = (status: string) => {
   switch (status) {
     case "Order Confirmed":
-      return "bg-blue-100 text-blue-800 border-blue-200"
+      return "bg-blue-100 text-blue-800 border-blue-200";
     case "Order Processing":
-      return "bg-yellow-100 text-yellow-800 border-yellow-200"
+      return "bg-yellow-100 text-yellow-800 border-yellow-200";
     case "Order Set for Delivery":
-      return "bg-purple-100 text-purple-800 border-purple-200"
+      return "bg-purple-100 text-purple-800 border-purple-200";
     case "Order Delivered":
-      return "bg-green-100 text-green-800 border-green-200"
+      return "bg-green-100 text-green-800 border-green-200";
     default:
-      return "bg-gray-100 text-gray-800 border-gray-200"
+      return "bg-gray-100 text-gray-800 border-gray-200";
   }
-}
+};
 
 const DeliveryProgressBar = ({ status }: { status: string }) => {
-  const steps = ["Order Confirmed", "Order Processing", "Order Set for Delivery", "Order Delivered"]
-  const currentStep = steps.indexOf(status)
+  const steps = [
+    "Order Confirmed",
+    "Order Processing",
+    "Order Set for Delivery",
+    "Order Delivered",
+  ];
+  const currentStep = steps.indexOf(status);
 
   return (
     <div className="flex items-center space-x-2">
@@ -111,28 +170,38 @@ const DeliveryProgressBar = ({ status }: { status: string }) => {
             )}
           </div>
           {index < steps.length - 1 && (
-            <div className={`w-12 h-1 ${index < currentStep ? "bg-blue-500" : "bg-gray-300"}`} />
+            <div
+              className={`w-12 h-1 ${
+                index < currentStep ? "bg-blue-500" : "bg-gray-300"
+              }`}
+            />
           )}
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
 
-const RiderTrackingModal = ({ rider, orderId }: { rider: any; orderId: string }) => {
-  const [isTracking, setIsTracking] = useState(false)
+const RiderTrackingModal = ({
+  rider,
+  orderId,
+}: {
+  rider: any;
+  orderId: string;
+}) => {
+  const [isTracking, setIsTracking] = useState(false);
 
   const handleTrackRider = async () => {
-    setIsTracking(true)
+    setIsTracking(true);
     // Simulate API call to GIG delivery service
     setTimeout(() => {
-      setIsTracking(false)
+      setIsTracking(false);
       toast({
         title: "Rider Location Updated",
         description: `Successfully retrieved location for ${rider.name}`,
-      })
-    }, 2000)
-  }
+      });
+    }, 2000);
+  };
 
   return (
     <DialogContent className="max-w-md">
@@ -144,7 +213,9 @@ const RiderTrackingModal = ({ rider, orderId }: { rider: any; orderId: string })
       </DialogHeader>
       <div className="space-y-4">
         <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg">
-          <h3 className="font-semibold text-gray-900 mb-2">Rider Information</h3>
+          <h3 className="font-semibold text-gray-900 mb-2">
+            Rider Information
+          </h3>
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <Truck className="h-4 w-4 text-blue-600" />
@@ -168,7 +239,9 @@ const RiderTrackingModal = ({ rider, orderId }: { rider: any; orderId: string })
           <div className="bg-white border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
             <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-2" />
             <p className="text-sm text-gray-500">Map integration placeholder</p>
-            <p className="text-xs text-gray-400 mt-1">Real map would show rider's current location</p>
+            <p className="text-xs text-gray-400 mt-1">
+              Real map would show rider's current location
+            </p>
           </div>
         </div>
 
@@ -191,44 +264,47 @@ const RiderTrackingModal = ({ rider, orderId }: { rider: any; orderId: string })
         </Button>
       </div>
     </DialogContent>
-  )
-}
+  );
+};
 
 export default function TrackOrdersAdminPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [currentPage, setCurrentPage] = useState(1)
-  const ordersPerPage = 50
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 50;
 
-  const orders = useMemo(() => generateTrackingOrders(), [])
+  const { data, isLoading: ordersLoading } = useAdminGetOrders({
+    limit: ordersPerPage,
+  });
 
-  const filteredOrders = useMemo(() => {
-    return orders.filter((order) => {
-      const matchesSearch =
-        order.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.transactionId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.product.toLowerCase().includes(searchTerm.toLowerCase())
+  const orders = data?.data || [];
 
-      const matchesStatus = statusFilter === "all" || order.deliveryStatus === statusFilter
+  // const orders = useMemo(() => generateTrackingOrders(), [])
 
-      return matchesSearch && matchesStatus
-    })
-  }, [orders, searchTerm, statusFilter])
+  // const filteredOrders = useMemo(() => {
+  //   return orders.filter((order) => {
+  //     const matchesSearch =
+  //       order.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       order.transactionId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       order.product.toLowerCase().includes(searchTerm.toLowerCase())
 
-  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage)
-  const startIndex = (currentPage - 1) * ordersPerPage
-  const paginatedOrders = filteredOrders.slice(startIndex, startIndex + ordersPerPage)
+  //     const matchesStatus = statusFilter === "all" || order.deliveryStatus === statusFilter
+
+  //     return matchesSearch && matchesStatus
+  //   })
+  // }, [orders, searchTerm, statusFilter])
+
+  // const totalPages = Math.ceil(filteredOrders.length / ordersPerPage)
+  const startIndex = (currentPage - 1) * ordersPerPage;
+  // const paginatedOrders = filteredOrders.slice(startIndex, startIndex + ordersPerPage)
 
   const statusCounts = useMemo(() => {
-    return orders.reduce(
-      (acc, order) => {
-        acc[order.deliveryStatus] = (acc[order.deliveryStatus] || 0) + 1
-        return acc
-      },
-      {} as Record<string, number>,
-    )
-  }, [orders])
+    return orders.reduce((acc, order) => {
+      acc[order.delivery] = (acc[order.delivery] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+  }, [orders]);
 
   return (
     <div className="space-y-6 animate-slide-in">
@@ -236,11 +312,15 @@ export default function TrackOrdersAdminPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-blue-700">Order Confirmed</CardTitle>
+            <CardTitle className="text-sm font-medium text-blue-700">
+              Order Confirmed
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <span className="text-2xl font-bold text-blue-900">{statusCounts["Order Confirmed"] || 0}</span>
+              <span className="text-2xl font-bold text-blue-900">
+                {statusCounts["Order Confirmed"] || 0}
+              </span>
               <CheckCircle className="h-8 w-8 text-blue-600" />
             </div>
           </CardContent>
@@ -248,11 +328,15 @@ export default function TrackOrdersAdminPage() {
 
         <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-yellow-700">Order Processing</CardTitle>
+            <CardTitle className="text-sm font-medium text-yellow-700">
+              Order Processing
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <span className="text-2xl font-bold text-yellow-900">{statusCounts["Order Processing"] || 0}</span>
+              <span className="text-2xl font-bold text-yellow-900">
+                {statusCounts["Order Processing"] || 0}
+              </span>
               <Clock className="h-8 w-8 text-yellow-600" />
             </div>
           </CardContent>
@@ -260,11 +344,15 @@ export default function TrackOrdersAdminPage() {
 
         <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-purple-700">Set for Delivery</CardTitle>
+            <CardTitle className="text-sm font-medium text-purple-700">
+              Set for Delivery
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <span className="text-2xl font-bold text-purple-900">{statusCounts["Order Set for Delivery"] || 0}</span>
+              <span className="text-2xl font-bold text-purple-900">
+                {statusCounts["Order Set for Delivery"] || 0}
+              </span>
               <Truck className="h-8 w-8 text-purple-600" />
             </div>
           </CardContent>
@@ -272,11 +360,15 @@ export default function TrackOrdersAdminPage() {
 
         <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-green-700">Order Delivered</CardTitle>
+            <CardTitle className="text-sm font-medium text-green-700">
+              Order Delivered
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
-              <span className="text-2xl font-bold text-green-900">{statusCounts["Order Delivered"] || 0}</span>
+              <span className="text-2xl font-bold text-green-900">
+                {statusCounts["Order Delivered"] || 0}
+              </span>
               <Package className="h-8 w-8 text-green-600" />
             </div>
           </CardContent>
@@ -298,8 +390,8 @@ export default function TrackOrdersAdminPage() {
                 placeholder="Search by Order ID, Transaction ID, Customer, or Product..."
                 value={searchTerm}
                 onChange={(e) => {
-                  setSearchTerm(e.target.value)
-                  setCurrentPage(1)
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
                 }}
                 className="w-full"
               />
@@ -307,8 +399,8 @@ export default function TrackOrdersAdminPage() {
             <Select
               value={statusFilter}
               onValueChange={(value) => {
-                setStatusFilter(value)
-                setCurrentPage(1)
+                setStatusFilter(value);
+                setCurrentPage(1);
               }}
             >
               <SelectTrigger className="w-full md:w-48">
@@ -317,8 +409,12 @@ export default function TrackOrdersAdminPage() {
               <SelectContent>
                 <SelectItem value="all">All Statuses</SelectItem>
                 <SelectItem value="Order Confirmed">Order Confirmed</SelectItem>
-                <SelectItem value="Order Processing">Order Processing</SelectItem>
-                <SelectItem value="Order Set for Delivery">Set for Delivery</SelectItem>
+                <SelectItem value="Order Processing">
+                  Order Processing
+                </SelectItem>
+                <SelectItem value="Order Set for Delivery">
+                  Set for Delivery
+                </SelectItem>
                 <SelectItem value="Order Delivered">Order Delivered</SelectItem>
               </SelectContent>
             </Select>
@@ -331,35 +427,51 @@ export default function TrackOrdersAdminPage() {
                 <tr className="border-b bg-gray-50">
                   <th className="text-left p-3 font-semibold">SN</th>
                   <th className="text-left p-3 font-semibold">Order ID</th>
-                  <th className="text-left p-3 font-semibold">Transaction ID</th>
+                  <th className="text-left p-3 font-semibold">
+                    Transaction ID
+                  </th>
                   <th className="text-left p-3 font-semibold">Customer</th>
                   <th className="text-left p-3 font-semibold">Product</th>
-                  <th className="text-left p-3 font-semibold">Delivery Progress</th>
+                  <th className="text-left p-3 font-semibold">
+                    Delivery Progress
+                  </th>
                   <th className="text-left p-3 font-semibold">Status</th>
                   <th className="text-left p-3 font-semibold">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {paginatedOrders.map((order) => (
+                {orders.map((order, index) => (
                   <tr key={order.orderId} className="border-b hover:bg-gray-50">
-                    <td className="p-3">{order.sn}</td>
-                    <td className="p-3 font-medium text-blue-600">{order.orderId}</td>
-                    <td className="p-3 text-sm text-gray-600">{order.transactionId}</td>
-                    <td className="p-3">{order.customer}</td>
-                    <td className="p-3 text-sm">{order.product}</td>
+                    <td className="p-3">
+                      {String(index + 1).padStart(3, "0")}
+                    </td>
+                    <td className="p-3 font-medium text-blue-600">
+                      {order.orderId}
+                    </td>
+                    <td className="p-3 text-sm text-gray-600">
+                      {order.transaction[0]?.ref}
+                    </td>
+                    <td className="p-3">
+                      {order.user.firstname} {order.user.lastname}
+                    </td>
+                    <td className="p-3 text-sm">{order.items[0]?.title}</td>
                     <td className="p-3">
                       <div className="min-w-[300px]">
-                        <DeliveryProgressBar status={order.deliveryStatus} />
+                        <DeliveryProgressBar status={order.delivery} />
                       </div>
                     </td>
                     <td className="p-3">
-                      <Badge className={`${getStatusColor(order.deliveryStatus)} flex items-center gap-1`}>
-                        {getStatusIcon(order.deliveryStatus)}
-                        {order.deliveryStatus}
+                      <Badge
+                        className={`${getStatusColor(
+                          upperCaseText(order.delivery)
+                        )} flex items-center gap-1 text-nowrap`}
+                      >
+                        {getStatusIcon(upperCaseText(order.delivery))}
+                        {upperCaseText(order.delivery)}
                       </Badge>
                     </td>
                     <td className="p-3">
-                      {order.rider ? (
+                      {order?.rider ? (
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button
@@ -370,7 +482,10 @@ export default function TrackOrdersAdminPage() {
                               Track GIG
                             </Button>
                           </DialogTrigger>
-                          <RiderTrackingModal rider={order.rider} orderId={order.orderId} />
+                          <RiderTrackingModal
+                            rider={order.rider}
+                            orderId={order.orderId}
+                          />
                         </Dialog>
                       ) : (
                         <Button size="sm" variant="outline" disabled>
@@ -387,10 +502,11 @@ export default function TrackOrdersAdminPage() {
 
           {/* Pagination */}
           <div className="flex items-center justify-between mt-6">
-            <div className="text-sm text-gray-600">
-              Showing {startIndex + 1} to {Math.min(startIndex + ordersPerPage, filteredOrders.length)} of{" "}
+            {/* <div className="text-sm text-gray-600">
+              Showing {startIndex + 1} to{" "}
+              {Math.min(startIndex + ordersPerPage, filteredOrders.length)} of{" "}
               {filteredOrders.length} orders
-            </div>
+            </div> */}
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
@@ -401,9 +517,10 @@ export default function TrackOrdersAdminPage() {
                 Previous
               </Button>
 
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                const pageNum = Math.max(1, Math.min(currentPage - 2, totalPages - 4)) + i
-                if (pageNum > totalPages) return null
+              {/* {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                const pageNum =
+                  Math.max(1, Math.min(currentPage - 2, totalPages - 4)) + i;
+                if (pageNum > totalPages) return null;
 
                 return (
                   <Button
@@ -411,25 +528,31 @@ export default function TrackOrdersAdminPage() {
                     variant={currentPage === pageNum ? "default" : "outline"}
                     size="sm"
                     onClick={() => setCurrentPage(pageNum)}
-                    className={currentPage === pageNum ? "bg-blue-600 hover:bg-blue-700" : ""}
+                    className={
+                      currentPage === pageNum
+                        ? "bg-blue-600 hover:bg-blue-700"
+                        : ""
+                    }
                   >
                     {pageNum}
                   </Button>
-                )
-              })}
+                );
+              })} */}
 
-              <Button
+              {/* <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
                 disabled={currentPage === totalPages}
               >
                 Next
-              </Button>
+              </Button> */}
             </div>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

@@ -15,14 +15,19 @@ export type CustomerOrderItemResponseDto = {
   subtotal: number;
   shippingFees: number;
   user: { firstname: string; lastname: string };
-  transaction: { ref: string };
+  transaction: { ref: string }[];
   highlighted?: boolean;
+  rider?: string;
   items: {
     id: string;
+    markup: number;
     image: string;
     title: string;
     quantity: number;
     price: number;
+    merchant: {
+      company: string;
+    };
   }[];
 };
 

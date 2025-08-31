@@ -335,7 +335,7 @@ export default function AllOrdersAdminPage() {
                 <tr>
                   <td>${order.id}</td>
                   <td>${order.orderId}</td>
-                  <td>${order.transaction.ref}</td>
+                  <td>${order.transaction[0]?.ref}</td>
                   <td>${order.user.firstname}</td>
                   <td>${order.user.lastname}</td>
                   <td>${order.items.length}</td>
@@ -717,18 +717,23 @@ export default function AllOrdersAdminPage() {
                       {order.orderId}
                     </TableCell>
                     <TableCell className="font-mono text-sm text-gray-600">
-                      {order.transaction.ref}
+                      {order.transaction[0]?.ref}
                     </TableCell>
                     <TableCell className="font-medium">
                       {order.user.firstname} {order.user.lastname}
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        variant="outline"
-                        className="bg-blue-50 text-blue-700 border-blue-200 font-medium"
-                      >
-                        {/* {order.merchant} */}
-                      </Badge>
+                      <div className="flex gap-1">
+                        {order.items.map((item) => (
+                          <Badge
+                            variant="outline"
+                            className="bg-blue-50 text-blue-700 border-blue-200 font-medium"
+                            key={item.id}
+                          >
+                            {item.merchant.company}
+                          </Badge>
+                        ))}
+                      </div>
                     </TableCell>
                     <TableCell className="max-w-[150px] truncate font-medium">
                       {order.items.length}
@@ -750,11 +755,12 @@ export default function AllOrdersAdminPage() {
                     <TableCell>
                       <Badge
                         variant="outline"
-                        // className={`${getStatusBadgeColor(
-                        //   order.merchantStatus
-                        // )} font-medium`}
+                        className={`${getStatusBadgeColor(
+                          upperCaseText(order.fulfillment)
+                        )} font-medium`}
                       >
                         {/* {order.merchantStatus} */}
+                        {upperCaseText(order.fulfillment)}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -762,20 +768,20 @@ export default function AllOrdersAdminPage() {
                         variant="outline"
                         className={`${getStatusBadgeColor(
                           upperCaseText(order.delivery)
-                        )} font-medium`}
+                        )} font-medium text-nowrap`}
                       >
                         {upperCaseText(order.delivery)}
                       </Badge>
                     </TableCell>
                     <TableCell className="font-bold text-purple-600">
-                      {/* {order.markup}% */}
+                      {order.items.reduce((acc, item) => acc + item.markup, 0)}%
                     </TableCell>
                     <TableCell>
                       <Badge
                         variant="outline"
                         className={`${getStatusBadgeColor(
                           upperCaseText(order.delivery)
-                        )} font-medium`}
+                        )} font-medium text-nowrap`}
                       >
                         {upperCaseText(order.delivery)}
                       </Badge>

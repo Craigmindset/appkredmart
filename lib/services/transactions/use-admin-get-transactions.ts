@@ -17,7 +17,7 @@ export type CustomerTransactionResponseDto = {
   order: {
     items: {
       quantity: number;
-    };
+    }[];
     merchantOrders: {
       merchant: {
         company: string;
