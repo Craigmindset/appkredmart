@@ -8,7 +8,7 @@ export interface MerchantDto {
   firstname: string;
   lastname: string;
   phone: string;
-
+  company: string;
   picture?: string;
   emailVerified?: Date;
   position?: string;

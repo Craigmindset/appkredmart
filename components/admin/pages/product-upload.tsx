@@ -22,6 +22,9 @@ import { Upload, X, Plus, FileText, ImageIcon, Save, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { useMerchantCreateProduct } from "@/lib/services/products/use-merchant-create-product";
 import { uploadMedia } from "@/lib/services/upload/useUploadMedia";
+import { useAdminCreateProduct } from "@/lib/services/products/use-admin-create-product";
+import { useFetchMerchants } from "@/lib/services/merchant/use-fetch-merchants";
+import { da } from "date-fns/locale";
 
 const categories = [
   "Phones and Tablets",
@@ -71,7 +74,9 @@ export default function ProductUploadAdminPage() {
     mutateAsync,
     loading: productCreating,
     error,
-  } = useMerchantCreateProduct();
+  } = useAdminCreateProduct();
+  const { data } = useFetchMerchants();
+  const merchants = data?.data || [];
 
   // Color options and their hex codes
   const colorOptions = [
@@ -142,20 +147,63 @@ export default function ProductUploadAdminPage() {
       toast.error("Please fill in all required fields");
       return;
     }
+    try {
+      setIsLoading(true);
 
-    // let image: string | undefined;
-    // let images: string[] = [];
+      let image: string | undefined;
+      let images: string[] = [];
 
-    // if (mainImage) {
-    //   image = await uploadMedia(mainImage);
-    // }
+      if (mainImage) {
+        image = (await uploadMedia(mainImage))?.original;
+      }
 
-    // if (galleryImages.length > 0) {
-    //   images = await Promise.all(
-    //     galleryImages.map((file) => uploadMedia(file))
-    //   );
-    // }
+      if (galleryImages.length > 0) {
+        images = await Promise.all(
+          galleryImages.map(async (file) => {
+            const res = await uploadMedia(file);
+            return res.original;
+          })
+        );
+      }
 
+      await mutateAsync({
+        name: formData.name,
+        brand: formData.name,
+        category: [formData.category],
+        color: formData.color,
+        description: formData.description,
+        image: image || "",
+        images,
+        discountPrice: Number(formData.discountPrice),
+        price: Number(formData.price),
+        merchant: formData.merchant,
+        status: action,
+      }).then((response) => {
+        toast.success(
+          `Product ${
+            action === "draft" ? "saved as draft" : "published"
+          } successfully!`
+        );
+
+        // Reset form
+        setFormData({
+          name: "",
+          category: "",
+          color: "",
+          brand: "",
+          description: "",
+          price: "",
+          discountPrice: "",
+          isDeal: false,
+          merchant: "",
+        });
+        setMainImage(null);
+        setGalleryImages([]);
+      });
+    } catch {
+    } finally {
+      setIsLoading(false);
+    }
     // console.log({ images });
     // await mutateAsync({
     //   name: formData.name,
@@ -315,8 +363,11 @@ export default function ProductUploadAdminPage() {
                         <SelectValue placeholder="Select merchant" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Slot">Slot</SelectItem>
-                        <SelectItem value="Kredmart">Kredmart</SelectItem>
+                        {merchants.map((merchant, index) => (
+                          <SelectItem value={merchant.id} key={merchant.id}>
+                            {merchant.company}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>

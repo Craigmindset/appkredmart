@@ -15,6 +15,7 @@ export const adminCreateProduct = async (data: {
   price: number;
   discountPrice: number;
   status: "draft" | "publish";
+  merchant: string;
 }) => {
   const response = await backendAxios.post("/admin/product", data);
 
