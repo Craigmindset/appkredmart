@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -160,16 +160,28 @@ export function AdminWallet() {
     toast.success(`${label} copied to clipboard`);
   };
 
-  const handleAccountNumberVerification = useCallback(async () => {
-    if (withdrawalData.receiverBank && withdrawalData.receiverAccount) {
+  const handleAccountNumberVerification = useCallback(
+    async (receiverAccount: string, receiverBank: string) => {
       await mutateAsync({
-        account_number: withdrawalData.receiverAccount,
-        bank_code: withdrawalData.receiverBank,
+        account_number: receiverAccount,
+        bank_code: receiverBank,
       });
-    } else {
-      console.log("None");
+    },
+    []
+  );
+
+  useEffect(() => {
+    if (
+      withdrawalData.receiverBank &&
+      withdrawalData.receiverAccount &&
+      withdrawalData.receiverAccount.length > 9
+    ) {
+      handleAccountNumberVerification(
+        withdrawalData.receiverAccount,
+        withdrawalData.receiverBank
+      );
     }
-  }, []);
+  }, [withdrawalData]);
 
   const handleWithdrawSubmit = () => {
     if (
@@ -471,18 +483,6 @@ export function AdminWallet() {
             <div>
               <Label htmlFor="receiverBank">Select Receiver Bank</Label>
               <div className="relative">
-                {/* <Input
-                  id="receiverBank"
-                  placeholder="Type bank name or select from dropdown"
-                  value={withdrawalData.receiverBank}
-                  onChange={(e) =>
-                    setWithdrawalData((prev) => ({
-                      ...prev,
-                      receiverBank: e.target.value,
-                    }))
-                  }
-                  className="pr-10"
-                /> */}
                 <Select
                   value={withdrawalData.receiverBank}
                   onValueChange={(value) => {
@@ -490,7 +490,6 @@ export function AdminWallet() {
                       ...prev,
                       receiverBank: value,
                     }));
-                    handleAccountNumberVerification();
                   }}
                 >
                   <SelectTrigger className="w-full">
@@ -518,8 +517,6 @@ export function AdminWallet() {
                     ...prev,
                     receiverAccount: e.target.value,
                   }));
-
-                  handleAccountNumberVerification();
                 }}
               />
             </div>
