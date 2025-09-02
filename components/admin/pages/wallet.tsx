@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -48,6 +48,11 @@ import { toast } from "sonner";
 
 import { useWallet } from "@/store/wallet-store";
 import { useAdminWallet } from "@/lib/services/wallet/use-admin-wallet";
+import { useAdminWalletTransactions } from "@/lib/services/admin/use-admin-wallet-transaction";
+import { formatDate } from "date-fns";
+import { upperCaseText } from "@/lib/utils";
+import { useGetBanks } from "@/lib/services/use-get-banks";
+import { useAccountNumberValidate } from "@/lib/services/use-account-validate";
 
 // Demo transaction data
 const demoTransactions = [
@@ -137,6 +142,14 @@ export function AdminWallet() {
     amount: "",
   });
 
+  const { data: transactions, loading } = useAdminWalletTransactions();
+  const { data: banks, isPending: banksPending } = useGetBanks();
+  const {
+    mutateAsync,
+    loading: validatingAccountNumber,
+    data: accountValidated,
+  } = useAccountNumberValidate();
+
   // Wallet state from store
   const { data: wallet } = useAdminWallet();
   const [transferPin, setTransferPin] = useState("");
@@ -146,6 +159,17 @@ export function AdminWallet() {
     navigator.clipboard.writeText(text);
     toast.success(`${label} copied to clipboard`);
   };
+
+  const handleAccountNumberVerification = useCallback(async () => {
+    if (withdrawalData.receiverBank && withdrawalData.receiverAccount) {
+      await mutateAsync({
+        account_number: withdrawalData.receiverAccount,
+        bank_code: withdrawalData.receiverBank,
+      });
+    } else {
+      console.log("None");
+    }
+  }, []);
 
   const handleWithdrawSubmit = () => {
     if (
@@ -360,22 +384,26 @@ export function AdminWallet() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {demoTransactions.map((transaction) => (
+                {(transactions || [])?.map((transaction) => (
                   <TableRow key={transaction.id} className="hover:bg-muted/30">
                     <TableCell>
                       <div>
-                        <div className="font-medium">{transaction.date}</div>
+                        <div className="font-medium">
+                          {formatDate(transaction.createdAt, "yyyy-MM-dd")}
+                        </div>
                         <div className="text-sm text-muted-foreground">
-                          {transaction.time}
+                          {formatDate(transaction.createdAt, "HH:mm")}
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <Badge
                         variant="secondary"
-                        className={getTransactionColor(transaction.type)}
+                        className={getTransactionColor(
+                          upperCaseText(transaction.type)
+                        )}
                       >
-                        {transaction.type}
+                        {upperCaseText(transaction.type)}
                       </Badge>
                     </TableCell>
                     <TableCell className="max-w-[200px]">
@@ -443,7 +471,7 @@ export function AdminWallet() {
             <div>
               <Label htmlFor="receiverBank">Select Receiver Bank</Label>
               <div className="relative">
-                <Input
+                {/* <Input
                   id="receiverBank"
                   placeholder="Type bank name or select from dropdown"
                   value={withdrawalData.receiverBank}
@@ -454,36 +482,24 @@ export function AdminWallet() {
                     }))
                   }
                   className="pr-10"
-                />
+                /> */}
                 <Select
                   value={withdrawalData.receiverBank}
-                  onValueChange={(value) =>
+                  onValueChange={(value) => {
                     setWithdrawalData((prev) => ({
                       ...prev,
                       receiverBank: value,
-                    }))
-                  }
+                    }));
+                    handleAccountNumberVerification();
+                  }}
                 >
-                  <SelectTrigger className="absolute right-0 top-0 h-full w-10 border-0 bg-transparent p-0 hover:bg-muted">
+                  <SelectTrigger className="w-full">
                     <SelectValue />
-                    <svg
-                      className="h-4 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
                   </SelectTrigger>
                   <SelectContent>
-                    {nigerianBanks.map((bank) => (
-                      <SelectItem key={bank} value={bank}>
-                        {bank}
+                    {(banks || [])?.map((bank) => (
+                      <SelectItem key={bank.id} value={bank.code}>
+                        {bank.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -497,12 +513,14 @@ export function AdminWallet() {
                 id="receiverAccount"
                 placeholder="Enter account number"
                 value={withdrawalData.receiverAccount}
-                onChange={(e) =>
+                onChange={(e) => {
                   setWithdrawalData((prev) => ({
                     ...prev,
                     receiverAccount: e.target.value,
-                  }))
-                }
+                  }));
+
+                  handleAccountNumberVerification();
+                }}
               />
             </div>
 
@@ -511,13 +529,16 @@ export function AdminWallet() {
               <Input
                 id="receiverName"
                 placeholder="Account holder name"
-                value={withdrawalData.receiverName}
-                onChange={(e) =>
-                  setWithdrawalData((prev) => ({
-                    ...prev,
-                    receiverName: e.target.value,
-                  }))
-                }
+                // value={withdrawalData.receiverName}
+                value={accountValidated?.account_name || ""}
+                disabled
+                readOnly
+                // onChange={(e) =>
+                //   setWithdrawalData((prev) => ({
+                //     ...prev,
+                //     receiverName: e.target.value,
+                //   }))
+                // }
               />
             </div>
 

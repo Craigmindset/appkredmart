@@ -158,7 +158,7 @@ const OrdersTable = ({
       </TableHeader>
       <TableBody>
         {isPending &&
-          !orderTransactions.length &&
+          !orderTransactions?.length &&
           Array.from({ length: 5 }).map((_, i) => (
             <TableRow key={i} className="border-b">
               {Array.from({ length: 10 }).map((_, j) => (
@@ -170,7 +170,7 @@ const OrdersTable = ({
           ))}
         {orderTransactions.map((order) => (
           <TableRow key={order.id}>
-            <TableCell>{order.order.transaction[0]?.ref}</TableCell>
+            <TableCell>{order.order?.transaction[0]?.ref}</TableCell>
             <TableCell>{order.order.orderId}</TableCell>
             <TableCell>
               <div className="flex gap-1">
@@ -591,9 +591,9 @@ export default function TransactionsAdminPage() {
     wallets: mockWalletsData,
   };
 
-  const totalPages = Math.ceil(
-    (dataMap[activeTab]?.length || 0) / ITEMS_PER_PAGE
-  );
+  // const totalPages = Math.ceil(
+  //   (dataMap[activeTab]?.length || 0) / ITEMS_PER_PAGE
+  // );
 
   return (
     <div className="space-y-6">
