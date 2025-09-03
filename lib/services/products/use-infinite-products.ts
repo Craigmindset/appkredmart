@@ -18,15 +18,16 @@ export const getProducts = async (params?: GetProductsParams) => {
 };
 
 export const useInfiniteProducts = (
-  params?: Omit<GetProductsParams, "page" | "offset">
+  params?: Omit<GetProductsParams, "offset">
 ) => {
-  const { limit = 20, category, brand, search } = params || {};
+  const { limit = 20, category, page = 1, brand, search } = params || {};
 
   return useInfiniteQuery<ProductsResponseDto>({
     queryKey: [
       "PRODUCTS",
       {
         limit,
+        page,
         ...(category ? { category } : {}),
         ...(brand ? { brand } : {}),
         ...(search ? { search } : {}),

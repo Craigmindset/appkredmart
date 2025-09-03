@@ -9,7 +9,7 @@ import { useState } from "react";
 
 import { slugifyCategory } from "@/lib/categories";
 import { allCategories } from "@/lib/products";
-import { useGetProducts } from "@/lib/services/products/use-get-products";
+import { useInfiniteProducts } from "@/lib/services/products/use-infinite-products";
 import {
   Crown,
   Fuel,
@@ -21,7 +21,6 @@ import {
   Watch,
   Zap,
 } from "lucide-react";
-import { useInfiniteProducts } from "@/lib/services/products/use-infinite-products";
 
 const categoryIcons = {
   "Phones and Tablets": Smartphone,
@@ -42,26 +41,6 @@ export default function StorePage() {
   const [brand, setBrand] = useState<string>("all");
   const [onlyDeals, setOnlyDeals] = useState(false);
   const [sort, setSort] = useState<"htl" | "lth" | "none">("none");
-
-  // const filtered = useMemo(() => {
-  //   let list = products.slice();
-  //   if (q) {
-  //     const s = q.toLowerCase();
-  //     list = list.filter(
-  //       (p) =>
-  //         p.title.toLowerCase().includes(s) ||
-  //         p.brand.toLowerCase().includes(s) ||
-  //         p.category.toLowerCase().includes(s)
-  //     );
-  //   }
-  //   if (brand !== "all") list = list.filter((p) => p.brand === brand);
-  //   if (onlyDeals) list = list.filter((p) => p.deal);
-  //   if (sort === "htl") list.sort((a, b) => b.price - a.price);
-  //   if (sort === "lth") list.sort((a, b) => a.price - b.price);
-  //   return list;
-  // }, [q, brand, onlyDeals, sort]);
-
-  // const { data } = useGetProducts();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteProducts({ ...(brand == "all" ? {} : { brand }), limit: 20 });
