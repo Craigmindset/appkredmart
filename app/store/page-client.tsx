@@ -21,6 +21,7 @@ import {
   Watch,
   Zap,
 } from "lucide-react";
+import { useInfiniteProducts } from "@/lib/services/products/use-infinite-products";
 
 const categoryIcons = {
   "Phones and Tablets": Smartphone,
@@ -60,7 +61,12 @@ export default function StorePage() {
   //   return list;
   // }, [q, brand, onlyDeals, sort]);
 
-  const { data } = useGetProducts();
+  // const { data } = useGetProducts();
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteProducts({ ...(brand == "all" ? {} : { brand }), limit: 20 });
+
+  const products = data?.pages.flatMap((page) => page.data) ?? [];
 
   return (
     <LayoutShell>
@@ -103,7 +109,10 @@ export default function StorePage() {
             ? undefined
             : "Browse a curated selection of electronics, phones, audio and more."
         }
-        items={data?.data || []}
+        fetchNextPage={fetchNextPage}
+        hasNextPage={hasNextPage}
+        isFetchingNextPage={isFetchingNextPage}
+        items={products}
       />
     </LayoutShell>
   );

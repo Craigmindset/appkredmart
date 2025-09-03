@@ -4,9 +4,9 @@ import { GetProductDto } from "./products";
 
 export type ProductsResponseDto = {
   data: GetProductDto[];
-  count: number;
-  offset: number;
-  limit: number;
+  total: number;
+  page: number;
+  pageSize: number;
 };
 
 type GetProductsParams = {

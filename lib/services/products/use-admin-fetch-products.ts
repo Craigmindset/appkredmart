@@ -26,14 +26,15 @@ export interface AdminGetProductDto {
 
 export type ProductsResponseDto = {
   data: AdminGetProductDto[];
-  count: number;
-  offset: number;
-  limit: number;
+  total: number;
+  page: number;
+  pageSize: number;
 };
 
 type GetProductsParams = {
   offset?: number;
   limit?: number;
+  page?: number;
   search?: string;
 };
 
@@ -43,11 +44,12 @@ export const getAdminProducts = async (params?: GetProductsParams) => {
 };
 
 export const useAdminFetchProducts = (params?: GetProductsParams) => {
-  const { offset = 0, limit = 20, search } = params || {};
+  const { page = 1, offset = 0, limit = 20, search } = params || {};
 
   return useQuery<ProductsResponseDto>({
-    queryKey: ["ADMIN_PRODUCTS", { offset, limit, search }],
-    queryFn: async () => await getAdminProducts({ offset, limit, search }),
+    queryKey: ["ADMIN_PRODUCTS", { offset, limit, search, page }],
+    queryFn: async () =>
+      await getAdminProducts({ offset, limit, search, page }),
     staleTime: 5 * 60 * 1000, // 5 minutes cache
   });
 };

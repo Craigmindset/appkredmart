@@ -72,11 +72,15 @@ export default function ProductsAdminPage() {
     error,
   } = useAdminFetchProducts({
     search: searchTerm,
+    page: currentPage,
   });
 
   const { mutateAsync: updateProductAsync, loading: updateLoading } =
     useAdminUpdateProduct();
   const products = data?.data || [];
+
+  const totalPages =
+    data?.total && data.pageSize ? Math.ceil(data.total / data.pageSize) : 0;
   // Debounced search effect
   // useEffect(() => {
   //   const timeoutId = setTimeout(() => {
@@ -639,7 +643,7 @@ export default function ProductsAdminPage() {
             </div>
 
             {/* Pagination */}
-            {data?.count && data.count > 1 && (
+            {data?.total && data?.pageSize > 1 && (
               <div className="flex items-center justify-center gap-2 mt-4">
                 <Button
                   variant="outline"
@@ -650,13 +654,13 @@ export default function ProductsAdminPage() {
                   Previous
                 </Button>
                 <span className="text-sm text-gray-600">
-                  Page {currentPage} of {data?.count}
+                  Page {currentPage} of {totalPages}
                 </span>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === data?.count || loading}
+                  disabled={currentPage === totalPages || loading}
                 >
                   Next
                 </Button>

@@ -1,21 +1,43 @@
 "use client";
-import type { Product } from "@/lib/products";
+import { useEffect, useRef } from "react";
 import ProductCard from "./product-card";
-import { useProducts } from "@/lib/services/products/use-products";
-import { useGetProducts } from "@/lib/services/products/use-get-products";
 
 export default function ProductsGrid({
   title,
   description,
   items,
+  isFetchingNextPage,
+  hasNextPage,
+  fetchNextPage,
 }: {
   title?: string;
   description?: string;
   // items: Product[];
+  fetchNextPage: () => void;
   items: any[];
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
 }) {
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!hasNextPage || !loadMoreRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    observer.observe(loadMoreRef.current);
+    return () => observer.disconnect();
+  }, [hasNextPage, fetchNextPage]);
+
   return (
-  <section className="container mx-auto px-6 md:px-12 py-10">
+    <section className="container mx-auto px-6 md:px-12 py-10">
       {(title || description) && (
         <div className="mb-6">
           {title && (
@@ -35,9 +57,20 @@ export default function ProductsGrid({
         {items.map((p) => (
           <ProductCard key={p.id} product={p} />
         ))}
-        {/* {data?.data.map((p) => (
-          <ProductCard key={p.id} product={p} />
-        ))} */}
+      </div>
+
+      {/* Sentinel for infinite scroll */}
+      <div
+        ref={loadMoreRef}
+        className="h-10 mt-6 flex items-center justify-center"
+      >
+        {isFetchingNextPage ? (
+          <span>Loading more…</span>
+        ) : hasNextPage ? (
+          <span>Scroll to load more</span>
+        ) : (
+          <span>No more products</span>
+        )}
       </div>
     </section>
   );

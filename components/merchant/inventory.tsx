@@ -267,7 +267,8 @@ export function Inventory() {
   }, [searchTerm, brandFilter, categoryFilter, priceSort, discountFilter]);
 
   // Pagination
-  const totalPages = Math.ceil(filteredAndSortedProducts.length / itemsPerPage);
+  const totalPages =
+    data?.total && data.pageSize ? Math.ceil(data.total / data.pageSize) : 0;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedProducts = filteredAndSortedProducts.slice(
     startIndex,
@@ -564,15 +565,12 @@ export function Inventory() {
           </div>
 
           {/* Pagination */}
-          {totalPages > 1 && (
+          {data?.total && data?.pageSize && totalPages > 1 && (
             <div className="flex items-center justify-between pt-6">
               <div className="text-sm text-muted-foreground">
-                Showing {startIndex + 1} to{" "}
-                {Math.min(
-                  startIndex + itemsPerPage,
-                  filteredAndSortedProducts.length
-                )}{" "}
-                of {filteredAndSortedProducts.length} products
+                Showing {(currentPage - 1) * (data?.pageSize || 0) + 1} to{" "}
+                {Math.min(currentPage * data.pageSize, data.total)} of{" "}
+                {data?.total} products
               </div>
               <div className="flex items-center space-x-2">
                 <Button
