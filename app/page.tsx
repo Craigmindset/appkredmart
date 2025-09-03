@@ -17,6 +17,7 @@ export default async function Page() {
   await queryClient.prefetchQuery({
     queryKey: ["PRODUCTS", params],
     queryFn: async () => await getProducts(params),
+    staleTime: 1000 * 60 * 5,
   });
   return (
     <LayoutShell>
