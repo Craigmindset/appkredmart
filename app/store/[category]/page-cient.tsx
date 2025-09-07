@@ -22,7 +22,7 @@ import {
   useRouter,
   useSearchParams,
 } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 const BRAND_OPTIONS = [
   "Apple",
@@ -164,24 +164,25 @@ export default function CategoryPage() {
     observer.observe(loadMoreRef.current);
     return () => observer.disconnect();
   }, [hasNextPage, fetchNextPage]);
-  // const list = useMemo(() => {
-  //   let list = products.filter((p) => p.category === category);
-  //   if (q) {
-  //     const s = q.toLowerCase();
-  //     list = list.filter(
-  //       (p) =>
-  //         p.title.toLowerCase().includes(s) ||
-  //         p.brand.toLowerCase().includes(s) ||
-  //         p.category.toLowerCase().includes(s)
-  //     );
-  //   }
-  //   if (brand !== "all")
-  //     list = list.filter((p) => p.brand.toLowerCase() === brand.toLowerCase());
-  //   if (onlyDeals) list = list.filter((p) => p.deal);
-  //   if (sort === "htl") list.sort((a, b) => b.price - a.price);
-  //   if (sort === "lth") list.sort((a, b) => a.price - b.price);
-  //   return list;
-  // }, [category, q, brand, onlyDeals, sort]);
+  const list = useMemo(() => {
+    let list = products;
+    //   let list = products.filter((p) => p.category === category);
+    //   if (q) {
+    //     const s = q.toLowerCase();
+    //     list = list.filter(
+    //       (p) =>
+    //         p.title.toLowerCase().includes(s) ||
+    //         p.brand.toLowerCase().includes(s) ||
+    //         p.category.toLowerCase().includes(s)
+    //     );
+    //   }
+    //   if (brand !== "all")
+    //     list = list.filter((p) => p.brand.toLowerCase() === brand.toLowerCase());
+    // if (onlyDeals) list = list.filter((p) => p.deal);
+    if (sort === "htl") list.sort((a, b) => b.price - a.price);
+    if (sort === "lth") list.sort((a, b) => a.price - b.price);
+    return list;
+  }, [sort]);
 
   const resetFilters = () => {
     setBrand("all");
@@ -322,7 +323,7 @@ export default function CategoryPage() {
             </div>
             {/* 5 per row on desktop, 3 per row on mobile */}
             <div className="grid grid-cols-3 md:grid-cols-5 gap-4">
-              {products.map((p) => (
+              {list.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}
               {products.length === 0 && (

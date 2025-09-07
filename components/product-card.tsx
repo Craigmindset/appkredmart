@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import he from "he";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/store/cart-store";
@@ -162,7 +163,9 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
                 {product.description && (
                   <div
                     className="text-xs text-gray-500 mb-3 leading-snug"
-                    dangerouslySetInnerHTML={{ __html: product.description }}
+                    dangerouslySetInnerHTML={{
+                      __html: he.decode(product.description),
+                    }}
                   />
                 )}
 

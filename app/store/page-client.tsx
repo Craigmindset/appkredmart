@@ -43,7 +43,11 @@ export default function StorePage() {
   const [sort, setSort] = useState<"htl" | "lth" | "none">("none");
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteProducts({ ...(brand == "all" ? {} : { brand }), limit: 20 });
+    useInfiniteProducts({
+      ...(brand == "all" ? {} : { brand }),
+      limit: 20,
+      search: q,
+    });
 
   const products = data?.pages.flatMap((page) => page.data) ?? [];
 
