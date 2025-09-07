@@ -28,3 +28,5 @@ export default async function DealsPage() {
     </LayoutShell>
   );
 }
+
+export const revalidate = 60;
