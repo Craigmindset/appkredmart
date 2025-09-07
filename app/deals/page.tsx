@@ -22,9 +22,9 @@ export default async function DealsPage() {
 
   return (
     <LayoutShell>
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <PageClient />
-      </HydrationBoundary>
+      {/* <HydrationBoundary state={dehydrate(queryClient)}> */}
+      <PageClient />
+      {/* </HydrationBoundary> */}
     </LayoutShell>
   );
 }
