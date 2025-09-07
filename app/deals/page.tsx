@@ -1,16 +1,30 @@
-import LayoutShell from "@/components/layout-shell"
-import ProductsGrid from "@/components/products-grid"
-import { products } from "@/lib/products"
+import LayoutShell from "@/components/layout-shell";
+import { getQueryClient } from "@/lib/query-client";
+import { getProducts } from "@/lib/services/products/use-get-products";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import PageClient from "./page-client";
 
-export default function DealsPage() {
-  const deals = products.filter((p) => p.deal || p.label === "Hot Deal")
+export default async function DealsPage() {
+  const queryClient = getQueryClient();
+  const params = { limit: 20, page: 1, deals: true };
+
+  await queryClient.prefetchInfiniteQuery({
+    queryKey: ["PRODUCTS", params],
+    queryFn: ({ pageParam = 1 }) => getProducts({ ...params, page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: any) => {
+      const { page, pageSize, total } = lastPage;
+      const totalPages = Math.ceil(total / pageSize);
+      return page < totalPages ? page + 1 : undefined;
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+
   return (
     <LayoutShell>
-      <ProductsGrid
-        title="KredMart Deals"
-        description={"Exclusive offers and limited-time discounts. Don’t miss out."}
-        items={deals}
-      />
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <PageClient />
+      </HydrationBoundary>
     </LayoutShell>
-  )
+  );
 }

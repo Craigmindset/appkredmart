@@ -34,6 +34,7 @@ export const useUser = () => {
   } = useQuery({
     queryKey: ["USER"],
     queryFn: fetchUser,
+    staleTime: 5 * 60 * 1000, // 5 minutes cache
   });
 
   return { user: data, loading, error, refetch };

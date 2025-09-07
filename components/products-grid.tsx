@@ -13,7 +13,7 @@ export default function ProductsGrid({
   title?: string;
   description?: string;
   // items: Product[];
-  fetchNextPage: () => void;
+  fetchNextPage?: () => void;
   items: any[];
   hasNextPage?: boolean;
   isFetchingNextPage?: boolean;
@@ -21,7 +21,7 @@ export default function ProductsGrid({
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!hasNextPage || !loadMoreRef.current) return;
+    if (!fetchNextPage || !hasNextPage || !loadMoreRef.current) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -60,18 +60,20 @@ export default function ProductsGrid({
       </div>
 
       {/* Sentinel for infinite scroll */}
-      <div
-        ref={loadMoreRef}
-        className="h-10 mt-6 flex items-center justify-center"
-      >
-        {isFetchingNextPage ? (
-          <span>Loading more…</span>
-        ) : hasNextPage ? (
-          <span>Scroll to load more</span>
-        ) : (
-          <span>No more products</span>
-        )}
-      </div>
+      {fetchNextPage && (
+        <div
+          ref={loadMoreRef}
+          className="h-10 mt-6 flex items-center justify-center"
+        >
+          {isFetchingNextPage ? (
+            <span>Loading more…</span>
+          ) : hasNextPage ? (
+            <span>Scroll to load more</span>
+          ) : (
+            <span>No more products</span>
+          )}
+        </div>
+      )}
     </section>
   );
 }
