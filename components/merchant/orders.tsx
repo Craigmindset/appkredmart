@@ -35,6 +35,7 @@ import {
 import { Search, MoreHorizontal, MapPin, User, Truck } from "lucide-react";
 import { useMerchantGetOrders } from "@/lib/services/order/use-merchant-get-orders";
 import { upperCaseText } from "@/lib/utils";
+import { useProceedToDeliver } from "@/lib/services/order/use-proceed-deliver";
 
 // Demo orders data
 const demoOrders = [
@@ -134,6 +135,8 @@ export function MerchantOrders() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const { data, isPending } = useMerchantGetOrders({ search: searchTerm });
+  const { mutateAsync: processingDeliverAsync, loading: processingDeliver } =
+    useProceedToDeliver();
 
   const orders = data?.data || [];
 
@@ -159,8 +162,9 @@ export function MerchantOrders() {
     alert(`View Customer Address for ${customer} - Order: ${orderId}`);
   };
 
-  const handleProceedToDeliver = (orderId: string) => {
-    alert(`Proceed to Deliver Order: ${orderId}`);
+  const handleProceedToDeliver = async (orderId: string) => {
+    // alert(`Proceed to Deliver Order: ${orderId}`);
+    await processingDeliverAsync(orderId);
   };
 
   return (
@@ -293,7 +297,7 @@ export function MerchantOrders() {
                             {order.order.orderId}
                           </TableCell>
                           <TableCell className="font-mono text-xs hidden md:table-cell">
-                            {order.order.transaction.ref || ""}
+                            {order.order.transaction[0].ref || ""}
                           </TableCell>
                           <TableCell>
                             <div className="max-w-[100px] md:max-w-[140px]">
@@ -326,7 +330,7 @@ export function MerchantOrders() {
                               variant="secondary"
                               className={`${getPaymentColor(
                                 upperCaseText(order.order.paymentMethod)
-                              )} text-xs`}
+                              )} text-xs text-nowrap flex-nowrap`}
                             >
                               {upperCaseText(order.order.paymentMethod)}
                             </Badge>
@@ -336,7 +340,7 @@ export function MerchantOrders() {
                               variant="secondary"
                               className={`${getStatusColor(
                                 upperCaseText(order.order.delivery)
-                              )} text-xs`}
+                              )} text-xs text-nowrap`}
                             >
                               {upperCaseText(order.order.delivery)}
                             </Badge>
@@ -373,9 +377,12 @@ export function MerchantOrders() {
                                   onClick={() =>
                                     handleProceedToDeliver(order.orderId)
                                   }
+                                  disabled={processingDeliver}
                                 >
                                   <Truck className="mr-2 h-4 w-4" />
-                                  Proceed to Deliver
+                                  {processingDeliver
+                                    ? "Processing delivery..."
+                                    : "Proceed to Deliver"}
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>

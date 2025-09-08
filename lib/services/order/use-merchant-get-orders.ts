@@ -44,7 +44,7 @@ export interface MerchantOrderResponse {
   createdAt: string;
   updatedAt: string;
   user: User;
-  transaction: { ref: string };
+  transaction: { ref: string }[];
 }
 
 export interface User {
