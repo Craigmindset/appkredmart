@@ -1,4 +1,16 @@
 "use client";
+// Map category names to Lucide icons
+const categoryIcons: Record<string, React.ReactNode> = {
+  "Phones & Tablets": <Smartphone className="h-4 w-4 mr-2" />,
+  Computing: <Laptop className="h-4 w-4 mr-2" />,
+  Electronics: <Tv className="h-4 w-4 mr-2" />,
+  Generators: <Zap className="h-4 w-4 mr-2" />,
+  Accessories: <Plug className="h-4 w-4 mr-2" />,
+  "Home & Kitchen": <Utensils className="h-4 w-4 mr-2" />,
+  Lifestyle: <Heart className="h-4 w-4 mr-2" />,
+  Watches: <Watch className="h-4 w-4 mr-2" />,
+  "Premium Devices": <Star className="h-4 w-4 mr-2" />,
+};
 
 import type React from "react";
 import { Suspense, useMemo, useState, useEffect } from "react";
@@ -38,6 +50,15 @@ import {
   Tag,
   User,
   Truck,
+  Smartphone,
+  Laptop,
+  Tv,
+  Zap,
+  Plug,
+  Utensils,
+  Heart,
+  Watch,
+  Star,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -356,10 +377,7 @@ function HeaderCore() {
                       <AlignJustify className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="start"
-                    className="w-64 max-h-80 overflow-auto"
-                  >
+                  <DropdownMenuContent align="start" className="w-64">
                     <DropdownMenuLabel>All Categories</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     {allCategories.map((c) => (
@@ -368,8 +386,9 @@ function HeaderCore() {
                         onClick={() =>
                           router.push(`/store/${slugifyCategory(c)}`)
                         }
-                        className="cursor-pointer"
+                        className="cursor-pointer flex items-center"
                       >
+                        {categoryIcons[c] || <Tag className="h-4 w-4 mr-2" />}{" "}
                         {c}
                       </DropdownMenuItem>
                     ))}

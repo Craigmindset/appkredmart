@@ -5,6 +5,33 @@ import { useGetProducts } from "@/lib/services/products/use-get-products";
 
 export const ProductDeals = () => {
   const [page, setPage] = useState(1);
+  // Preload images for next page
+  useEffect(() => {
+    const preloadNextImages = async () => {
+      const nextPage = page + 1;
+      // Fetch next page data (reuse useGetProducts logic)
+      const res = await fetch(`/api/products?limit=6&page=${nextPage}`);
+      if (!res.ok) return;
+      const nextData = await res.json();
+      if (nextData?.data) {
+        nextData.data.forEach((p: any) => {
+          if (p.image) {
+            const img = new window.Image();
+            img.src = p.image;
+          }
+          if (Array.isArray(p.images)) {
+            p.images.forEach((imgUrl: string) => {
+              if (imgUrl) {
+                const img = new window.Image();
+                img.src = imgUrl;
+              }
+            });
+          }
+        });
+      }
+    };
+    preloadNextImages();
+  }, [page]);
   const { data, isFetching } = useGetProducts({ limit: 6, page });
 
   // Desktop/tablet page controls

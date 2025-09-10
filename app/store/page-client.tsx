@@ -53,35 +53,9 @@ export default function StorePage() {
 
   return (
     <LayoutShell>
-      <section className="container mx-auto px-4 pt-6 ">
-        {/* Top: Categories (20%), StoreBanner (80%) */}
-        <div className="grid gap-2 md:grid-cols-[20%_80%] mx-4 items-stretch">
-          <aside className="hidden md:block md:col-span-1 rounded-lg  bg-blue-100 p-4 h-[400px]">
-            <h4 className="mb-3 text-sm font-semibold">Categories</h4>
-            <ul className="space-y-0.2 text-sm">
-              {allCategories.map((c) => (
-                <li key={c}>
-                  <Link
-                    href={`/store/${slugifyCategory(c)}`}
-                    className="flex items-center gap-2 hover:underline leading-9"
-                  >
-                    {(() => {
-                      const IconComponent =
-                        categoryIcons[c as keyof typeof categoryIcons];
-                      return IconComponent ? (
-                        <IconComponent className="h-4 w-4" />
-                      ) : null;
-                    })()}
-                    {c}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </aside>
-
-          <div className="md:col-span-1 rounded-lg border bg-card h-[600px] md:h-[400px]">
-            <StoreBanner />
-          </div>
+      <section className="container mx-auto px-0 pt-0">
+        <div className="w-full">
+          <StoreBanner />
         </div>
       </section>
 

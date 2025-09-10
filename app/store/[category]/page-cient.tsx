@@ -13,17 +13,32 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { getCategoryFromSlug } from "@/lib/categories";
-import { useGetProducts } from "@/lib/services/products/use-get-products";
 import { useInfiniteProducts } from "@/lib/services/products/use-infinite-products";
 import Link from "next/link";
-import {
-  redirect,
-  useParams,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
+import { redirect, useParams, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+/* ---------- helpers ---------- */
+type P = any;
+
+const getImage = (p: P) =>
+  p?.image || p?.thumbnail || p?.images?.[0] || "/placeholder.svg";
+
+const getTitle = (p: P) => p?.title || p?.name || "Untitled";
+const getPrice = (p: P) => Number(p?.price ?? 0);
+const getOldPrice = (p: P) =>
+  Number(
+    p?.oldPrice ?? p?.compareAt ?? p?.compare_at_price ?? p?.listPrice ?? 0
+  );
+const hasDeal = (p: P) => Boolean(p?.deal) || getOldPrice(p) > getPrice(p);
+const getDiscountPct = (p: P) => {
+  const oldP = getOldPrice(p);
+  const price = getPrice(p);
+  if (!oldP || !price || oldP <= price) return 0;
+  return Math.round(((oldP - price) / oldP) * 100);
+};
+
+/* ---------- constants ---------- */
 const BRAND_OPTIONS = [
   "Apple",
   "Samsung",
@@ -59,7 +74,6 @@ const BRAND_OPTIONS = [
   "Garmin",
 ] as const;
 
-// Category-specific banner content
 const CATEGORY_BANNERS = {
   "phones-and-tablets": {
     title: "Latest Phones & Tablets",
@@ -124,20 +138,66 @@ const CATEGORY_BANNERS = {
     bgColor: "bg-gradient-to-r from-black to-gray-800",
     textColor: "text-white",
   },
-};
+} as const;
+
+/* ---------- small deal tile (for the orange strip) ---------- */
+function DealTile({ p }: { p: P }) {
+  const price = getPrice(p);
+  const old = getOldPrice(p);
+  const discount = getDiscountPct(p);
+
+  return (
+    <Link href={`/product/${p?.slug || p?.id || ""}`} className="block">
+      <div className="relative rounded-lg border bg-white overflow-hidden">
+        {/* discount badge */}
+        {discount > 0 && (
+          <span className="absolute -top-2 right-2 z-10 rounded-md bg-amber-500 px-2 py-1 text-[11px] font-semibold text-white shadow">
+            -{discount}%
+          </span>
+        )}
+
+        {/* image */}
+        <div className="aspect-[4/3] bg-gray-50">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={getImage(p)}
+            alt={getTitle(p)}
+            className="h-full w-full object-contain"
+            loading="lazy"
+          />
+        </div>
+
+        {/* text */}
+        <div className="p-2">
+          <p className="line-clamp-2 text-[13px]">{getTitle(p)}</p>
+          <div className="mt-1">
+            <div className="text-sm font-semibold">
+              ₦ {price?.toLocaleString?.() ?? price}
+            </div>
+            {old > price && (
+              <div className="text-xs text-muted-foreground line-through">
+                ₦ {old?.toLocaleString?.() ?? old}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}
 
 export default function CategoryPage() {
   const params = useParams<{ category: string }>();
   const slug = params.category;
   const category = getCategoryFromSlug(slug);
 
-  const router = useRouter();
   const qs = useSearchParams();
   const q = (qs.get("search") || "").toString().trim();
 
   const [brand, setBrand] = useState<string | "all">("all");
   const [onlyDeals, setOnlyDeals] = useState(false);
   const [sort, setSort] = useState<"htl" | "lth" | "none">("none");
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteProducts({
       ...(brand == "all" ? {} : { brand }),
@@ -147,42 +207,47 @@ export default function CategoryPage() {
 
   const products = data?.pages.flatMap((page) => page.data) ?? [];
 
+  /* infinite scroll for main grid */
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
-
   useEffect(() => {
     if (!hasNextPage || !loadMoreRef.current) return;
-
     const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          fetchNextPage();
-        }
-      },
+      (entries) => entries[0].isIntersecting && fetchNextPage(),
       { threshold: 1.0 }
     );
-
     observer.observe(loadMoreRef.current);
     return () => observer.disconnect();
   }, [hasNextPage, fetchNextPage]);
+
+  /* filtered/sorted list for main grid */
   const list = useMemo(() => {
-    let list = products;
-    //   let list = products.filter((p) => p.category === category);
-    //   if (q) {
-    //     const s = q.toLowerCase();
-    //     list = list.filter(
-    //       (p) =>
-    //         p.title.toLowerCase().includes(s) ||
-    //         p.brand.toLowerCase().includes(s) ||
-    //         p.category.toLowerCase().includes(s)
-    //     );
-    //   }
-    //   if (brand !== "all")
-    //     list = list.filter((p) => p.brand.toLowerCase() === brand.toLowerCase());
-    // if (onlyDeals) list = list.filter((p) => p.deal);
-    if (sort === "htl") list.sort((a, b) => b.price - a.price);
-    if (sort === "lth") list.sort((a, b) => a.price - b.price);
-    return list;
-  }, [sort]);
+    let l = products.slice();
+    if (q) {
+      const s = q.toLowerCase();
+      l = l.filter(
+        (p: P) =>
+          getTitle(p).toLowerCase().includes(s) ||
+          (p?.brand || "").toLowerCase().includes(s) ||
+          (p?.category || "").toLowerCase().includes(s)
+      );
+    }
+    if (brand !== "all")
+      l = l.filter(
+        (p: P) => (p?.brand || "").toLowerCase() === brand.toLowerCase()
+      );
+    if (onlyDeals) l = l.filter((p: P) => hasDeal(p));
+    if (sort === "htl") l.sort((a: P, b: P) => getPrice(b) - getPrice(a));
+    if (sort === "lth") l.sort((a: P, b: P) => getPrice(a) - getPrice(b));
+    return l;
+  }, [products, q, brand, onlyDeals, sort]);
+
+  /* deals slice for the orange strip */
+  const deals = useMemo(() => {
+    const d = products.filter((p: P) => hasDeal(p));
+    // Prefer biggest discounts first
+    d.sort((a: P, b: P) => getDiscountPct(b) - getDiscountPct(a));
+    return d.slice(0, 15);
+  }, [products]);
 
   const resetFilters = () => {
     setBrand("all");
@@ -195,13 +260,11 @@ export default function CategoryPage() {
     return null;
   }
 
-  const bannerConfig = CATEGORY_BANNERS[
-    slug as keyof typeof CATEGORY_BANNERS
-  ] || {
+  const bannerConfig = (CATEGORY_BANNERS as any)[slug] || {
     title: category,
-    subtitle: `Explore our ${category.toLowerCase()} collection`,
+    subtitle: `Explore our ${String(category).toLowerCase()} collection`,
     image: `/placeholder.svg?height=340&width=600&query=${encodeURIComponent(
-      category + " promo"
+      String(category) + " promo"
     )}`,
     bgColor: "bg-gradient-to-r from-blue-600 to-purple-600",
     textColor: "text-white",
@@ -210,27 +273,64 @@ export default function CategoryPage() {
   return (
     <LayoutShell>
       <section className="container mx-auto px-4 pt-6">
-        {/* Hero: 60% slider, 40% category banner */}
-        <div className="grid gap-4 md:grid-cols-10">
-          <div className="md:col-span-6 rounded-lg border bg-card">
-            <HeroSlider />
-          </div>
-          <div
-            className={`md:col-span-4 rounded-lg border ${bannerConfig.bgColor} p-6 flex flex-col justify-center`}
-          >
-            <div className={bannerConfig.textColor}>
-              <h2 className="text-2xl font-bold mb-2">{bannerConfig.title}</h2>
-              <p className="text-sm opacity-90 mb-4">{bannerConfig.subtitle}</p>
-              <div className="relative h-48 rounded-md overflow-hidden">
-                <img
-                  src={bannerConfig.image || "/placeholder.svg"}
-                  alt={`${category} collection`}
-                  className="h-full w-full object-cover"
-                />
-              </div>
+        {/* Category banner */}
+        <div
+          className={`w-full rounded-lg border ${bannerConfig.bgColor} p-6 flex flex-col justify-center mb-4`}
+        >
+          <div className={bannerConfig.textColor}>
+            <h2 className="text-2xl font-bold mb-2">{bannerConfig.title}</h2>
+            <p className="text-sm opacity-90 mb-4">{bannerConfig.subtitle}</p>
+            <div className="relative h-48 md:h-72 rounded-md overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={bannerConfig.image || "/placeholder.svg"}
+                alt={`${category} collection`}
+                className="h-full w-full object-cover"
+              />
             </div>
           </div>
         </div>
+
+        {/* Jumia-like DEALS STRIP */}
+        {deals.length > 0 && (
+          <div className="mb-6">
+            {/* header bar */}
+            <div className="mb-2 flex items-center justify-between rounded-md bg-amber-600 px-4 py-3 text-white shadow-sm">
+              <h3 className="text-base font-semibold">Limited Stock Deals</h3>
+              <Link
+                href="/store/deals"
+                className="inline-flex items-center gap-1 text-sm hover:underline"
+              >
+                See All
+                <span aria-hidden>›</span>
+              </Link>
+            </div>
+
+            {/* content: mobile = horizontal scroll (3 per view); md+ = 5 across */}
+            <div className="md:hidden relative">
+              <div
+                className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth -mx-2 px-2 gap-2"
+                style={{ WebkitOverflowScrolling: "touch" }}
+                aria-label="Limited stock deals"
+              >
+                {deals.map((p: P) => (
+                  <div
+                    key={p.id}
+                    className="snap-start shrink-0 basis-1/3 px-1"
+                  >
+                    <DealTile p={p} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="hidden md:grid grid-cols-5 gap-3">
+              {deals.slice(0, 10).map((p: P) => (
+                <DealTile key={p.id} p={p} />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Breadcrumb / heading */}
         <div className="mt-6 flex flex-wrap items-center gap-2 text-sm">
@@ -318,15 +418,17 @@ export default function CategoryPage() {
                 </p>
               )}
               <p className="text-sm text-muted-foreground mt-1">
-                {products.length} products found
+                {list.length} products found
               </p>
             </div>
-            {/* 5 per row on desktop, 3 per row on mobile */}
+
+            {/* main grid: 3 on mobile, 5 on desktop (like your note) */}
             <div className="grid grid-cols-3 md:grid-cols-5 gap-4">
-              {list.map((p) => (
+              {list.map((p: P) => (
                 <ProductCard key={p.id} product={p} />
               ))}
-              {products.length === 0 && (
+
+              {list.length === 0 && (
                 <div className="col-span-3 md:col-span-5 text-center py-8">
                   <p className="text-muted-foreground">No products found.</p>
                   <button
@@ -338,6 +440,8 @@ export default function CategoryPage() {
                 </div>
               )}
             </div>
+
+            {/* infinite loader for main grid */}
             <div
               ref={loadMoreRef}
               className="h-10 mt-6 flex items-center justify-center w-full"
