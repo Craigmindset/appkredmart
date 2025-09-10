@@ -1,7 +1,6 @@
 import { backendAxios } from "@/lib/backendaxios";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { GetProductDto } from "../products/products";
-import { Fulfillment, PaymentStatus } from "@/store/orders-store";
+import { Fulfillment } from "@/store/orders-store";
+import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 
