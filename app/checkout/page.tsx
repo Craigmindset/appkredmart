@@ -203,7 +203,7 @@ export default function CheckoutPage() {
   /** Totals */
   const subtotal = getCartTotal;
   const vat = subtotal * 0.075;
-  const delivery = 0;
+  const delivery = shipmentPrice || 0;
   const total = subtotal + vat + delivery + insurancePrice;
 
   /** BNPL math */
@@ -362,7 +362,6 @@ export default function CheckoutPage() {
   const handleGetShipment = async () => {
     await getShipmentAsync({ user: guestInfo, items: cartItems }).then(
       (response) => {
-        console.log({ response });
         if (response) {
           setCart(response.cart);
           setShipmentPrice(response.deliveryPrice);
@@ -534,7 +533,7 @@ export default function CheckoutPage() {
                 <div className="flex items-center gap-3">
                   <Button
                     onClick={handleGetShipment}
-                    // disabled={isProcessing || !isFormValid()}
+                    disabled={isProcessing || !isFormValid() || shipmentLoading}
                     className="w-full bg-[#466cf4] hover:bg-[#3a5ce0] text-white h-10 text-sm font-semibold"
                   >
                     Get Delivery
