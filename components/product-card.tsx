@@ -195,6 +195,15 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
               {/* Qty + Add to Cart */}
               <div className="flex items-center gap-2 mt-4">
                 <span className="text-xs text-gray-700">Qty</span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="w-8 h-8 p-0 text-lg"
+                  aria-label="Decrease quantity"
+                  onClick={() => setQty(qty > 1 ? qty - 1 : 1)}
+                >
+                  −
+                </Button>
                 <Input
                   type="number"
                   min={1}
@@ -202,8 +211,17 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
                   onChange={(e) =>
                     setQty(Math.max(1, Number(e.target.value || 1)))
                   }
-                  className="w-14 h-8 text-xs"
+                  className="w-14 h-8 text-xs text-center"
                 />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="w-8 h-8 p-0 text-lg"
+                  aria-label="Increase quantity"
+                  onClick={() => setQty(qty + 1)}
+                >
+                  +
+                </Button>
                 <Button
                   className={`ml-auto px-3 py-1.5 text-xs rounded-md transition-colors ${
                     added ? "bg-green-600 hover:bg-green-700 text-white" : ""
