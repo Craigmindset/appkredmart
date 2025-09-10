@@ -382,7 +382,7 @@ function HeaderCore() {
                     value={term}
                     onChange={(e) => setTerm(e.target.value)}
                     placeholder="Search products, brands, categories"
-                    className="w-full min-w-[280px] sm:min-w-[400px] md:min-w-[500px]"
+                    className="w-full min-w-0 sm:min-w-[280px] md:min-w-[400px] lg:min-w-[500px]"
                     aria-label="Search products"
                   />
                   <Button type="submit">Search</Button>
