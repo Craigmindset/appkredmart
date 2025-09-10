@@ -3,8 +3,12 @@
 import React, { useRef, useEffect } from "react";
 
 export default function ThreeColumnAd() {
-  const row1Ref = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
-  const row2Ref = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
+  const row1Ref = useRef<HTMLDivElement>(
+    null
+  ) as React.RefObject<HTMLDivElement>;
+  const row2Ref = useRef<HTMLDivElement>(
+    null
+  ) as React.RefObject<HTMLDivElement>;
 
   // Auto-scroll logic for mobile
   useEffect(() => {
@@ -58,7 +62,7 @@ export default function ThreeColumnAd() {
         className="flex gap-6 justify-center overflow-x-auto scrollbar-hide sm:flex-row flex-nowrap sm:overflow-visible"
       >
         <div
-          className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center min-w-[80vw] sm:min-w-0"
+          className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center min-w-[60vw] sm:min-w-0"
           style={{ width: 300, height: 250 }}
         >
           <img

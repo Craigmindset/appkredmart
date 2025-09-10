@@ -22,6 +22,9 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
   const [open, setOpen] = useState(false);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
+  const [mainImg, setMainImg] = useState(
+    product.images?.[0] ?? product.image ?? "/placeholder.svg"
+  );
   const add = useCart((s) => s.add);
   const { toast } = useToast();
 
@@ -36,6 +39,8 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
   const handleOpenChange = (v: boolean) => {
     setOpen(v);
     if (!v) setAdded(false);
+    if (!v)
+      setMainImg(product.images?.[0] ?? product.image ?? "/placeholder.svg");
   };
 
   return (
@@ -99,7 +104,7 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
 
       {/* Modal */}
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="max-w-4xl p-0 overflow-hidden rounded-2xl bg-white shadow-2xl border-0 my-8 max-h-[80vh]">
+        <DialogContent className="max-w-4xl p-0 overflow-hidden justify-center rounded-2xl bg-white  shadow-2xl border-0 my-8 max-h-[80vh]">
           <div className="flex flex-col md:flex-row min-h-[340px] max-h-[75vh] overflow-y-auto">
             {/* Left: Main Image + Thumbnails */}
             <div
@@ -107,7 +112,7 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
               style={{ zIndex: 1 }}
             >
               <Image
-                src={product.images?.[0] ?? product.image ?? "/placeholder.svg"}
+                src={mainImg}
                 alt={product.name + " main"}
                 width={350}
                 height={350}
@@ -125,7 +130,10 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
                       alt={"Gallery " + (i + 1)}
                       width={70}
                       height={70}
-                      className="rounded-lg object-cover w-16 h-16 border border-gray-200 bg-white cursor-pointer hover:ring-2 hover:ring-blue-500 transition"
+                      className={`rounded-lg object-cover w-16 h-16 border border-gray-200 bg-white cursor-pointer hover:ring-2 hover:ring-blue-500 transition ${
+                        mainImg === img ? "ring-2 ring-blue-500" : ""
+                      }`}
+                      onClick={() => setMainImg(img)}
                     />
                   ))}
               </div>
@@ -187,6 +195,15 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
               {/* Qty + Add to Cart */}
               <div className="flex items-center gap-2 mt-4">
                 <span className="text-xs text-gray-700">Qty</span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="w-8 h-8 p-0 text-lg"
+                  aria-label="Decrease quantity"
+                  onClick={() => setQty(qty > 1 ? qty - 1 : 1)}
+                >
+                  −
+                </Button>
                 <Input
                   type="number"
                   min={1}
@@ -194,8 +211,17 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
                   onChange={(e) =>
                     setQty(Math.max(1, Number(e.target.value || 1)))
                   }
-                  className="w-14 h-8 text-xs"
+                  className="w-14 h-8 text-xs text-center"
                 />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="w-8 h-8 p-0 text-lg"
+                  aria-label="Increase quantity"
+                  onClick={() => setQty(qty + 1)}
+                >
+                  +
+                </Button>
                 <Button
                   className={`ml-auto px-3 py-1.5 text-xs rounded-md transition-colors ${
                     added ? "bg-green-600 hover:bg-green-700 text-white" : ""
