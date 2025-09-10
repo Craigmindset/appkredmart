@@ -46,7 +46,7 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
   return (
     <>
       {/* Product tile */}
-      <div className="group relative rounded-lg border bg-card">
+      <div className="group relative rounded-lg border bg-card min-w-0">
         <div className="relative">
           {product.label && (
             <Badge
