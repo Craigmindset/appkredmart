@@ -46,7 +46,7 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
   return (
     <>
       {/* Product tile */}
-      <div className="group relative rounded-lg border bg-card min-w-0">
+      <div className="group relative rounded-lg border bg-card">
         <div className="relative">
           {product.label && (
             <Badge
@@ -68,7 +68,7 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
             alt={product.name}
             width={400}
             height={300}
-            className="h-48 w-full rounded-t-lg object-cover cursor-pointer"
+            className="h-32 w-full sm:h-48 md:h-60 rounded-t-lg object-contain cursor-pointer"
             onClick={() => onAdd(1)}
           />
 

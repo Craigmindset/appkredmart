@@ -45,7 +45,7 @@ export default function HeroSection() {
   useEffect(() => {
     intervalRef.current = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slideCount);
-    }, 4000);
+    }, 8000);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
@@ -80,7 +80,7 @@ export default function HeroSection() {
           <div className="space-y-4 md:space-y-6 flex flex-col justify-center pt-2 md:pt-4 px-0 md:px-4">
             <div className="space-y-1">
               <h1
-                className={`${poppins.className} text-3xl sm:text-6xl md:text-7xl lg:text-6xl font-black text-gray-900 leading-tight tracking-tighter drop-shadow-lg whitespace-nowrap text-center lg:text-left`}
+                className={`${poppins.className} text-3xl sm:text-6xl md:text-7xl lg:text-7xl font-black text-gray-900 leading-tight tracking-tighter drop-shadow-lg whitespace-nowrap text-center lg:text-left`}
               >
                 {slide.headline}
               </h1>
@@ -141,7 +141,7 @@ export default function HeroSection() {
             </div>
           </div>
           {/* Right Column - Image aligned bottom */}
-          <div className="relative w-full h-[220px] sm:h-[320px] md:h-[400px] lg:h-[500px] flex items-end justify-center pt-6 md:pt-8">
+          <div className="relative w-full h-[220px] sm:h-[320px] md:h-[400px] lg:h-[600px] flex items-end justify-center pt-6 md:pt-8">
             <Image
               src={slide.src}
               alt={slide.alt}
