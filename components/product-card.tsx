@@ -104,7 +104,7 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
 
       {/* Modal */}
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="max-w-4xl p-0 overflow-hidden justify-center rounded-2xl bg-white  shadow-2xl border-0 my-8 max-h-[80vh]">
+        <DialogContent className="w-full max-w-[400px] md:max-w-4xl p-0 px-4 md:px-0 overflow-hidden justify-center rounded-2xl bg-white shadow-2xl border-0 my-8 max-h-[80vh] mx-0 md:mx-0">
           <div className="flex flex-col md:flex-row min-h-[340px] max-h-[75vh] overflow-y-auto">
             {/* Left: Main Image + Thumbnails */}
             <div
