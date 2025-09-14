@@ -62,6 +62,12 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
               {product.label}
             </Badge>
           )}
+          {/* Discount percent badge */}
+          {product.discountPercent && product.discountPercent > 0 && (
+            <Badge className="absolute right-2 top-2 z-10 bg-green-600 text-white font-bold">
+              -{product.discountPercent}%
+            </Badge>
+          )}
 
           <Image
             src={product.image || "/placeholder.svg"}
@@ -95,8 +101,8 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
 
         <div className="p-3">
           <div className="text-sm text-muted-foreground">{product.brand}</div>
-          <div className="line-clamp-1 font-medium">{product.name}</div>
-          <div className="mt-1 font-semibold text-blue-600">
+          <div className="line-clamp-1 font-medium text-sm">{product.name}</div>
+          <div className="mt-1 font-semibold text-blue-600 text-sm">
             {formatNaira(product.price)}
           </div>
         </div>

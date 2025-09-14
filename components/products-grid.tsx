@@ -21,6 +21,13 @@ export default function ProductsGrid({
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    // Auto-fetch next page after initial load
+    if (fetchNextPage && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage]);
+
+  useEffect(() => {
     if (!fetchNextPage || !hasNextPage || !loadMoreRef.current) return;
 
     const observer = new IntersectionObserver(
@@ -53,7 +60,7 @@ export default function ProductsGrid({
         </div>
       )}
       {/* Keep generic grid for shared usage; category page uses its own 3/5 layout */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {items.map((p) => (
           <ProductCard key={p.id} product={p} />
         ))}

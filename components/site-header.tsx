@@ -1,17 +1,4 @@
 "use client";
-// Map category names to Lucide icons
-const categoryIcons: Record<string, React.ReactNode> = {
-  "Phones & Tablets": <Smartphone className="h-4 w-4 mr-2" />,
-  Computing: <Laptop className="h-4 w-4 mr-2" />,
-  Electronics: <Tv className="h-4 w-4 mr-2" />,
-  Generators: <Zap className="h-4 w-4 mr-2" />,
-  Accessories: <Plug className="h-4 w-4 mr-2" />,
-  "Home & Kitchen": <Utensils className="h-4 w-4 mr-2" />,
-  Lifestyle: <Heart className="h-4 w-4 mr-2" />,
-  Watches: <Watch className="h-4 w-4 mr-2" />,
-  "Premium Devices": <Star className="h-4 w-4 mr-2" />,
-};
-
 import type React from "react";
 import { Suspense, useMemo, useState, useEffect } from "react";
 
@@ -64,11 +51,24 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Skeleton } from "./ui/skeleton";
 
+// Map category names to Lucide icons
+const categoryIcons: Record<string, React.ReactNode> = {
+  "Phones & Tablets": <Smartphone className="h-4 w-4 mr-2" />,
+  Computing: <Laptop className="h-4 w-4 mr-2" />,
+  Electronics: <Tv className="h-4 w-4 mr-2" />,
+  Generators: <Zap className="h-4 w-4 mr-2" />,
+  Accessories: <Plug className="h-4 w-4 mr-2" />,
+  "Home & Kitchen": <Utensils className="h-4 w-4 mr-2" />,
+  Lifestyle: <Heart className="h-4 w-4 mr-2" />,
+  Watches: <Watch className="h-4 w-4 mr-2" />,
+  "Premium Devices": <Star className="h-4 w-4 mr-2" />,
+};
+
 /* ---------------------------- Top bar only (static) ---------------------------- */
 
 function TopBar() {
   return (
-    <div className="w-full bg-blue-900 text-white text-xs py-1 flex items-center justify-end gap-4 pr-4">
+    <div className="w-full bg-blue-900  text-white text-xs py-1 flex items-center justify-end gap-4 pr-4">
       <div className="flex items-center gap-2">
         <Truck className="h-4 w-4 mr-1 inline-block" />
         <span>Return Policy</span>
@@ -185,16 +185,18 @@ function HeaderCore() {
   ];
 
   return (
-    <header
-      className={`sticky top-0 z-50 w-full border-b bg-blue-800 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75 ${appFontClass}`}
-    >
+    <header className="sticky top-0 z-50 bg-[#d3e7f6] border-b">
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex h-16 md:h-20 items-center justify-between">
           {/* Left: Mobile menu + Site name */}
           <div className="flex items-center gap-2">
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="md:hidden focus-visible:ring-2 focus-visible:ring-blue-500"
+                >
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Open menu</span>
                 </Button>
@@ -205,36 +207,24 @@ function HeaderCore() {
                 </SheetHeader>
                 <div className="mt-4 space-y-2">
                   <nav className="flex flex-col">
-                    <Link
-                      href="/"
-                      className="flex items-center gap-3 rounded px-2 py-3 text-sm hover:bg-muted"
-                    >
-                      <Home className="h-4 w-4" /> Home
-                    </Link>
-                    <Link
-                      href="/access-loan"
-                      className="flex items-center gap-3 rounded px-2 py-3 text-sm hover:bg-muted"
-                    >
-                      <CreditCard className="h-4 w-4" /> Access Loan
-                    </Link>
-                    <Link
-                      href="/store"
-                      className="flex items-center gap-3 rounded px-2 py-3 text-sm hover:bg-muted"
-                    >
-                      <Store className="h-4 w-4" /> Store
-                    </Link>
-                    <Link
-                      href="/deals"
-                      className="flex items-center gap-3 rounded px-2 py-3 text-sm hover:bg-muted"
-                    >
-                      <Tag className="h-4 w-4" /> Kredmart deals
-                    </Link>
-                    <Link
-                      href="/about"
-                      className="flex items-center gap-3 rounded px-2 py-3 text-sm hover:bg-muted"
-                    >
-                      <Info className="h-4 w-4" /> About
-                    </Link>
+                    {MENU.map((m) => (
+                      <Link
+                        key={m.href}
+                        href={m.href}
+                        className="flex items-center gap-3 rounded px-2 py-3 text-sm hover:bg-muted focus-visible:ring-2 focus-visible:ring-blue-500"
+                      >
+                        {m.label === "Home" && <Home className="h-4 w-4" />}
+                        {m.label === "Access Loan" && (
+                          <CreditCard className="h-4 w-4" />
+                        )}
+                        {m.label === "Store" && <Store className="h-4 w-4" />}
+                        {m.label === "Kredmart deals" && (
+                          <Tag className="h-4 w-4" />
+                        )}
+                        {m.label === "About" && <Info className="h-4 w-4" />}
+                        {m.label}
+                      </Link>
+                    ))}
                   </nav>
                 </div>
               </SheetContent>
@@ -251,9 +241,9 @@ function HeaderCore() {
               <Link
                 key={m.href}
                 href={m.href}
-                className={`text-sm transition-colors ${
+                className={`text-sm transition-colors px-2 py-1 rounded focus-visible:ring-2 focus-visible:ring-blue-500 ${
                   pathname === m.href
-                    ? "font-medium"
+                    ? "font-medium bg-blue-900 text-white"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -309,7 +299,7 @@ function HeaderCore() {
               size="icon"
               aria-label="Cart"
               onClick={() => router.push("/cart")}
-              className="relative"
+              className="relative focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               <ShoppingCart className="h-5 w-5" />
               {itemCount > 0 && (
@@ -326,13 +316,13 @@ function HeaderCore() {
               <>
                 <Link
                   href="/sign-in"
-                  className="hidden md:inline text-sm hover:underline"
+                  className="hidden md:inline text-sm hover:underline focus-visible:ring-2 focus-visible:ring-blue-500"
                 >
                   Login
                 </Link>
                 <Link
                   href="/sign-up"
-                  className="hidden md:inline-flex h-8 items-center justify-center rounded-md border border-input bg-background px-3 text-sm"
+                  className="hidden md:inline-flex h-8 items-center justify-center rounded-md border border-input bg-background px-3 text-sm focus-visible:ring-2 focus-visible:ring-blue-500"
                 >
                   Sign Up
                 </Link>
@@ -360,7 +350,7 @@ function HeaderCore() {
 
         {/* Store toolbar: category picker + search + action */}
         {isStore && (
-          <div className="border-t py-2">
+          <div className="border-t py-2 px-6 bg-blue-500">
             <form
               onSubmit={submitSearch}
               className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
