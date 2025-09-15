@@ -50,9 +50,6 @@ export default function MyLoansPage() {
             <Button variant="outline" asChild>
               <Link href="/dashboard/loan-request">Request a loan</Link>
             </Button>
-            <Button variant="ghost" onClick={seedDemo} className="hidden md:inline-flex">
-              Load demo data
-            </Button>
           </div>
         </CardHeader>
         <CardContent className="text-sm text-muted-foreground">

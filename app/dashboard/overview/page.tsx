@@ -26,7 +26,7 @@ export default function OverviewPage() {
     {
       title: "Total Balance",
       value: formatNaira(overview?.totalBalance || 0),
-      change: "+12.5%",
+      change: "0%",
       trend: "up",
       icon: DollarSign,
       gradient: "from-emerald-500 to-teal-600",
@@ -46,7 +46,7 @@ export default function OverviewPage() {
     {
       title: "Total Orders",
       value: overview?.activeOrders || 0,
-      change: "+8.2%",
+      change: "0%",
       trend: "up",
       icon: ShoppingCart,
       gradient: "from-purple-500 to-pink-600",
@@ -56,8 +56,8 @@ export default function OverviewPage() {
     {
       title: "Pending Deliveries",
       value: overview?.pendingDeliveries || 0,
-      change: "-2 from last week",
-      trend: "down",
+      change: "0%",
+      trend: "up",
       icon: Package,
       gradient: "from-orange-500 to-red-600",
       bgGradient: "from-orange-50 to-red-50",

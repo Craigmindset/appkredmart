@@ -120,7 +120,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                       <SidebarMenuButton
                         asChild
                         isActive={pathname === i.href}
-                        className="data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground hover:bg-sidebar-accent/50"
+                        className="data-[active=true]:bg-white data-[active=true]:text-black hover:bg-sidebar-accent/50"
                       >
                         <Link href={i.href}>
                           <i.icon className="h-4 w-4" />
