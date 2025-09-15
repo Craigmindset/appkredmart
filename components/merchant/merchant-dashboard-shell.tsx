@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -136,6 +136,10 @@ export function MerchantDashboardShell({
         <SidebarFooter className="border-t border-blue-700 bg-blue-900 p-4">
           <div className="flex items-center gap-3 mb-3">
             <Avatar className="h-8 w-8">
+              <AvatarImage
+                src={user?.picture || "/placeholder.svg?height=32&width=32"}
+                alt={initials}
+              />
               <AvatarFallback className="bg-blue-600 text-white text-sm">
                 {initials.toUpperCase()}
               </AvatarFallback>
@@ -208,6 +212,11 @@ export function MerchantDashboardShell({
                 className="gap-2 hover:bg-blue-800"
               >
                 <Avatar className="h-7 w-7">
+                  <AvatarImage
+                    src={user?.picture || "/placeholder.svg?height=32&width=32"}
+                    alt={initials}
+                  />
+
                   <AvatarFallback className="bg-blue-600 text-white text-xs">
                     {initials.toUpperCase()}
                   </AvatarFallback>

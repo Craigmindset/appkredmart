@@ -6,12 +6,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
+import { uploadMedia } from "@/lib/services/upload/useUploadMedia";
+import { useUpdateMerchantAccount } from "@/lib/services/user/use-update-merchant-account";
 import { useUser } from "@/lib/services/user/user";
 import { Upload } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useUpdateMerchantAccount } from "@/lib/services/user/use-update-merchant-account";
-import { uploadMedia } from "@/lib/services/upload/useUploadMedia";
 import { toast } from "sonner";
 
 export function Account() {

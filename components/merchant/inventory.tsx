@@ -36,6 +36,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useMerchantFetchProducts } from "@/lib/services/products/use-merchant-fetch-products";
+import { useMerchantFetchProductsSummary } from "@/lib/services/products/use-merchant-fetch-products-summary";
 
 // Demo products data
 const demoProducts = [
@@ -224,6 +225,7 @@ export function Inventory() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 50;
   const { data } = useMerchantFetchProducts({ search: searchTerm });
+  const { data: summary } = useMerchantFetchProductsSummary();
 
   const products = data?.data || [];
 
@@ -309,7 +311,7 @@ export function Inventory() {
           <div className="flex items-center justify-between">
             <div>
               <div className="text-2xl font-bold text-blue-800">
-                {totalProducts}
+                {summary?.totalProducts || 0}
               </div>
               <div className="text-sm text-blue-600 font-medium">
                 Total Products
@@ -321,7 +323,9 @@ export function Inventory() {
         <div className="bg-gradient-to-r from-green-50 to-green-100 p-6 rounded-lg border border-green-200">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold text-green-800">{inStock}</div>
+              <div className="text-2xl font-bold text-green-800">
+                {summary?.inStocks || 0}
+              </div>
               <div className="text-sm text-green-600 font-medium">In Stock</div>
             </div>
             <CheckCircle className="h-8 w-8 text-green-600" />
@@ -331,7 +335,7 @@ export function Inventory() {
           <div className="flex items-center justify-between">
             <div>
               <div className="text-2xl font-bold text-yellow-800">
-                {lowStock}
+                {summary?.lowStocks}
               </div>
               <div className="text-sm text-yellow-600 font-medium">
                 Low Stock
@@ -344,7 +348,7 @@ export function Inventory() {
           <div className="flex items-center justify-between">
             <div>
               <div className="text-2xl font-bold text-red-800">
-                {outOfStock}
+                {summary?.outOfStocks || 0}
               </div>
               <div className="text-sm text-red-600 font-medium">
                 Out of Stock
