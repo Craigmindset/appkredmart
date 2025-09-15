@@ -30,8 +30,6 @@ import { Badge } from "@/components/ui/badge";
 import { Download, ReceiptText } from "lucide-react";
 import {
   useOrders,
-  orderTotal,
-  type Order,
   type PaymentMethod,
   type PaymentStatus,
   type Fulfillment,
@@ -76,7 +74,6 @@ function withinRange(iso: string, start?: string, end?: string) {
 
 export default function MyOrdersPage() {
   const { toast } = useToast();
-  // const orders = useOrders((s) => s.orders);
   const seedDemo = useOrders((s) => s.seedDemo);
 
   // Controls
@@ -86,12 +83,11 @@ export default function MyOrdersPage() {
   const [method, setMethod] = useState<PaymentMethod | "all">("all");
   const [sort, setSort] = useState<SortKey>("newest");
 
-  const { data: data, isLoading } = useGetOrders();
+  const { data, isLoading } = useGetOrders();
   const orders = data?.data || [];
 
   const filtered = useMemo(() => {
     let list = orders.slice();
-    // search by id or product title
     const s = q.trim().toLowerCase();
     if (s) {
       list = list.filter(
@@ -100,14 +96,10 @@ export default function MyOrdersPage() {
           o.items.some((it) => it.title.toLowerCase().includes(s))
       );
     }
-    if (method !== "all") {
-      list = list.filter((o) => o.paymentMethod === method);
-    }
-    // date range
+    if (method !== "all") list = list.filter((o) => o.paymentMethod === method);
     list = list.filter((o) =>
       withinRange(o.createdAt, start || undefined, end || undefined)
     );
-    // sort
     if (sort === "newest")
       list.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
     if (sort === "oldest")
@@ -210,14 +202,10 @@ export default function MyOrdersPage() {
         <CardHeader className="space-y-2">
           <div className="flex items-center justify-between gap-3">
             <CardTitle>My Orders</CardTitle>
-            {orders.length === 0 && (
-              <Button variant="outline" onClick={seedDemo}>
-                Load demo orders
-              </Button>
-            )}
           </div>
+
           {/* Top controls */}
-          <div className="grid gap-3 md:grid-cols-5">
+          <div className="grid gap-3 md:grid-cols-6">
             {/* Search */}
             <div className="md:col-span-2">
               <Label htmlFor="search" className="text-xs text-muted-foreground">
@@ -228,11 +216,13 @@ export default function MyOrdersPage() {
                 placeholder="Search by Order ID or Product"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
+                className="w-full"
               />
             </div>
+
             {/* Date range */}
-            <div className="flex items-end gap-2">
-              <div className="flex-1">
+            <div className="md:col-span-2 flex items-end gap-2 min-w-0">
+              <div className="flex-1 min-w-0">
                 <Label
                   htmlFor="start"
                   className="text-xs text-muted-foreground"
@@ -244,9 +234,10 @@ export default function MyOrdersPage() {
                   type="date"
                   value={start}
                   onChange={(e) => setStart(e.target.value)}
+                  className="w-full"
                 />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <Label htmlFor="end" className="text-xs text-muted-foreground">
                   End date
                 </Label>
@@ -255,16 +246,18 @@ export default function MyOrdersPage() {
                   type="date"
                   value={end}
                   onChange={(e) => setEnd(e.target.value)}
+                  className="w-full"
                 />
               </div>
             </div>
+
             {/* Payment method */}
-            <div>
+            <div className="md:col-span-1">
               <Label className="text-xs text-muted-foreground">
                 Payment Method
               </Label>
               <Select value={method} onValueChange={(v: any) => setMethod(v)}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="All methods" />
                 </SelectTrigger>
                 <SelectContent>
@@ -277,11 +270,12 @@ export default function MyOrdersPage() {
                 </SelectContent>
               </Select>
             </div>
+
             {/* Sort */}
-            <div>
+            <div className="md:col-span-1">
               <Label className="text-xs text-muted-foreground">Sort</Label>
               <Select value={sort} onValueChange={(v: SortKey) => setSort(v)}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Sort" />
                 </SelectTrigger>
                 <SelectContent>
@@ -292,6 +286,7 @@ export default function MyOrdersPage() {
               </Select>
             </div>
           </div>
+
           <div className="flex justify-end">
             <Button
               variant="ghost"
@@ -408,6 +403,7 @@ export default function MyOrdersPage() {
               Receipt {active ? "— " + active.orderId : ""}
             </DialogTitle>
           </DialogHeader>
+
           {active && (
             <div className="space-y-3">
               <div className="grid gap-2 text-sm text-muted-foreground md:grid-cols-3">
@@ -437,6 +433,7 @@ export default function MyOrdersPage() {
                   <div className="col-span-2 text-right">Qty</div>
                   <div className="col-span-3 text-right">Total</div>
                 </div>
+
                 <div>
                   {active.items.map((it) => (
                     <div
