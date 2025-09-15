@@ -93,7 +93,7 @@ export function MerchantDashboardShell({
 
   return (
     <SidebarProvider>
-      <Sidebar className="border-r border-gray-200 bg-blue-900">
+      <Sidebar className="border-r border-gray-200 bg-blue-900 z-20">
         <SidebarHeader className="border-b border-blue-700 bg-blue-900">
           <div className="flex items-center gap-3 px-3 py-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white">
@@ -162,7 +162,7 @@ export function MerchantDashboardShell({
       </Sidebar>
       <SidebarInset className="flex-1 bg-gray-50">
         {/* Sticky Header */}
-        <header className="sticky top-0 z-50 w-full border-b border-blue-700 bg-blue-700/95 backdrop-blur supports-[backdrop-filter]:bg-blue-700/90">
+        <header className="sticky top-0 z-10 w-full border-b border-blue-700 bg-blue-700/95 backdrop-blur supports-[backdrop-filter]:bg-blue-700/90">
           <div className="flex h-16 items-center justify-between px-6">
             <div className="flex items-center gap-4">
               <SidebarTrigger className="h-8 w-8 p-0 hover:bg-blue-800 rounded-md transition-colors" />
