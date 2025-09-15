@@ -34,7 +34,16 @@ import {
   ShoppingBag,
   Upload,
   Wallet,
+  Megaphone,
 } from "lucide-react";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
 
@@ -93,7 +102,7 @@ export function MerchantDashboardShell({
 
   return (
     <SidebarProvider>
-      <Sidebar className="border-r border-gray-200 bg-blue-900">
+      <Sidebar className="border-r border-gray-200 bg-blue-900 z-20">
         <SidebarHeader className="border-b border-blue-700 bg-blue-900">
           <div className="flex items-center gap-3 px-3 py-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white">
@@ -166,7 +175,7 @@ export function MerchantDashboardShell({
       </Sidebar>
       <SidebarInset className="flex-1 bg-gray-50">
         {/* Sticky Header */}
-        <header className="sticky top-0 z-50 w-full border-b border-blue-700 bg-blue-700/95 backdrop-blur supports-[backdrop-filter]:bg-blue-700/90">
+        <header className="sticky top-0 z-10 w-full border-b border-blue-700 bg-blue-700/95 backdrop-blur supports-[backdrop-filter]:bg-blue-700/90">
           <div className="flex h-16 items-center justify-between px-6">
             <div className="flex items-center gap-4">
               <SidebarTrigger className="h-8 w-8 p-0 hover:bg-blue-800 rounded-md transition-colors" />
@@ -181,6 +190,36 @@ export function MerchantDashboardShell({
               </div>
             </div>
             <div className="flex items-center gap-3">
+              {/* Broadcast Button */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" size="icon" className="hover:bg-blue-800" title="Send Broadcast">
+                    <Megaphone className="h-5 w-5 text-yellow-300" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Send Broadcast Message</DialogTitle>
+                  </DialogHeader>
+                  <form className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Message</label>
+                      <textarea className="w-full border rounded p-2 min-h-[80px]" placeholder="Enter your broadcast message..." required />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Recipients</label>
+                      <select className="w-full border rounded p-2" defaultValue="all">
+                        <option value="all">All Users & Merchants</option>
+                        <option value="users">All Users</option>
+                        <option value="merchants">All Merchants</option>
+                      </select>
+                    </div>
+                    <DialogFooter>
+                      <Button type="submit" className="w-full bg-blue-700 text-white hover:bg-blue-800">Send Broadcast</Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
               {/* Home and Store Links */}
               <Link
                 href="/"

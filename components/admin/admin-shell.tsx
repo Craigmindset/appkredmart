@@ -17,12 +17,21 @@ import {
   User,
   Users,
   Wallet,
+  Megaphone,
 } from "lucide-react";
 import type * as React from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
@@ -45,6 +54,8 @@ import { useAdminWallet } from "@/lib/services/wallet/use-admin-wallet";
 import { type Permission } from "@/store/admin-rbac-store";
 import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { useState } from "react";
 
 interface AdminNavItem {
   title: string;
@@ -146,9 +157,20 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const { mutateAsync: signOut } = useLogout();
   const { user, loading } = useUser();
   const { data: wallet } = useAdminWallet();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [broadcastSent, setBroadcastSent] = useState(false);
 
   const handleLogout = async () => {
     await signOut();
+  };
+
+  const handleBroadcast = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setBroadcastSent(true);
+    setTimeout(() => {
+      setBroadcastSent(false);
+      setDialogOpen(false);
+    }, 2000);
   };
 
   if (loading) {
@@ -310,9 +332,66 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               </Link>
 
               {/* Broadcast */}
-              <Button variant="ghost" size="sm" className="hover:bg-gray-100">
-                <Radio className="h-4 w-4 text-blue-600" />
-              </Button>
+              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="hover:bg-gray-100"
+                    title="Send Broadcast"
+                  >
+                    <Radio className="h-4 w-4 text-blue-500" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Send Broadcast Message</DialogTitle>
+                  </DialogHeader>
+                  <form className="space-y-4" onSubmit={handleBroadcast}>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Message
+                      </label>
+                      <textarea
+                        className="w-full border rounded p-2 min-h-[80px]"
+                        placeholder="Enter your broadcast message..."
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Recipients
+                      </label>
+                      <select
+                        className="w-full border rounded p-2"
+                        defaultValue="all"
+                      >
+                        <option value="all">All Users & Merchants</option>
+                        <option value="users">All Users</option>
+                        <option value="merchants">All Merchants</option>
+                      </select>
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        type="submit"
+                        className="w-full bg-blue-700 text-white hover:bg-blue-800"
+                      >
+                        Send Broadcast
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                  {broadcastSent && (
+                    <div className="mt-4">
+                      <Alert>
+                        <AlertTitle>Broadcast sent!</AlertTitle>
+                        <AlertDescription>
+                          Your message was sent to the selected recipients.
+                        </AlertDescription>
+                      </Alert>
+                    </div>
+                  )}
+                </DialogContent>
+              </Dialog>
 
               {/* Profile */}
               <Button

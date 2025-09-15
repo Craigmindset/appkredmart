@@ -178,7 +178,7 @@ export function Overview() {
             Export Report
           </Button>
           <Button asChild size="default" className="gap-2">
-            <Link href="/dashboard/merchant/transactions">
+            <Link href="/admindesk/dashboard/transactions">
               View All Transactions
               <ArrowUpRight className="h-4 w-4" />
             </Link>
@@ -188,7 +188,10 @@ export function Overview() {
 
       {/* KPI Cards - Centralized Layout */}
       <div className="grid gap-6 grid-cols-1 md:grid-cols-3 justify-center place-items-stretch">
-        <Link href="/merchant/transactions" className="block h-full w-full">
+        <Link
+          href="/admindesk/dashboard/transactions"
+          className="block h-full w-full"
+        >
           <Card className="overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer h-full w-full">
             <CardHeader className="bg-emerald-600 text-emerald-50 pb-4">
               <div className="flex items-center justify-between">
@@ -210,7 +213,10 @@ export function Overview() {
           </Card>
         </Link>
 
-        <Link href="/merchant/orders" className="block h-full w-full">
+        <Link
+          href="/admindesk/dashboard/orders"
+          className="block h-full w-full"
+        >
           <Card className="overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer h-full w-full">
             <CardHeader className="bg-blue-600 text-blue-50 pb-4">
               <div className="flex items-center justify-between">
@@ -232,7 +238,10 @@ export function Overview() {
           </Card>
         </Link>
 
-        <Link href="/merchant/inventory" className="block h-full w-full">
+        <Link
+          href="/admindesk/dashboard/inventory"
+          className="block h-full w-full"
+        >
           <Card className="overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer h-full w-full">
             <CardHeader className="bg-purple-600 text-purple-50 pb-4">
               <div className="flex items-center justify-between">
@@ -256,7 +265,10 @@ export function Overview() {
 
       {/* Quick Actions Section */}
       <div className="grid gap-6 md:grid-cols-3 justify-center place-items-center">
-        <Link href="/merchant/product-upload" className="block w-full">
+        <Link
+          href="/admindesk/dashboard/product-upload"
+          className="block w-full"
+        >
           <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer group">
             <CardContent className="p-8">
               <div className="flex items-center justify-between mb-4">
@@ -273,7 +285,7 @@ export function Overview() {
           </Card>
         </Link>
 
-        <Link href="/merchant/inventory" className="block w-full">
+        <Link href="/admindesk/dashboard/inventory" className="block w-full">
           <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer group">
             <CardContent className="p-8">
               <div className="flex items-center justify-between mb-4">
@@ -289,21 +301,22 @@ export function Overview() {
             </CardContent>
           </Card>
         </Link>
-
-        <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer group opacity-50 pointer-events-none">
-          <CardContent className="p-8">
-            <div className="flex items-center justify-between mb-4">
-              <div className="h-12 w-12 rounded-lg bg-purple-100 flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-                <TrendingUp className="h-6 w-6 text-purple-600" />
+        <Link href="/admindesk/dashboard/orders" className="block w-full">
+          <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer group">
+            <CardContent className="p-8">
+              <div className="flex items-center justify-between mb-4">
+                <div className="h-12 w-12 rounded-lg bg-purple-100 flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                  <Truck className="h-6 w-6 text-purple-600" />
+                </div>
+                <ArrowUpRight className="h-5 w-5 text-muted-foreground group-hover:text-purple-600 transition-colors" />
               </div>
-              <ArrowUpRight className="h-5 w-5 text-muted-foreground group-hover:text-purple-600 transition-colors" />
-            </div>
-            <h3 className="font-semibold text-lg mb-2">View Analytics</h3>
-            <p className="text-muted-foreground">
-              Detailed performance reports and insights
-            </p>
-          </CardContent>
-        </Card>
+              <h3 className="font-semibold text-lg mb-2">Track Orders</h3>
+              <p className="text-muted-foreground">
+                See customer delivery status and track order progress
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
 
       {/* Recent Activity Section */}
@@ -311,19 +324,24 @@ export function Overview() {
         <CardHeader className="pb-6">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="space-y-2">
-              <CardTitle className="text-2xl">Recent Activity</CardTitle>
-              <p className="text-muted-foreground">
+              <CardTitle className="text-2xl text-red-600 font-medium">
+                Recent Activity
+              </CardTitle>
+              <p className="text-black">
                 View your latest orders and top-performing products
               </p>
             </div>
             <div className="flex gap-3">
-              <Button asChild variant="outline" size="default">
+              <Button
+                asChild
+                size="default"
+                className="bg-green-600 hover:bg-green-700 text-white"
+              >
                 <Link href="/dashboard/merchant/transactions">View All</Link>
               </Button>
               <Button
-                variant="outline"
                 size="default"
-                className="gap-2 bg-transparent"
+                className="gap-2 bg-black hover:bg-gray-900 text-white border-none"
               >
                 <Download className="h-4 w-4" />
                 Export
@@ -332,150 +350,62 @@ export function Overview() {
           </div>
         </CardHeader>
         <CardContent>
-          <Tabs
-            value={activeTab}
-            onValueChange={(v) => setActiveTab(v as typeof activeTab)}
-          >
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger
-                value="orders"
-                className={
-                  activeTab === "orders"
-                    ? "text-base py-3 text-red-600 font-bold border-b-2 border-red-600"
-                    : "text-base py-3 text-gray-800 dark:text-gray-200"
-                }
-              >
-                Recent Orders
-              </TabsTrigger>
-              <TabsTrigger
-                value="products"
-                className={
-                  activeTab === "products"
-                    ? "text-base py-3 text-red-600 font-bold border-b-2 border-red-600"
-                    : "text-base py-3 text-gray-800 dark:text-gray-200"
-                }
-              >
-                Top Products
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="orders" className="mt-0">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[120px]">Order ID</TableHead>
-                      <TableHead>Customer</TableHead>
-                      <TableHead>Product</TableHead>
-                      <TableHead className="text-left w-[150px]">
-                        Product Price
-                      </TableHead>
-                      <TableHead className="w-[160px]">
-                        Payment Method
-                      </TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Date</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {(orders?.data || []).map((order) => (
-                      <TableRow key={order.id} className="hover:bg-emerald-50">
-                        <TableCell className="font-medium">
-                          {order.orderId}
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          {order.order.user.firstname}{" "}
-                          {order.order.user.lastname}
-                        </TableCell>
-                        <TableCell className="max-w-[200px] truncate">
-                          {order.items[0]?.title}
-                        </TableCell>
-                        <TableCell className="text-left font-semibold">
-                          {formatNaira(order.subtotal)}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="font-medium">
-                            {upperCaseText(order.order.paymentMethod)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            {getStatusIcon(
-                              upperCaseText(order.order.fulfillment)
-                            )}
-                            <Badge
-                              className={`font-medium ${getStatusColor(
-                                upperCaseText(order.order.fulfillment)
-                              )}`}
-                            >
-                              {upperCaseText(order.order.fulfillment)}
-                            </Badge>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {new Date(order.createdAt).toLocaleDateString()}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="products" className="mt-0">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[120px]">Product ID</TableHead>
-                      <TableHead>Product Name</TableHead>
-                      <TableHead className="text-right">Sales Count</TableHead>
-                      <TableHead className="text-right">Revenue</TableHead>
-                      <TableHead className="text-right">Stock Level</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {demoMerchantData.topProducts.map((product) => (
-                      <TableRow key={product.id} className="hover:bg-muted/50">
-                        <TableCell className="font-medium">
-                          {product.id}
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          {product.name}
-                        </TableCell>
-                        <TableCell className="text-right font-semibold">
-                          {product.sales}
-                        </TableCell>
-                        <TableCell className="text-right font-semibold">
-                          {formatNaira(product.revenue)}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Badge
-                            variant={
-                              product.stock < 10 ? "destructive" : "secondary"
-                            }
-                            className="font-medium"
-                          >
-                            {product.stock} in stock
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </TabsContent>
-          </Tabs>
+          {/* Only show Recent Orders table, remove product tab and its elements */}
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[120px]">Order ID</TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Product</TableHead>
+                  <TableHead className="text-left w-[150px]">
+                    Product Price
+                  </TableHead>
+                  <TableHead className="w-[160px]">Payment Method</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Date</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {(orders?.data || []).map((order) => (
+                  <TableRow key={order.id} className="hover:bg-emerald-50">
+                    <TableCell className="font-medium">
+                      {order.orderId}
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      {order.order.user.firstname} {order.order.user.lastname}
+                    </TableCell>
+                    <TableCell className="max-w-[200px] truncate">
+                      {order.items[0]?.title}
+                    </TableCell>
+                    <TableCell className="text-left font-semibold">
+                      {formatNaira(order.subtotal)}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="font-medium">
+                        {upperCaseText(order.order.paymentMethod)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {getStatusIcon(upperCaseText(order.order.fulfillment))}
+                        <Badge
+                          className={`font-medium ${getStatusColor(
+                            upperCaseText(order.order.fulfillment)
+                          )}`}
+                        >
+                          {upperCaseText(order.order.fulfillment)}
+                        </Badge>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>
