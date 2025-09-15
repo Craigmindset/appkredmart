@@ -31,6 +31,7 @@ export const useGetProducts = (params?: GetProductsParams) => {
     ...(category ? { category } : {}),
     ...(brand ? { brand } : {}),
   };
+
   return useQuery<ProductsResponseDto>({
     queryKey: ["PRODUCTS", formattedParams],
     queryFn: async () => await getProducts(formattedParams),

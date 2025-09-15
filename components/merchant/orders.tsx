@@ -297,7 +297,7 @@ export function MerchantOrders() {
                             {order.order.orderId}
                           </TableCell>
                           <TableCell className="font-mono text-xs hidden md:table-cell">
-                            {order.order.transaction[0].ref || ""}
+                            {order.order.transaction[0]?.ref || ""}
                           </TableCell>
                           <TableCell>
                             <div className="max-w-[100px] md:max-w-[140px]">
