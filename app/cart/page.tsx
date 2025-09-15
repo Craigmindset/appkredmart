@@ -3,8 +3,9 @@
 import LayoutShell from "@/components/layout-shell";
 import { useCart, cartSelectors } from "@/store/cart-store";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { formatNaira } from "@/lib/currency";
 
 export default function CartPage() {
@@ -17,96 +18,152 @@ export default function CartPage() {
 
   return (
     <LayoutShell>
-      <section className="container mx-auto px-4 py-10 min-h-[56vh]">
-        <h1 className="text-2xl font-semibold tracking-tight">Your Cart</h1>
+      <section className="container mx-auto px-3 sm:px-4 md:px-6 py-8 md:py-10 min-h-[56vh]">
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+          Your Cart
+        </h1>
+
         {items.length === 0 ? (
           <div className="mt-8">
             <p className="text-muted-foreground">Your cart is empty.</p>
-            <Link href="/store" className="mt-3 inline-block underline">
-              Continue shopping
-            </Link>
+            <Button asChild className="mt-4">
+              <Link href="/store">Continue shopping</Link>
+            </Button>
           </div>
         ) : (
-          <div className="mt-6 grid gap-6 md:grid-cols-3">
-            <div className="md:col-span-2 space-y-3">
-              {items.map((i) => (
-                <div
-                  key={i.product.id}
-                  className="flex items-center gap-3 rounded-xl border bg-card shadow-sm hover:shadow-md transition-shadow duration-200 p-2 min-w-0"
-                >
-                  <img
-                    src={i.product.image || "/placeholder.svg"}
-                    alt={i.product.name}
-                    className="h-14 w-16 rounded-lg object-cover border"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-sm truncate">
-                      {i.product.name}
-                    </div>
-                    <div className="text-xs text-muted-foreground truncate">
-                      {i.product.brand}
-                    </div>
-                    <div className="font-bold text-primary text-base mt-0.5">
-                      {formatNaira(i.product.price)}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1 border rounded px-1 py-0.5 bg-muted">
-                    <button
-                      className="px-2 py-0.5 text-lg text-gray-600 hover:text-primary"
-                      onClick={() => decrement(i.product.id)}
-                      aria-label="Decrease quantity"
+          <div className="mt-6 grid gap-6 lg:grid-cols-3">
+            {/* Items */}
+            <div className="lg:col-span-2 space-y-3">
+              <ul role="list" className="space-y-3">
+                {items.map((i) => {
+                  const lineTotal = i.product.price * i.quantity;
+                  const qtyId = `qty-${i.product.id}`;
+                  return (
+                    <li
+                      key={i.product.id}
+                      className="grid grid-cols-[22px_64px_1fr_auto] sm:grid-cols-[22px_80px_1fr_auto] items-center gap-2 sm:gap-3 rounded-xl border bg-card p-2 sm:p-3 shadow-sm"
                     >
-                      −
-                    </button>
-                    <span className="px-2 text-sm font-medium">
-                      {i.quantity}
-                    </span>
-                    <button
-                      className="px-2 py-0.5 text-lg text-white bg-blue-500 hover:bg-green-200 rounded"
-                      onClick={() => increment(i.product.id)}
-                      aria-label="Increase quantity"
-                    >
-                      +
-                    </button>
-                  </div>
-                  <div className="font-semibold text-sm w-20 text-right">
-                    {formatNaira(i.product.price * i.quantity)}
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => remove(i.product.id)}
-                    aria-label="Remove"
-                  >
-                    <Trash2 className="h-4 w-4 text-red-500 hover:text-red-700 transition" />
+                      {/* Status tick */}
+                      <div className="flex items-center justify-center">
+                        <CheckCircle2
+                          className="h-4 w-4 sm:h-5 sm:w-5 text-green-600"
+                          aria-label="In stock"
+                        />
+                      </div>
+
+                      {/* Image */}
+                      <div className="relative h-12 w-12 sm:h-16 sm:w-16 overflow-hidden rounded-md border">
+                        <Image
+                          src={i.product.image || "/placeholder.svg"}
+                          alt={i.product.name}
+                          fill
+                          sizes="(max-width: 640px) 48px, 64px"
+                          className="object-cover"
+                        />
+                      </div>
+
+                      {/* Details */}
+                      <div className="min-w-0">
+                        <p className="text-[13px] sm:text-sm font-medium leading-tight truncate">
+                          {i.product.name}
+                        </p>
+                        {/* price */}
+                        <p className="mt-1 text-[13px] sm:text-sm font-semibold">
+                          {formatNaira(i.product.price)}
+                        </p>
+                      </div>
+
+                      {/* Right controls: qty stepper + delete */}
+                      <div className="flex items-center gap-2 justify-self-end">
+                        <div className="inline-flex items-center rounded-md border bg-muted/60">
+                          <button
+                            type="button"
+                            onClick={() => decrement(i.product.id)}
+                            aria-controls={qtyId}
+                            aria-label={`Decrease quantity of ${i.product.name}`}
+                            className="h-7 w-7 sm:h-8 sm:w-8 grid place-items-center text-gray-600 hover:text-foreground"
+                          >
+                            −
+                          </button>
+                          <output
+                            id={qtyId}
+                            aria-live="polite"
+                            className="min-w-6 text-center text-[12px] sm:text-sm font-medium"
+                          >
+                            {i.quantity}
+                          </output>
+                          <button
+                            type="button"
+                            onClick={() => increment(i.product.id)}
+                            aria-label={`Increase quantity of ${i.product.name}`}
+                            className="h-7 w-7 sm:h-8 sm:w-8 grid place-items-center text-gray-800 hover:text-foreground"
+                          >
+                            +
+                          </button>
+                        </div>
+
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 sm:h-8 sm:w-8 text-muted-foreground hover:text-red-600"
+                          onClick={() => remove(i.product.id)}
+                          aria-label={`Remove ${i.product.name}`}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+
+                      {/* Line total under row on very small screens (optional) */}
+                      <div className="col-span-4 sm:hidden flex items-center justify-between pt-1">
+                        <span className="text-xs text-muted-foreground">
+                          Total
+                        </span>
+                        <span className="font-semibold text-sm">
+                          {formatNaira(lineTotal)}
+                        </span>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+
+              {/* Row actions */}
+              <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between pt-2">
+                <Button asChild variant="link" className="px-0 h-auto">
+                  <Link href="/store" className="text-sm">
+                    Continue shopping
+                  </Link>
+                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={clear}>
+                    Clear cart
                   </Button>
                 </div>
-              ))}
-              <div className="flex items-center gap-3">
-                <Link href="/store" className="underline text-sm">
-                  Continue shopping
-                </Link>
-                <Button variant="outline" onClick={clear}>
-                  Clear cart
-                </Button>
               </div>
             </div>
-            <div className="rounded-xl border bg-card shadow-sm p-4 h-fit">
+
+            {/* Summary */}
+            <aside className="rounded-xl border bg-card shadow-sm p-4 h-fit lg:sticky lg:top-24">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Subtotal</span>
+                <span className="text-sm text-muted-foreground">Subtotal</span>
                 <span className="font-bold text-base">
                   {formatNaira(total)}
                 </span>
               </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Taxes and shipping calculated at checkout.
+              </p>
               <div className="mt-4">
-                <Link
-                  href="/checkout"
-                  className="inline-flex h-10 w-full items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-background shadow hover:bg-primary/90 transition"
-                >
-                  Proceed to Checkout
-                </Link>
+                <Button asChild className="w-full h-10">
+                  <Link href="/checkout">Proceed to Checkout</Link>
+                </Button>
               </div>
-            </div>
+              <div className="mt-2">
+                <Button asChild variant="outline" className="w-full h-10">
+                  <Link href="/store">Add more items</Link>
+                </Button>
+              </div>
+            </aside>
           </div>
         )}
       </section>
