@@ -34,7 +34,16 @@ import {
   ShoppingBag,
   Upload,
   Wallet,
+  Megaphone,
 } from "lucide-react";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
 
@@ -177,6 +186,36 @@ export function MerchantDashboardShell({
               </div>
             </div>
             <div className="flex items-center gap-3">
+              {/* Broadcast Button */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" size="icon" className="hover:bg-blue-800" title="Send Broadcast">
+                    <Megaphone className="h-5 w-5 text-yellow-300" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Send Broadcast Message</DialogTitle>
+                  </DialogHeader>
+                  <form className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Message</label>
+                      <textarea className="w-full border rounded p-2 min-h-[80px]" placeholder="Enter your broadcast message..." required />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Recipients</label>
+                      <select className="w-full border rounded p-2" defaultValue="all">
+                        <option value="all">All Users & Merchants</option>
+                        <option value="users">All Users</option>
+                        <option value="merchants">All Merchants</option>
+                      </select>
+                    </div>
+                    <DialogFooter>
+                      <Button type="submit" className="w-full bg-blue-700 text-white hover:bg-blue-800">Send Broadcast</Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
               {/* Home and Store Links */}
               <Link
                 href="/"
