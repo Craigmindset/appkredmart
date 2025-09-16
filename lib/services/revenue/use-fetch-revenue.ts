@@ -19,6 +19,7 @@ interface RevenueResponseDto {
 type GetRevenueParams = {
   search?: string;
 };
+
 export const getRevenues = async (params?: GetRevenueParams) => {
   const response = await backendAxios.get("/admin/revenues", { params });
   return response.data;

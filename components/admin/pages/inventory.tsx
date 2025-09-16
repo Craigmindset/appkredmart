@@ -25,6 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useAdminFetchProducts } from "@/lib/services/products/use-admin-fetch-products";
+import { useAdminFetchProductsSummary } from "@/lib/services/products/use-admin-fetch-products-summary";
 import { formatDate } from "date-fns";
 import {
   AlertTriangle,
@@ -124,6 +125,7 @@ export default function InventoryAdminPage() {
   const [priceFilter, setPriceFilter] = useState("All");
 
   const { data } = useAdminFetchProducts({ search: searchQuery });
+  const { data: summary } = useAdminFetchProductsSummary();
   const inventories = data?.data || [];
 
   // const filteredData = useMemo(() => {
@@ -207,7 +209,7 @@ export default function InventoryAdminPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-900">
-              {totalProducts}
+              {summary?.totalProducts || 0}
             </div>
           </CardContent>
         </Card>
@@ -220,7 +222,9 @@ export default function InventoryAdminPage() {
             <AlertTriangle className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-900">{outOfStock}</div>
+            <div className="text-2xl font-bold text-red-900">
+              {summary?.outOfStocks || 0}
+            </div>
           </CardContent>
         </Card>
 
@@ -232,7 +236,9 @@ export default function InventoryAdminPage() {
             <TrendingDown className="h-4 w-4 text-yellow-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-900">{lowStock}</div>
+            <div className="text-2xl font-bold text-yellow-900">
+              {summary?.lowStocks || 0}
+            </div>
           </CardContent>
         </Card>
 
@@ -245,7 +251,7 @@ export default function InventoryAdminPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-900">
-              {wellStocked}
+              {summary?.wellStocked}
             </div>
           </CardContent>
         </Card>
