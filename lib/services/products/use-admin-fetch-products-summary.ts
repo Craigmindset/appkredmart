@@ -7,6 +7,9 @@ export type ProductSummaryResponseDto = {
   lowStocks: number;
   outOfStocks: number;
   wellStocked: number;
+  totalInventoryValue: number;
+  averageMarkup: number;
+  activeProducts: number;
 };
 
 export const getAdminProductSummary = async () => {

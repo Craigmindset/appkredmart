@@ -272,10 +272,6 @@ export function Inventory() {
   const totalPages =
     data?.total && data.pageSize ? Math.ceil(data.total / data.pageSize) : 0;
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedProducts = filteredAndSortedProducts.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
 
   const resetFilters = () => {
     setSearchTerm("");

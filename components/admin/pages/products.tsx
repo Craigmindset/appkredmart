@@ -26,6 +26,7 @@ import {
   AdminGetProductDto,
   useAdminFetchProducts,
 } from "@/lib/services/products/use-admin-fetch-products";
+import { useAdminFetchProductsSummary } from "@/lib/services/products/use-admin-fetch-products-summary";
 import { useAdminUpdateProduct } from "@/lib/services/products/use-admin-update-product";
 import {
   DollarSign,
@@ -77,6 +78,7 @@ export default function ProductsAdminPage() {
 
   const { mutateAsync: updateProductAsync, loading: updateLoading } =
     useAdminUpdateProduct();
+  const { data: summary } = useAdminFetchProductsSummary();
   const products = data?.data || [];
 
   const totalPages =
@@ -221,7 +223,7 @@ export default function ProductsAdminPage() {
   };
 
   // Calculate summary stats
-  const totalProducts = products.length || 0;
+
   const activeProducts =
     products?.filter((p) => p.status === "PUBLISHED").length || 0;
   const totalInventoryValue =
@@ -288,7 +290,7 @@ export default function ProductsAdminPage() {
                     {loading ? (
                       <Skeleton className="h-8 w-16 bg-blue-400" />
                     ) : (
-                      (totalProducts || 0).toLocaleString()
+                      (summary?.totalProducts || 0).toLocaleString()
                     )}
                   </div>
                 </div>
@@ -306,7 +308,7 @@ export default function ProductsAdminPage() {
                     {loading ? (
                       <Skeleton className="h-8 w-16 bg-green-400" />
                     ) : (
-                      (activeProducts || 0).toLocaleString()
+                      (summary?.activeProducts || 0).toLocaleString()
                     )}
                   </div>
                 </div>
@@ -322,9 +324,14 @@ export default function ProductsAdminPage() {
                   <p className="text-purple-100">Inventory Value</p>
                   <div className="text-2xl font-bold">
                     {loading ? (
-                      <Skeleton className="h-8 w-16 bg-purple-400" />
+                      <Skeleton className="h-8 w-20 bg-purple-400" />
                     ) : (
-                      `₦${((totalInventoryValue || 0) / 1000000).toFixed(1)}M`
+                      new Intl.NumberFormat("en-NG", {
+                        style: "currency",
+                        currency: "NGN",
+                        notation: "compact",
+                        maximumFractionDigits: 1,
+                      }).format(summary?.totalInventoryValue || 0)
                     )}
                   </div>
                 </div>
@@ -342,7 +349,7 @@ export default function ProductsAdminPage() {
                     {loading ? (
                       <Skeleton className="h-8 w-16 bg-orange-400" />
                     ) : (
-                      `${(averageMarkup || 0).toFixed(1)}%`
+                      `${(summary?.averageMarkup || 0).toFixed(1)}%`
                     )}
                   </div>
                 </div>

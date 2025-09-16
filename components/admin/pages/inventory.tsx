@@ -124,7 +124,18 @@ export default function InventoryAdminPage() {
   const [dealFilter, setDealFilter] = useState("All");
   const [priceFilter, setPriceFilter] = useState("All");
 
-  const { data } = useAdminFetchProducts({ search: searchQuery });
+  const { data } = useAdminFetchProducts({
+    search: searchQuery,
+    merchant: merchantFilter,
+    brand: categoryFilter,
+    ...(priceFilter === "Best Price"
+      ? {
+          sortBy: "price",
+          order: "asc",
+        }
+      : {}),
+  });
+
   const { data: summary } = useAdminFetchProductsSummary();
   const inventories = data?.data || [];
 
@@ -251,7 +262,7 @@ export default function InventoryAdminPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-900">
-              {summary?.wellStocked}
+              {summary?.wellStocked || 0}
             </div>
           </CardContent>
         </Card>

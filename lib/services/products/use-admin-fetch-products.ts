@@ -32,10 +32,14 @@ export type ProductsResponseDto = {
 };
 
 type GetProductsParams = {
+  merchant?: string;
+  brand?: string;
   offset?: number;
   limit?: number;
   page?: number;
   search?: string;
+  sortBy?: string;
+  order?: "asc" | "desc";
 };
 
 export const getAdminProducts = async (params?: GetProductsParams) => {
@@ -44,12 +48,24 @@ export const getAdminProducts = async (params?: GetProductsParams) => {
 };
 
 export const useAdminFetchProducts = (params?: GetProductsParams) => {
-  const { page = 1, offset = 0, limit = 20, search } = params || {};
+  const {
+    page = 1,
+    offset = 0,
+    limit = 20,
+
+    ...otherParams
+  } = params || {};
+
+  const formattedParams = {
+    page,
+    offset,
+    limit,
+    ...otherParams,
+  };
 
   return useQuery<ProductsResponseDto>({
-    queryKey: ["ADMIN_PRODUCTS", { offset, limit, search, page }],
-    queryFn: async () =>
-      await getAdminProducts({ offset, limit, search, page }),
+    queryKey: ["ADMIN_PRODUCTS", formattedParams],
+    queryFn: async () => await getAdminProducts(formattedParams),
     staleTime: 5 * 60 * 1000, // 5 minutes cache
   });
 };
