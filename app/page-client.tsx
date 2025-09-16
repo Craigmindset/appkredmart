@@ -2,36 +2,37 @@
 import ProductCard from "@/components/product-card";
 import { useEffect, useRef, useState } from "react";
 import { useGetProducts } from "@/lib/services/products/use-get-products";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const ProductDeals = () => {
   const [page, setPage] = useState(1);
-  // Preload images for next page
-  useEffect(() => {
-    const preloadNextImages = async () => {
-      const nextPage = page + 1;
-      // Fetch next page data (reuse useGetProducts logic)
-      const res = await fetch(`/api/products?limit=6&page=${nextPage}`);
-      if (!res.ok) return;
-      const nextData = await res.json();
-      if (nextData?.data) {
-        nextData.data.forEach((p: any) => {
-          if (p.image) {
-            const img = new window.Image();
-            img.src = p.image;
-          }
-          if (Array.isArray(p.images)) {
-            p.images.forEach((imgUrl: string) => {
-              if (imgUrl) {
-                const img = new window.Image();
-                img.src = imgUrl;
-              }
-            });
-          }
-        });
-      }
-    };
-    preloadNextImages();
-  }, [page]);
+  // // Preload images for next page
+  // useEffect(() => {
+  //   const preloadNextImages = async () => {
+  //     const nextPage = page + 1;
+  //     // Fetch next page data (reuse useGetProducts logic)
+  //     const res = await fetch(`/api/products?limit=6&page=${nextPage}`);
+  //     if (!res.ok) return;
+  //     const nextData = await res.json();
+  //     if (nextData?.data) {
+  //       nextData.data.forEach((p: any) => {
+  //         if (p.image) {
+  //           const img = new window.Image();
+  //           img.src = p.image;
+  //         }
+  //         if (Array.isArray(p.images)) {
+  //           p.images.forEach((imgUrl: string) => {
+  //             if (imgUrl) {
+  //               const img = new window.Image();
+  //               img.src = imgUrl;
+  //             }
+  //           });
+  //         }
+  //       });
+  //     }
+  //   };
+  //   preloadNextImages();
+  // }, [page]);
   const { data, isFetching } = useGetProducts({ limit: 6, page });
 
   // Desktop/tablet page controls
@@ -89,11 +90,17 @@ export const ProductDeals = () => {
           style={{ WebkitOverflowScrolling: "touch" }}
           aria-label="Deals carousel"
         >
-          {data?.data?.map((p: any) => (
-            <div key={p.id} className="snap-start shrink-0 basis-1/3 px-1">
-              <ProductCard product={p} />
-            </div>
-          ))}
+          {isFetching
+            ? Array.from({ length: 6 }).map((_, index) => (
+                <div key={index} className="snap-start shrink-0 basis-1/3 px-1">
+                  <Skeleton className="w-full h-96" />
+                </div>
+              ))
+            : data?.data?.map((p: any) => (
+                <div key={p.id} className="snap-start shrink-0 basis-1/3 px-1">
+                  <ProductCard product={p} />
+                </div>
+              ))}
         </div>
         {/* Removed mobile page indicator and prev/next page buttons for cleaner navigation-only UI */}
       </div>
@@ -123,9 +130,15 @@ export const ProductDeals = () => {
         </button>
 
         <div className="grid grid-cols-3 lg:grid-cols-6 gap-4 w-full">
-          {data?.data?.map((p: any) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
+          {isFetching
+            ? Array.from({ length: 6 }).map((_, index) => (
+                <div key={index} className="snap-start shrink-0 basis-1/3 px-1">
+                  <Skeleton className="w-full h-72" />
+                </div>
+              ))
+            : data?.data?.map((p: any) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
         </div>
 
         <button
