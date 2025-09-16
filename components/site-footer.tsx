@@ -115,7 +115,8 @@ export default function SiteFooter() {
                     <Mail className="h-4 w-4 text-blue-400 shrink-0" />
                     <a
                       href={`mailto:${CONTACT_EMAIL}`}
-                      className="text-gray-300 hover:text-white transition-colors break-words"
+                      className="text-gray-300 hover:text-white transition-colors break-words whitespace-pre-line break-all max-w-[90vw] sm:max-w-full"
+                      style={{ wordBreak: "break-all" }}
                     >
                       {CONTACT_EMAIL}
                     </a>
