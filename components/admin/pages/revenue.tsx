@@ -34,64 +34,19 @@ import { useAdminFetchRevenueSummary } from "@/lib/services/revenue/use-fetch-re
 import { useAdminFetchRevenues } from "@/lib/services/revenue/use-fetch-revenue";
 import { upperCaseText } from "@/lib/utils";
 
-// Demo revenue data
-const demoTransactions = [
-  {
-    id: "TXN001",
-    date: "2024-01-15",
-    type: "Order",
-    merchant: "TechStore Ltd",
-    amount: 150000,
-    markup: 15000,
-    vat: 11250,
-    settlement: 123750,
-    status: "Settled",
-  },
-  {
-    id: "TXN002",
-    date: "2024-01-14",
-    type: "Loan",
-    merchant: "QuickLoan Inc",
-    amount: 500000,
-    markup: 25000,
-    vat: 18750,
-    settlement: 456250,
-    status: "Pending",
-  },
-  {
-    id: "TXN003",
-    date: "2024-01-13",
-    type: "Order",
-    merchant: "Fashion Hub",
-    amount: 75000,
-    markup: 7500,
-    vat: 5625,
-    settlement: 61875,
-    status: "Settled",
-  },
-  {
-    id: "TXN004",
-    date: "2024-01-12",
-    type: "Wallet",
-    merchant: "Airtime Plus",
-    amount: 25000,
-    markup: 1250,
-    vat: 937.5,
-    settlement: 22812.5,
-    status: "Settled",
-  },
-  {
-    id: "TXN005",
-    date: "2024-01-11",
-    type: "Order",
-    merchant: "Electronics Pro",
-    amount: 300000,
-    markup: 30000,
-    vat: 22500,
-    settlement: 247500,
-    status: "Disputed",
-  },
-];
+// All transactions removed for clean state
+type Transaction = {
+  id: string;
+  date: string;
+  type: string;
+  merchant: string;
+  amount: number;
+  markup: number;
+  vat: number;
+  settlement: number;
+  status: string;
+};
+const demoTransactions: Transaction[] = [];
 
 export default function RevenueAdminPage() {
   const [searchTerm, setSearchTerm] = useState("");

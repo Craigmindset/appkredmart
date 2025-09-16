@@ -9,14 +9,15 @@ export default function ProductsGrid({
   isFetchingNextPage,
   hasNextPage,
   fetchNextPage,
+  showDealBadge = false,
 }: {
   title?: string;
   description?: string;
-  // items: Product[];
   fetchNextPage?: () => void;
   items: any[];
   hasNextPage?: boolean;
   isFetchingNextPage?: boolean;
+  showDealBadge?: boolean;
 }) {
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
@@ -62,7 +63,7 @@ export default function ProductsGrid({
       {/* Keep generic grid for shared usage; category page uses its own 3/5 layout */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {items.map((p) => (
-          <ProductCard key={p.id} product={p} />
+          <ProductCard key={p.id} product={p} showDealBadge={showDealBadge} />
         ))}
       </div>
 
