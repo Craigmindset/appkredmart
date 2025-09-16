@@ -40,6 +40,7 @@ type GetProductsParams = {
   search?: string;
   sortBy?: string;
   order?: "asc" | "desc";
+  category?: string;
 };
 
 export const getAdminProducts = async (params?: GetProductsParams) => {

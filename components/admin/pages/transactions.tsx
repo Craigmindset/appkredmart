@@ -174,8 +174,8 @@ const OrdersTable = ({
             <TableCell>{order.order.orderId}</TableCell>
             <TableCell>
               <div className="flex gap-1">
-                {order.order.merchantOrders.map((merchant) => (
-                  <Badge>{merchant.merchant.company}</Badge>
+                {order.order.merchantOrders.map((merchant, index) => (
+                  <Badge key={index}>{merchant.merchant.company}</Badge>
                 ))}
               </div>
             </TableCell>

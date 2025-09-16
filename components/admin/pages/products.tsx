@@ -74,11 +74,14 @@ export default function ProductsAdminPage() {
   } = useAdminFetchProducts({
     search: searchTerm,
     page: currentPage,
+    merchant: selectedMerchant,
+    category: selectedCategory,
   });
 
   const { mutateAsync: updateProductAsync, loading: updateLoading } =
     useAdminUpdateProduct();
-  const { data: summary } = useAdminFetchProductsSummary();
+  const { data: summary, isPending: summaryLoading } =
+    useAdminFetchProductsSummary();
   const products = data?.data || [];
 
   const totalPages =
@@ -287,7 +290,7 @@ export default function ProductsAdminPage() {
                 <div>
                   <p className="text-blue-100">Total Products</p>
                   <div className="text-2xl font-bold">
-                    {loading ? (
+                    {summaryLoading ? (
                       <Skeleton className="h-8 w-16 bg-blue-400" />
                     ) : (
                       (summary?.totalProducts || 0).toLocaleString()
@@ -305,7 +308,7 @@ export default function ProductsAdminPage() {
                 <div>
                   <p className="text-green-100">Active Products</p>
                   <div className="text-2xl font-bold">
-                    {loading ? (
+                    {summaryLoading ? (
                       <Skeleton className="h-8 w-16 bg-green-400" />
                     ) : (
                       (summary?.activeProducts || 0).toLocaleString()
@@ -323,7 +326,7 @@ export default function ProductsAdminPage() {
                 <div>
                   <p className="text-purple-100">Inventory Value</p>
                   <div className="text-2xl font-bold">
-                    {loading ? (
+                    {summaryLoading ? (
                       <Skeleton className="h-8 w-20 bg-purple-400" />
                     ) : (
                       new Intl.NumberFormat("en-NG", {
@@ -346,7 +349,7 @@ export default function ProductsAdminPage() {
                 <div>
                   <p className="text-orange-100">Avg. Markup</p>
                   <div className="text-2xl font-bold">
-                    {loading ? (
+                    {summaryLoading ? (
                       <Skeleton className="h-8 w-16 bg-orange-400" />
                     ) : (
                       `${(summary?.averageMarkup || 0).toFixed(1)}%`
@@ -507,11 +510,11 @@ export default function ProductsAdminPage() {
                 </thead>
                 <tbody>
                   {loading ? (
-                    Array.from({ length: 5 }).map((_, i) => (
+                    Array.from({ length: 7 }).map((_, i) => (
                       <tr key={i} className="border-b">
                         {Array.from({ length: 11 }).map((_, j) => (
                           <td key={j} className="p-2">
-                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-6 w-full" />
                           </td>
                         ))}
                       </tr>
@@ -556,7 +559,7 @@ export default function ProductsAdminPage() {
                           ))}
                         </td>
                         <td className="p-2">
-                          <Badge variant="secondary">
+                          <Badge variant="secondary" className="text-nowrap">
                             {product.brand || "-"}
                           </Badge>
                         </td>
@@ -650,7 +653,7 @@ export default function ProductsAdminPage() {
             </div>
 
             {/* Pagination */}
-            {data?.total && data?.pageSize > 1 && (
+            {!!data?.total && data?.pageSize > 1 && (
               <div className="flex items-center justify-center gap-2 mt-4">
                 <Button
                   variant="outline"

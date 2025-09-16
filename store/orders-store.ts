@@ -11,7 +11,13 @@ export type Fulfillment =
   | "Rider on Move"
   | "Delivered"
   | "Canceled";
-export type DeliveryStatus = "Arriving Today" | "In Progress";
+// export type DeliveryStatus = "Arriving Today" | "In Progress";
+export type DeliveryStatus =
+  | "CONFIRMED"
+  | "READY_FOR_DELIVERY"
+  | "ITEM_PICKED"
+  | "RIDER_ON_MOVE"
+  | "DELIVERED";
 
 export type OrderItem = {
   id: string;

@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -124,10 +125,10 @@ export default function InventoryAdminPage() {
   const [dealFilter, setDealFilter] = useState("All");
   const [priceFilter, setPriceFilter] = useState("All");
 
-  const { data } = useAdminFetchProducts({
+  const { data, isLoading } = useAdminFetchProducts({
     search: searchQuery,
     merchant: merchantFilter,
-    brand: categoryFilter,
+    category: categoryFilter,
     ...(priceFilter === "Best Price"
       ? {
           sortBy: "price",
@@ -364,13 +365,23 @@ export default function InventoryAdminPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {inventories.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell className="font-medium">{item.id}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {item.name}
-                      {/* {item?.bestPrice && (
+              {isLoading
+                ? Array.from({ length: 7 }).map((_, i) => (
+                    <TableRow key={i}>
+                      {Array.from({ length: 8 }).map((_, j) => (
+                        <TableCell key={j} className="p-2">
+                          <Skeleton className="h-6 w-full" />
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                : inventories.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="font-medium">{item.id}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {item.name}
+                          {/* {item?.bestPrice && (
                         <Badge
                           variant="outline"
                           className="bg-blue-50 text-blue-700 text-xs"
@@ -378,22 +389,22 @@ export default function InventoryAdminPage() {
                           Best Price
                         </Badge>
                       )} */}
-                    </div>
-                  </TableCell>
-                  <TableCell>{item.category}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="bg-gray-50">
-                      {item?.merchant?.company}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium">{item?.quantity}</span>
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {formatNaira(item.price)}
-                  </TableCell>
-                  <TableCell>
-                    {/* {item?.deals ? (
+                        </div>
+                      </TableCell>
+                      <TableCell>{item.category.join(", ")}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="bg-gray-50">
+                          {item?.merchant?.company}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-medium">{item?.quantity}</span>
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {formatNaira(item.price)}
+                      </TableCell>
+                      <TableCell>
+                        {/* {item?.deals ? (
                       <Badge
                         variant="default"
                         className={
@@ -405,16 +416,17 @@ export default function InventoryAdminPage() {
                         {item.deals}
                       </Badge>
                     ) : ( */}
-                    <span className="text-muted-foreground text-sm">
-                      No deals
-                    </span>
-                    {/* )} */}
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {item.updatedAt && formatDate(item.updatedAt, "dd/MM/yyyy")}
-                  </TableCell>
-                </TableRow>
-              ))}
+                        <span className="text-muted-foreground text-sm">
+                          No deals
+                        </span>
+                        {/* )} */}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {item.updatedAt &&
+                          formatDate(item.updatedAt, "dd/MM/yyyy")}
+                      </TableCell>
+                    </TableRow>
+                  ))}
             </TableBody>
           </Table>
         </CardContent>

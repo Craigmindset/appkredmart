@@ -144,18 +144,20 @@ const getStatusColor = (status: string) => {
 };
 
 const DeliveryProgressBar = ({ status }: { status: string }) => {
+  console.log({ status });
   const steps = [
-    "Order Confirmed",
-    "Order Processing",
-    "Order Set for Delivery",
-    "Order Delivered",
+    { key: "COMFIRMED", label: "Order confirmed" },
+    { key: "READY_FOR_DELIVERY", label: "Packed" },
+    { key: "ITEM_PICKED", label: "Item picked" },
+    { key: "RIDER_ON_MOVE", label: "Rider on move" },
+    { key: "DELIVERED", label: "Delivered" },
   ];
-  const currentStep = steps.indexOf(status);
+  const currentStep = steps.findIndex((step) => step.key === status);
 
   return (
     <div className="flex items-center space-x-2">
       {steps.map((step, index) => (
-        <div key={step} className="flex items-center">
+        <div key={step.key} className="flex items-center">
           <div
             className={`flex items-center justify-center w-8 h-8 rounded-full border-2 ${
               index <= currentStep
