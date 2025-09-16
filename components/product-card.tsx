@@ -18,7 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { formatNaira } from "@/lib/currency";
 import { GetProductDto } from "@/lib/services/products/products";
 
-export default function ProductCard({ product }: { product: GetProductDto }) {
+export default function ProductCard({ product, showDealBadge = false }: { product: GetProductDto, showDealBadge?: boolean }) {
   const [open, setOpen] = useState(false);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
@@ -48,6 +48,15 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
       {/* Product tile */}
       <div className="group relative rounded-lg border bg-card">
         <div className="relative">
+          {/* Show 2% badge if showDealBadge is true */}
+          {showDealBadge && (
+            <Badge
+              className="absolute right-2 top-2 z-20 bg-red-600 text-white px-2 py-1 text-xs font-bold shadow-md"
+              variant="default"
+            >
+              -2%
+            </Badge>
+          )}
           {product.label && (
             <Badge
               className={`absolute left-2 top-2 z-10 ${
@@ -60,12 +69,6 @@ export default function ProductCard({ product }: { product: GetProductDto }) {
               }
             >
               {product.label}
-            </Badge>
-          )}
-          {/* Discount percent badge */}
-          {product.discountPercent && product.discountPercent > 0 && (
-            <Badge className="absolute right-2 top-2 z-10 bg-green-600 text-white font-bold">
-              -{product.discountPercent}%
             </Badge>
           )}
 

@@ -7,12 +7,18 @@ import React from "react";
 import { useInfiniteProducts } from "@/lib/services/products/use-infinite-products";
 
 const PageClient = () => {
+  // ...existing code...
   //   const deals = products.filter((p) => p.deal || p.label === "Hot Deal");
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteProducts({ limit: 20, deals: true });
 
   const products = data?.pages.flatMap((page) => page.data) ?? [];
+
+  // Debug: Log number of products in deals page
+  if (typeof window !== "undefined") {
+    console.log("[Deals Page] Number of products:", products.length);
+  }
 
   return (
     <>
@@ -36,6 +42,7 @@ const PageClient = () => {
             fetchNextPage={fetchNextPage}
             hasNextPage={hasNextPage}
             isFetchingNextPage={isFetchingNextPage}
+            showDealBadge={true}
           />
         </div>
       </div>

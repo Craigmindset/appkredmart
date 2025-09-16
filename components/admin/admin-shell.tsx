@@ -53,7 +53,7 @@ import { useUser } from "@/lib/services/user/user";
 import { useAdminWallet } from "@/lib/services/wallet/use-admin-wallet";
 import { type Permission } from "@/store/admin-rbac-store";
 import Link from "next/link";
-import { redirect, usePathname } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useState } from "react";
 
@@ -159,9 +159,17 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const { data: wallet } = useAdminWallet();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [broadcastSent, setBroadcastSent] = useState(false);
+  const router = useRouter();
 
   const handleLogout = async () => {
-    await signOut();
+    try {
+      await signOut();
+    } catch (e) {
+      // Optionally log error or show a toast
+      console.error("Logout failed", e);
+    } finally {
+      router.push("/admin");
+    }
   };
 
   const handleBroadcast = (e: React.FormEvent<HTMLFormElement>) => {
