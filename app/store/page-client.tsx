@@ -85,18 +85,20 @@ export default function StorePage() {
         </div>
       </section>
 
-      <ProductsGrid
-        title={q ? `Search results for “${q}”` : "All Products"}
-        description={
-          q
-            ? undefined
-            : "Browse a curated selection of electronics, phones, audio and more."
-        }
-        fetchNextPage={fetchNextPage}
-        hasNextPage={hasNextPage}
-        isFetchingNextPage={isFetchingNextPage}
-        items={products}
-      />
+      <div id="results">
+        <ProductsGrid
+          title={q ? `Search results for “${q}”` : "All Products"}
+          description={
+            q
+              ? undefined
+              : "Browse a curated selection of electronics, phones, audio and more."
+          }
+          fetchNextPage={fetchNextPage}
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          items={products}
+        />
+      </div>
     </LayoutShell>
   );
 }

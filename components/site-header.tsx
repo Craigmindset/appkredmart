@@ -140,6 +140,27 @@ function CountrySelector() {
 /* We wrap THIS component with <Suspense> in the default export below.            */
 
 function HeaderCore() {
+  // --- Search Suggestions State ---
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  // Dummy product names for suggestions (replace with API call or real data as needed)
+  const productNames = [
+    "iPhone 15 Pro Max",
+    "Samsung Galaxy S24 Ultra",
+    "HP Pavilion Laptop",
+    "Sony Bravia TV",
+    "Infinix Hot 40",
+    "Tecno Camon 20",
+    "Apple Watch Series 9",
+    "JBL Bluetooth Speaker",
+    "Dell XPS 13",
+    "Oraimo Power Bank",
+    "Hisense Refrigerator",
+    "Nike Sneakers",
+    "Adidas Backpack",
+    "Canon EOS Camera",
+    "PlayStation 5 Console",
+  ];
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -174,7 +195,29 @@ function HeaderCore() {
         next ? `/store?search=${encodeURIComponent(next)}` : "/store"
       );
     }
+    setShowSuggestions(false);
+    // Auto-scroll to results after navigation
+    setTimeout(() => {
+      const el = document.getElementById("results");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 500);
   };
+
+  // Update suggestions as user types
+  useEffect(() => {
+    if (term.length < 2) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+    const filtered = productNames.filter((name) =>
+      name.toLowerCase().includes(term.toLowerCase())
+    );
+    setSuggestions(filtered);
+    setShowSuggestions(filtered.length > 0);
+  }, [term]);
 
   const MENU = [
     { href: "/", label: "Home" },
@@ -387,13 +430,37 @@ function HeaderCore() {
 
                 {/* Search */}
                 <div className="flex-1 flex items-center gap-2">
-                  <Input
-                    value={term}
-                    onChange={(e) => setTerm(e.target.value)}
-                    placeholder="Search products, brands, categories"
-                    className="w-full min-w-0 sm:min-w-[280px] md:min-w-[400px] lg:min-w-[500px]"
-                    aria-label="Search products"
-                  />
+                  <div className="relative w-full">
+                    <Input
+                      value={term}
+                      onChange={(e) => setTerm(e.target.value)}
+                      placeholder="Search products, brands, categories"
+                      className="w-full min-w-0 sm:min-w-[280px] md:min-w-[400px] lg:min-w-[500px] transition-opacity focus:opacity-90 active:opacity-80"
+                      aria-label="Search products"
+                      autoComplete="off"
+                      onFocus={() => setShowSuggestions(suggestions.length > 0)}
+                      onBlur={() =>
+                        setTimeout(() => setShowSuggestions(false), 100)
+                      }
+                      style={{ opacity: 0.95 }}
+                    />
+                    {showSuggestions && (
+                      <ul className="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded shadow-lg z-50 max-h-56 overflow-y-auto transition-opacity opacity-95 hover:opacity-100">
+                        {suggestions.map((s, i) => (
+                          <li
+                            key={s + i}
+                            className="px-4 py-2 cursor-pointer hover:bg-blue-100 text-sm text-gray-800 transition-opacity active:opacity-80"
+                            onMouseDown={() => {
+                              setTerm(s);
+                              setShowSuggestions(false);
+                            }}
+                          >
+                            {s}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                   <Button type="submit">Search</Button>
                 </div>
               </div>
