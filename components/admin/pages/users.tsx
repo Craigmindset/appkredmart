@@ -135,59 +135,49 @@ export default function UsersAdminPage() {
     <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="bg-blue-600 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <Users className="h-4 w-4 text-blue-600" />
+            <Users className="h-4 w-4 text-white" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{totalUsers}</div>
-            <p className="text-xs text-muted-foreground">
-              {activeUsers} active users
-            </p>
+            <div className="text-2xl font-bold">{totalUsers}</div>
+            <p className="text-xs text-blue-100">{activeUsers} active users</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-green-600 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
-            <ShoppingCart className="h-4 w-4 text-green-600" />
+            <ShoppingCart className="h-4 w-4 text-white" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {totalOrders}
-            </div>
-            <p className="text-xs text-muted-foreground">Across all users</p>
+            <div className="text-2xl font-bold">{totalOrders}</div>
+            <p className="text-xs text-green-100">Across all users</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-orange-500 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Loans</CardTitle>
-            <CreditCard className="h-4 w-4 text-orange-600" />
+            <CreditCard className="h-4 w-4 text-white" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">
-              {activeLoans}
-            </div>
-            <p className="text-xs text-muted-foreground">Currently active</p>
+            <div className="text-2xl font-bold">{activeLoans}</div>
+            <p className="text-xs text-orange-100">Currently active</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-purple-700 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Wallet Accounts
             </CardTitle>
-            <Wallet className="h-4 w-4 text-purple-600" />
+            <Wallet className="h-4 w-4 text-white" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-600">
-              {totalUsers}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              All users have wallets
-            </p>
+            <div className="text-2xl font-bold">{totalUsers}</div>
+            <p className="text-xs text-purple-100">All users have wallets</p>
           </CardContent>
         </Card>
       </div>

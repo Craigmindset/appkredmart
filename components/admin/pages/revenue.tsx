@@ -162,57 +162,57 @@ export default function RevenueAdminPage() {
     <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="bg-green-600 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <TrendingUp className="h-4 w-4 text-green-600" />
+            <TrendingUp className="h-4 w-4 text-white opacity-80" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold">
               {formatCurrency(summary?.totalRevenue || 0)}
             </div>
-            <p className="text-xs text-muted-foreground">All transactions</p>
+            <p className="text-xs opacity-80">All transactions</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-blue-600 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Markup</CardTitle>
-            <DollarSign className="h-4 w-4 text-blue-600" />
+            <DollarSign className="h-4 w-4 text-white opacity-80" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
+            <div className="text-2xl font-bold">
               {formatCurrency(summary?.totalMarkup || 0)}
             </div>
-            <p className="text-xs text-muted-foreground">Platform earnings</p>
+            <p className="text-xs opacity-80">Platform earnings</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-orange-500 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">VAT (7.5%)</CardTitle>
-            <Percent className="h-4 w-4 text-orange-600" />
+            <Percent className="h-4 w-4 text-white opacity-80" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">
+            <div className="text-2xl font-bold">
               {formatCurrency(summary?.totalVats || 0)}
             </div>
-            <p className="text-xs text-muted-foreground">Tax collected</p>
+            <p className="text-xs opacity-80">Tax collected</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-purple-700 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Merchant Settlement
             </CardTitle>
-            <Receipt className="h-4 w-4 text-purple-600" />
+            <Receipt className="h-4 w-4 text-white opacity-80" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-600">
+            <div className="text-2xl font-bold">
               {formatCurrency(summary?.merchantSettlement || 0)}
             </div>
-            <p className="text-xs text-muted-foreground">Paid to merchants</p>
+            <p className="text-xs opacity-80">Paid to merchants</p>
           </CardContent>
         </Card>
       </div>
@@ -269,8 +269,8 @@ export default function RevenueAdminPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Transaction ID</TableHead>
                   <TableHead>Date</TableHead>
+                  <TableHead>Transaction ID</TableHead>
                   <TableHead>Type</TableHead>
                   <TableHead>Merchant</TableHead>
                   <TableHead className="text-right">Amount</TableHead>
@@ -278,7 +278,6 @@ export default function RevenueAdminPage() {
                   <TableHead className="text-right">VAT (7.5%)</TableHead>
                   <TableHead className="text-right">Settlement</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="w-20">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -289,11 +288,11 @@ export default function RevenueAdminPage() {
                       highlightedRows.includes(revenue.id) ? "bg-yellow-50" : ""
                     }
                   >
-                    <TableCell className="font-mono text-sm">
-                      {revenue.id}
-                    </TableCell>
                     <TableCell>
                       {new Date(revenue.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell className="font-mono text-sm">
+                      {revenue.id}
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline">{revenue.type}</Badge>
@@ -319,20 +318,6 @@ export default function RevenueAdminPage() {
                       <Badge className={getStatusColor(revenue.status)}>
                         {upperCaseText(revenue.status)}
                       </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => toggleHighlight(revenue.id)}
-                        className={
-                          highlightedRows.includes(revenue.id)
-                            ? "bg-yellow-100"
-                            : ""
-                        }
-                      >
-                        <Highlighter className="h-4 w-4" />
-                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
