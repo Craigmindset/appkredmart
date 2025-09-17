@@ -107,7 +107,7 @@ const categories = [
   "Premium Devices",
 ];
 const dealTypes = ["All", "Kredmart deals", "Flash Sale", "No Deals"];
-const priceTypes = ["All", "Best Price", "Regular Price"];
+const priceTypes = ["All", "Best Price"];
 
 // Currency formatter for Naira
 const formatNaira = (amount: number) => {
@@ -292,57 +292,83 @@ export default function InventoryAdminPage() {
 
             {/* Filters */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Select value={merchantFilter} onValueChange={setMerchantFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Filter by merchant" />
-                </SelectTrigger>
-                <SelectContent>
-                  {merchants.map((merchant) => (
-                    <SelectItem key={merchant} value={merchant}>
-                      {merchant}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex flex-col gap-2 min-w-[160px]">
+                <label className="text-xs text-gray-500 font-medium mb-1">
+                  Filter Merchant
+                </label>
+                <Select
+                  value={merchantFilter}
+                  onValueChange={setMerchantFilter}
+                >
+                  <SelectTrigger className="bg-blue-50 border-blue-200 focus:ring-blue-300">
+                    <SelectValue placeholder="Filter by merchant" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {merchants.map((merchant) => (
+                      <SelectItem key={merchant} value={merchant}>
+                        {merchant}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Filter by category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex flex-col gap-2 min-w-[160px]">
+                <label className="text-xs text-gray-500 font-medium mb-1">
+                  Filter Category
+                </label>
+                <Select
+                  value={categoryFilter}
+                  onValueChange={setCategoryFilter}
+                >
+                  <SelectTrigger className="bg-green-50 border-green-200 focus:ring-green-300">
+                    <SelectValue placeholder="Filter by category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-              <Select value={dealFilter} onValueChange={setDealFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Filter by deals" />
-                </SelectTrigger>
-                <SelectContent>
-                  {dealTypes.map((deal) => (
-                    <SelectItem key={deal} value={deal}>
-                      {deal}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex flex-col gap-2 min-w-[160px]">
+                <label className="text-xs text-gray-500 font-medium mb-1">
+                  Filter Deals
+                </label>
+                <Select value={dealFilter} onValueChange={setDealFilter}>
+                  <SelectTrigger className="bg-yellow-50 border-yellow-200 focus:ring-yellow-300">
+                    <SelectValue placeholder="Filter by deals" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {dealTypes.map((deal) => (
+                      <SelectItem key={deal} value={deal}>
+                        {deal}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-              <Select value={priceFilter} onValueChange={setPriceFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Filter by price" />
-                </SelectTrigger>
-                <SelectContent>
-                  {priceTypes.map((price) => (
-                    <SelectItem key={price} value={price}>
-                      {price}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex flex-col gap-2 min-w-[160px]">
+                <label className="text-xs text-gray-500 font-medium mb-1">
+                  Filter Price
+                </label>
+                <Select value={priceFilter} onValueChange={setPriceFilter}>
+                  <SelectTrigger className="bg-purple-50 border-purple-200 focus:ring-purple-300">
+                    <SelectValue placeholder="Filter by price" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {priceTypes.map((price) => (
+                      <SelectItem key={price} value={price}>
+                        {price}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
         </CardContent>
@@ -381,14 +407,6 @@ export default function InventoryAdminPage() {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           {item.name}
-                          {/* {item?.bestPrice && (
-                        <Badge
-                          variant="outline"
-                          className="bg-blue-50 text-blue-700 text-xs"
-                        >
-                          Best Price
-                        </Badge>
-                      )} */}
                         </div>
                       </TableCell>
                       <TableCell>{item.category.join(", ")}</TableCell>
