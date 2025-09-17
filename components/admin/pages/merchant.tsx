@@ -34,94 +34,11 @@ import {
   useFetchMerchants,
 } from "@/lib/services/merchant/use-fetch-merchants";
 
-// Demo merchant data
-const merchantsData = [
-  {
-    id: "KM001234",
-    firstName: "John",
-    lastName: "Doe",
-    role: "Admin Officer",
-    email: "techhub@example.com",
-    phone: "+234 801 234 5678",
-    totalInventory: 245,
-    totalSold: 980,
-    totalMarkup: 125000,
-    totalOrders: 1250,
-    status: "Active",
-    cacDocUrl: "/docs/cac-john-doe.pdf",
-  },
-  {
-    id: "KM001235",
-    firstName: "Jane",
-    lastName: "Smith",
-    role: "CEO",
-    email: "fashion@example.com",
-    phone: "+234 802 345 6789",
-    totalInventory: 180,
-    totalSold: 720,
-    totalMarkup: 89000,
-    totalOrders: 890,
-    status: "Active",
-    cacDocUrl: "/docs/cac-jane-smith.pdf",
-  },
-  {
-    id: "KM001236",
-    firstName: "Mike",
-    lastName: "Johnson",
-    role: "CTO",
-    email: "home@example.com",
-    phone: "+234 803 456 7890",
-    totalInventory: 320,
-    totalSold: 1200,
-    totalMarkup: 156000,
-    totalOrders: 1580,
-    status: "Active",
-    cacDocUrl: "/docs/cac-mike-johnson.pdf",
-  },
-  {
-    id: "KM001237",
-    firstName: "Sarah",
-    lastName: "Wilson",
-    role: "Manager",
-    email: "mobile@example.com",
-    phone: "+234 804 567 8901",
-    totalInventory: 95,
-    totalSold: 520,
-    totalMarkup: 78000,
-    totalOrders: 650,
-    status: "Inactive",
-    cacDocUrl: "/docs/cac-sarah-wilson.pdf",
-  },
-];
-
 export default function MerchantAdminPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  // const [merchants, setMerchants] = useState(merchantsData);
   const [modalMerchant, setModalMerchant] = useState<null | MerchantDto>(null);
   const { data, loading } = useFetchMerchants();
   const merchants = data?.data || [];
-  // const filteredMerchants = merchants.filter((merchant) => {
-  //   const fullName = `${merchant.firstName} ${merchant.lastName}`.toLowerCase();
-  //   return (
-  //     fullName.includes(searchTerm.toLowerCase()) ||
-  //     merchant.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     (merchant.email &&
-  //       merchant.email.toLowerCase().includes(searchTerm.toLowerCase()))
-  //   );
-  // });
-
-  // const handleDeactivate = (merchantId: string) => {
-  //   setMerchants((prev) =>
-  //     prev.map((merchant) =>
-  //       merchant.id === merchantId
-  //         ? {
-  //             ...merchant,
-  //             status: merchant.status === "Active" ? "Inactive" : "Active",
-  //           }
-  //         : merchant
-  //     )
-  //   );
-  // };
 
   const handleViewOrders = (merchantId: string) => {
     // This would typically navigate to a detailed orders view
@@ -145,42 +62,42 @@ export default function MerchantAdminPage() {
     <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="bg-blue-600 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Total Merchants
             </CardTitle>
-            <Store className="h-4 w-4 text-blue-600" />
+            <Store className="h-4 w-4 text-blue-100" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalMerchants}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-blue-100">
               {activeMerchants} active merchants
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-green-600 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Total Inventory
             </CardTitle>
-            <Package className="h-4 w-4 text-green-600" />
+            <Package className="h-4 w-4 text-green-100" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {totalInventory?.toLocaleString()}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-green-100">
               Products across all merchants
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-purple-500 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
-            <ShoppingCart className="h-4 w-4 text-purple-600" />
+            <ShoppingCart className="h-4 w-4 text-white" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -194,22 +111,20 @@ export default function MerchantAdminPage() {
                 }, 0)
                 .toLocaleString()}
             </div>
-            <p className="text-xs text-muted-foreground">
-              All-time orders processed
-            </p>
+            <p className="text-xs text-white">All-time orders processed</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-blue-900 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-orange-600" />
+            <DollarSign className="h-4 w-4 text-white" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               ₦{totalRevenue?.toLocaleString()}
             </div>
-            <p className="text-xs text-muted-foreground">Total markup earned</p>
+            <p className="text-xs text-white">Total markup earned</p>
           </CardContent>
         </Card>
       </div>

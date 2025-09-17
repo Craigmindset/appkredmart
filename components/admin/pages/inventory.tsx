@@ -37,65 +37,6 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-// Demo inventory data with Slot and Gbam Inc. merchants
-const mockInventoryData = Array.from({ length: 50 }, (_, i) => {
-  const currentStock = Math.max(0, 100 - i * 3);
-  const minStock = 10;
-  const maxStock = 100;
-
-  // Calculate status based on stock levels
-  let status = "Normal";
-  if (currentStock === 0) {
-    status = "Out of Stock";
-  } else if (currentStock <= minStock) {
-    status = "Low Stock";
-  } else if (currentStock >= maxStock * 0.8) {
-    status = "Well Stocked";
-  }
-
-  // Calculate stock level percentage
-  const stockLevel =
-    currentStock === 0 ? 0 : Math.max(20, (currentStock / maxStock) * 100);
-
-  return {
-    id: `INV${1000 + i}`,
-    productName: [
-      "iPhone 15 Pro Max",
-      "Samsung Galaxy S24",
-      "MacBook Air M3",
-      "Dell XPS 13",
-      "Sony WH-1000XM5",
-      "AirPods Pro",
-      "iPad Pro",
-      "Surface Pro 9",
-      "Gaming Chair",
-      "Mechanical Keyboard",
-      "4K Monitor",
-      "Wireless Mouse",
-    ][i % 12],
-    category: [
-      "Phones and Tablets",
-      "Computing",
-      "Electronics",
-      "Accessories",
-      "Home & Kitchen",
-      "Premium Devices",
-    ][i % 6],
-    merchant: i % 2 === 0 ? "Slot" : "Gbam Inc.",
-    currentStock,
-    minStock,
-    maxStock,
-    price: 50000 + i * 5000,
-    deals: i % 4 === 0 ? "Kredmart deals" : i % 5 === 0 ? "Flash Sale" : null,
-    bestPrice: i % 3 === 0,
-    lastRestocked: new Date(
-      Date.now() - i * 24 * 60 * 60 * 1000
-    ).toLocaleDateString(),
-    status,
-    stockLevel: Math.round(stockLevel),
-  };
-});
-
 const merchants = ["All", "Slot", "Gbam Inc."];
 const categories = [
   "All",

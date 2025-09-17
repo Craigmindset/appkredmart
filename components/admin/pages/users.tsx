@@ -33,63 +33,8 @@ import {
 import { useFetchUsers } from "@/lib/services/merchant/use-fetch-users";
 import { upperCaseText } from "@/lib/utils";
 
-// Demo user data
-const demoUsers = [
-  {
-    id: "USR001",
-    username: "john_doe",
-    email: "john@example.com",
-    phone: "+234 801 234 5678",
-    totalOrders: 15,
-    loanStatus: "Active",
-    walletAccount: "KW123456789",
-    status: "Active",
-  },
-  {
-    id: "USR002",
-    username: "jane_smith",
-    email: "jane@example.com",
-    phone: "+234 802 345 6789",
-    totalOrders: 8,
-    loanStatus: "Pending",
-    walletAccount: "KW234567890",
-    status: "Active",
-  },
-  {
-    id: "USR003",
-    username: "mike_johnson",
-    email: "mike@example.com",
-    phone: "+234 803 456 7890",
-    totalOrders: 23,
-    loanStatus: "Completed",
-    walletAccount: "KW345678901",
-    status: "Active",
-  },
-  {
-    id: "USR004",
-    username: "sarah_wilson",
-    email: "sarah@example.com",
-    phone: "+234 804 567 8901",
-    totalOrders: 3,
-    loanStatus: "None",
-    walletAccount: "KW456789012",
-    status: "Inactive",
-  },
-  {
-    id: "USR005",
-    username: "david_brown",
-    email: "david@example.com",
-    phone: "+234 805 678 9012",
-    totalOrders: 12,
-    loanStatus: "Defaulted",
-    walletAccount: "KW567890123",
-    status: "Active",
-  },
-];
-
 export default function UsersAdminPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  // const [users, setUsers] = useState(demoUsers);
   const { data, loading } = useFetchUsers();
 
   const users = data?.data || [];
@@ -338,12 +283,6 @@ export default function UsersAdminPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => handleMessageUser(user.id)}
-                          >
-                            <MessageCircle className="mr-2 h-4 w-4" />
-                            Message User
-                          </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => handleDeactivateUser(user.id)}
                           >

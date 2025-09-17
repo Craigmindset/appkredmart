@@ -46,24 +46,6 @@ const recentOrders = [
   },
 ];
 
-const topProducts = [
-  {
-    name: "iPhone 14 Pro Max",
-    sales: 1250,
-    revenue: 85000000,
-  },
-  {
-    name: "Samsung Galaxy S23",
-    sales: 980,
-    revenue: 65000000,
-  },
-  {
-    name: "MacBook Air M2",
-    sales: 720,
-    revenue: 90000000,
-  },
-];
-
 export default function OverviewAdminPage() {
   const { user } = useUser();
   const { data } = useAdminOverview();
@@ -182,9 +164,9 @@ export default function OverviewAdminPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>Date</TableHead>
                   <TableHead>Order ID</TableHead>
                   <TableHead>Customer</TableHead>
-                  <TableHead>Date</TableHead>
                   <TableHead>Amount</TableHead>
                   <TableHead>Payment Method</TableHead>
                   <TableHead>Status</TableHead>
@@ -193,14 +175,14 @@ export default function OverviewAdminPage() {
               <TableBody>
                 {orders.map((order) => (
                   <TableRow key={order.id}>
+                    <TableCell>
+                      {new Date(order.createdAt).toLocaleString()}
+                    </TableCell>
                     <TableCell className="font-medium">
                       {order.orderId}
                     </TableCell>
                     <TableCell>
                       {order.user.firstname} {order.user.lastname}
-                    </TableCell>
-                    <TableCell>
-                      {new Date(order.createdAt).toLocaleString()}
                     </TableCell>
                     <TableCell>₦{order?.total?.toLocaleString()}</TableCell>
                     <TableCell>{upperCaseText(order.paymentMethod)}</TableCell>
@@ -208,39 +190,6 @@ export default function OverviewAdminPage() {
                       <Badge variant="secondary">
                         {upperCaseText(order.fulfillment)}
                       </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Top Products */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Top Performing Products</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Product Name</TableHead>
-                  <TableHead>Sales</TableHead>
-                  <TableHead>Revenue</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {topProducts.map((product) => (
-                  <TableRow key={product.name}>
-                    <TableCell className="font-medium">
-                      {product.name}
-                    </TableCell>
-                    <TableCell>{product.sales.toLocaleString()}</TableCell>
-                    <TableCell>
-                      ₦{(product.revenue / 1000000).toFixed(1)}M
                     </TableCell>
                   </TableRow>
                 ))}
