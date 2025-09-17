@@ -297,10 +297,6 @@ export function AdminWallet() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" className="bg-transparent">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Funds
-                </Button>
                 <Button
                   onClick={() => setShowWithdrawModal(true)}
                   className="bg-blue-600 hover:bg-blue-700"

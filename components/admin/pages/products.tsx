@@ -299,6 +299,9 @@ export default function ProductsAdminPage() {
                 </div>
                 <Package className="h-8 w-8 text-blue-200" />
               </div>
+              <div className="flex flex-row items-center gap-1 text-xs text-purple-100 mt-1 whitespace-nowrap">
+                <span>Total product on inventory</span>
+              </div>
             </CardContent>
           </Card>
 
@@ -316,6 +319,9 @@ export default function ProductsAdminPage() {
                   </div>
                 </div>
                 <TrendingUp className="h-8 w-8 text-green-200" />
+              </div>
+              <div className="flex flex-row items-center gap-1 text-xs text-purple-100 mt-1 whitespace-nowrap">
+                <span>Total product on sales</span>
               </div>
             </CardContent>
           </Card>
@@ -340,6 +346,9 @@ export default function ProductsAdminPage() {
                 </div>
                 <DollarSign className="h-8 w-8 text-purple-200" />
               </div>
+              <div className="flex flex-row items-center gap-1 text-xs text-purple-100 mt-1 whitespace-nowrap">
+                <span>Sum of the total products price with quantity</span>
+              </div>
             </CardContent>
           </Card>
 
@@ -357,6 +366,9 @@ export default function ProductsAdminPage() {
                   </div>
                 </div>
                 <Percent className="h-8 w-8 text-orange-200" />
+              </div>
+              <div className="flex flex-row items-center gap-1 text-xs text-purple-100 mt-1 whitespace-nowrap">
+                <span>Total product markup divided by total products</span>
               </div>
             </CardContent>
           </Card>
@@ -546,7 +558,9 @@ export default function ProductsAdminPage() {
                           />
                         </td>
                         <td className="p-2">
-                          <p className="font-medium">{product.name}</p>
+                          <p className="font-medium text-sm truncate max-w-[140px]">
+                            {product.name}
+                          </p>
                         </td>
                         <td className="p-2 text-sm text-gray-600">
                           {product.id.slice(0, 5)}...
@@ -584,6 +598,9 @@ export default function ProductsAdminPage() {
                           <RBACGuard
                             permissions={["manage_products"]}
                             requireAll={false}
+                            fallback={
+                              <span className="text-sm">{product.markup}%</span>
+                            }
                           >
                             <Input
                               type="number"
@@ -598,15 +615,6 @@ export default function ProductsAdminPage() {
                                 // });
                               }}
                             />
-                          </RBACGuard>
-                          <RBACGuard
-                            permissions={["manage_products"]}
-                            requireAll={false}
-                            fallback={
-                              <span className="text-sm">{product.markup}%</span>
-                            }
-                          >
-                            <span className="text-sm">{product.markup}%</span>
                           </RBACGuard>
                         </td>
                         <td className="p-2 font-medium text-sm text-green-600">
