@@ -3,6 +3,7 @@ import Chat from "@/components/Chat";
 import TestimonialGrid from "@/components/TestimonialGrid";
 import ThreeColumnAd from "@/components/ThreeColumnAd";
 import BrandCarousel from "@/components/brand-carousel";
+import HeroMobile from "@/components/hero-mobile";
 import HeroSlider from "@/components/hero-slider";
 import LayoutShell from "@/components/layout-shell";
 import Newsletter from "@/components/newsletter";
@@ -21,7 +22,14 @@ export default async function Page() {
   });
   return (
     <LayoutShell>
-      <HeroSlider />
+      <div>
+        <div className="block md:hidden">
+          <HeroMobile />
+        </div>
+        <div className="hidden md:block">
+          <HeroSlider />
+        </div>
+      </div>
       <BrandCarousel />
       <HydrationBoundary state={dehydrate(queryClient)}>
         <ProductDeals />

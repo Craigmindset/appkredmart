@@ -260,7 +260,13 @@ const OrdersTable = ({
   );
 };
 
-const LoansTable = ({ data, searchQuery, currentPage }) => {
+type LoansTableProps = {
+  data: typeof mockLoansData;
+  searchQuery: string;
+  currentPage: number;
+};
+
+const LoansTable = ({ data, searchQuery, currentPage }: LoansTableProps) => {
   const [providerFilter, setProviderFilter] = useState("All");
   const filteredData = useMemo(
     () =>
@@ -382,12 +388,19 @@ const LoansTable = ({ data, searchQuery, currentPage }) => {
   );
 };
 
+type MerchantsTableProps = {
+  data: typeof mockMerchantsData;
+  searchQuery: string;
+  currentPage: number;
+  onFilterByMerchant: (merchantId: string) => void;
+};
+
 const MerchantsTable = ({
   data,
   searchQuery,
   currentPage,
   onFilterByMerchant,
-}) => {
+}: MerchantsTableProps) => {
   const [merchantFilter, setMerchantFilter] = useState("All");
   const filteredData = useMemo(
     () =>
@@ -494,7 +507,17 @@ const MerchantsTable = ({
   );
 };
 
-const WalletsTable = ({ data, searchQuery, currentPage }) => {
+type WalletsTableProps = {
+  data: typeof mockWalletsData;
+  searchQuery: string;
+  currentPage: number;
+};
+
+const WalletsTable = ({
+  data,
+  searchQuery,
+  currentPage,
+}: WalletsTableProps) => {
   const filteredData = useMemo(
     () =>
       data.filter(
