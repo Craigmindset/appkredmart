@@ -144,9 +144,8 @@ const getStatusColor = (status: string) => {
 };
 
 const DeliveryProgressBar = ({ status }: { status: string }) => {
-  console.log({ status });
   const steps = [
-    { key: "COMFIRMED", label: "Order confirmed" },
+    { key: "CONFIRMED", label: "Order confirmed" },
     { key: "READY_FOR_DELIVERY", label: "Packed" },
     { key: "ITEM_PICKED", label: "Item picked" },
     { key: "RIDER_ON_MOVE", label: "Rider on move" },

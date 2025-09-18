@@ -38,25 +38,39 @@ export type CustomerOrdersResponseDto = {
   limit: number;
 };
 
-type GetProductsParams = {
+type GetOrdersParams = {
   offset?: number;
   limit?: number;
   search?: string | null;
+  merchant?: string;
+  settlement?: string;
+  delivery?: string;
   page?: number;
 };
 
-export const adminGetOrders = async (params?: GetProductsParams) => {
+export const adminGetOrders = async (params?: GetOrdersParams) => {
   const response = await backendAxios.get("/admin/orders", { params });
   return response.data;
 };
 
-export const useAdminGetOrders = (params?: GetProductsParams) => {
-  const { offset = 0, limit = 20, page = 1, search } = params || {};
+export const useAdminGetOrders = (params?: GetOrdersParams) => {
+  const {
+    offset = 0,
+    limit = 20,
+    page = 1,
+    search,
+    merchant,
+    delivery,
+    settlement,
+  } = params || {};
   const formattedParams = {
     offset,
     limit,
     page,
     ...(search ? { search } : {}),
+    ...(delivery ? { delivery } : {}),
+    ...(merchant ? { merchant } : {}),
+    ...(settlement ? { settlement } : {}),
   };
   return useQuery<CustomerOrdersResponseDto>({
     queryKey: ["ADMIN_ORDERS", formattedParams],

@@ -36,6 +36,7 @@ import { toast } from "sonner";
 import { useAdminGetOrders } from "@/lib/services/order/use-admin-get-orders";
 import { formatNaira } from "@/lib/currency";
 import { upperCaseText } from "@/lib/utils";
+import { useFetchMerchants } from "@/lib/services/merchant/use-fetch-merchants";
 
 // Demo data for all orders
 const generateOrdersData = () => {
@@ -129,7 +130,13 @@ export default function AllOrdersAdminPage() {
   const ITEMS_PER_PAGE = 50;
   const { data, isLoading: ordersLoading } = useAdminGetOrders({
     limit: ITEMS_PER_PAGE,
+    search: searchTerm,
+    merchant: merchantFilter,
+    settlement: settlementFilter,
+    delivery: deliveryStatusFilter,
   });
+
+  const { data: merhants } = useFetchMerchants();
 
   const orders = data?.data || [];
 
@@ -600,8 +607,14 @@ export default function AllOrdersAdminPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Merchants</SelectItem>
-                <SelectItem value="Slot">Slot</SelectItem>
-                <SelectItem value="Gbam Inc.">Gbam Inc.</SelectItem>
+                {merhants?.data.map((merhant) => (
+                  <SelectItem
+                    key={merhant.id}
+                    value={merhant.company.toLowerCase()}
+                  >
+                    {merhant.company}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
