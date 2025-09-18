@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "@/hooks/use-toast";
+import { useAdminBulkMarkup } from "@/lib/services/products/use-admin-bulk-markup";
 import {
   AdminGetProductDto,
   useAdminFetchProducts,
@@ -40,6 +40,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 export default function ProductsAdminPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -48,7 +49,6 @@ export default function ProductsAdminPage() {
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [bulkMarkup, setBulkMarkup] = useState("");
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
-  const [isApplyingBulk, setIsApplyingBulk] = useState(false);
   const [editProduct, setEditProduct] = useState<AdminGetProductDto | null>(
     null
   );
@@ -80,8 +80,14 @@ export default function ProductsAdminPage() {
 
   const { mutateAsync: updateProductAsync, loading: updateLoading } =
     useAdminUpdateProduct();
-  const { data: summary, isPending: summaryLoading } =
-    useAdminFetchProductsSummary();
+  const {
+    data: summary,
+    isPending: summaryLoading,
+    refetch: refetchProducts,
+  } = useAdminFetchProductsSummary();
+  const { mutateAsync: bulkMarkupAsync, loading: isApplyingBulk } =
+    useAdminBulkMarkup();
+
   const products = data?.data || [];
 
   const totalPages =
@@ -163,25 +169,23 @@ export default function ProductsAdminPage() {
   // Handle bulk markup application
   const handleBulkMarkup = async () => {
     if (!bulkMarkup || selectedProducts.length === 0) {
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: "Please enter markup percentage and select products.",
-        variant: "destructive",
       });
       return;
     }
 
-    setIsApplyingBulk(true);
-
     try {
       // await bulkUpdateMarkup(selectedProducts, Number(bulkMarkup));
-      setIsBulkModalOpen(false);
-      setBulkMarkup("");
-      setSelectedProducts([]);
+      // setIsBulkModalOpen(false);
+      await bulkMarkupAsync({ selectedProducts, bulkMarkup }).then(() => {
+        refetch();
+        setIsBulkModalOpen(false);
+        setBulkMarkup("");
+        setSelectedProducts([]);
+      });
     } catch (error) {
-      console.error("Bulk markup failed:", error);
     } finally {
-      setIsApplyingBulk(false);
     }
   };
 
