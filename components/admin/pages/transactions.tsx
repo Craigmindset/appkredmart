@@ -37,6 +37,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useFetchMerchants } from "@/lib/services/merchant/use-fetch-merchants";
+import { useAdminGetMerchantTransactions } from "@/lib/services/transactions/use-admin-get-merchant-transactions";
 import { useAdminGetTransactions } from "@/lib/services/transactions/use-admin-get-transactions";
 import { safeParseJson, upperCaseText } from "@/lib/utils";
 import { Download, MoreHorizontal, Search, Send } from "lucide-react";
@@ -168,6 +170,7 @@ const OrdersTable = ({
               ))}
             </TableRow>
           ))}
+
         {orderTransactions.map((order) => (
           <TableRow key={order.id}>
             <TableCell>{order.order?.transaction[0]?.ref}</TableCell>
@@ -402,23 +405,39 @@ const MerchantsTable = ({
   onFilterByMerchant,
 }: MerchantsTableProps) => {
   const [merchantFilter, setMerchantFilter] = useState("All");
-  const filteredData = useMemo(
-    () =>
-      data.filter(
-        (item) =>
-          (merchantFilter === "All" || item.merchantName === merchantFilter) &&
-          (item.transactionId
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase()) ||
-            item.merchantId.toLowerCase().includes(searchQuery.toLowerCase()))
-      ),
-    [data, searchQuery, merchantFilter]
-  );
+  const { data: transationData, isPending } = useAdminGetMerchantTransactions({
+    search: searchQuery,
+    page: currentPage,
+    limit: ITEMS_PER_PAGE,
+    merchant: merchantFilter,
+  });
+  const { data: merchants } = useFetchMerchants();
 
-  const paginatedData = filteredData.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+  const merchantTransactions = transationData?.data || [];
+
+  // const filteredData = useMemo(
+  //   () =>
+  //     data.filter(
+  //       (item) =>
+  //         (merchantFilter === "All" || item.merchantName === merchantFilter) &&
+  //         (item.transactionId
+  //           .toLowerCase()
+  //           .includes(searchQuery.toLowerCase()) ||
+  //           item.merchantId.toLowerCase().includes(searchQuery.toLowerCase()))
+  //     ),
+  //   [data, searchQuery, merchantFilter]
+  // );
+
+  // const paginatedData = filteredData.slice(
+  //   (currentPage - 1) * ITEMS_PER_PAGE,
+  //   currentPage * ITEMS_PER_PAGE
+  // );
+
+  const getTransactionColor = (type: string) => {
+    return type === "Credit"
+      ? "bg-green-100 text-green-800 hover:bg-green-200"
+      : "bg-red-100 text-red-800 hover:bg-red-200";
+  };
 
   return (
     <div>
@@ -428,9 +447,10 @@ const MerchantsTable = ({
             <SelectValue placeholder="Filter by merchant..." />
           </SelectTrigger>
           <SelectContent>
-            {merchantNames.map((m) => (
-              <SelectItem key={m} value={m}>
-                {m}
+            <SelectItem value="All">All</SelectItem>
+            {merchants?.data.map((m) => (
+              <SelectItem key={m.id} value={m.company.toLowerCase()}>
+                {m.company}
               </SelectItem>
             ))}
           </SelectContent>
@@ -441,7 +461,8 @@ const MerchantsTable = ({
           <TableRow>
             <TableHead>Transaction ID</TableHead>
             <TableHead>Merchant</TableHead>
-            <TableHead>Product Sold</TableHead>
+            {/* <TableHead>Product Sold</TableHead> */}
+            <TableHead>Type</TableHead>
             <TableHead>Amount</TableHead>
             <TableHead>Date</TableHead>
             <TableHead>Settle Status</TableHead>
@@ -449,7 +470,84 @@ const MerchantsTable = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {paginatedData.map((merchant) => (
+          {isPending &&
+            !merchantTransactions?.length &&
+            Array.from({ length: 7 }).map((_, i) => (
+              <TableRow key={i} className="border-b">
+                {Array.from({ length: 7 }).map((_, j) => (
+                  <TableCell key={j} className="p-2">
+                    <Skeleton className="h-8 w-full" />
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          {merchantTransactions.map((transaction) => (
+            <TableRow key={transaction.id}>
+              <TableCell>{transaction.reference}</TableCell>
+              <TableCell>
+                <div>{transaction.wallet.merchant.company}</div>
+                <div className="text-xs text-muted-foreground">
+                  {transaction.wallet.merchantId}
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="text-xs text-muted-foreground">
+                  {/* {upperCaseText(transaction.type)} */}
+                  <Badge
+                    variant="secondary"
+                    className={getTransactionColor(
+                      upperCaseText(transaction.type)
+                    )}
+                  >
+                    {upperCaseText(transaction.type)}
+                  </Badge>
+                </div>
+              </TableCell>
+
+              <TableCell className="font-medium">
+                {formatNaira(transaction.amount)}
+              </TableCell>
+              <TableCell>
+                {new Date(transaction.createdAt).toLocaleDateString()}
+              </TableCell>
+              <TableCell>
+                <Badge
+                  variant={
+                    transaction.status === "Paid" ||
+                    transaction.status === "Completed"
+                      ? "default"
+                      : transaction.status === "Pending"
+                      ? "secondary"
+                      : transaction.status === "Unpaid"
+                      ? "outline"
+                      : "destructive"
+                  }
+                  className={
+                    transaction.status === "Paid" ||
+                    transaction.status === "Completed"
+                      ? "bg-green-100 text-green-800 hover:bg-green-200"
+                      : transaction.status === "Pending"
+                      ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+                      : ""
+                  }
+                >
+                  {transaction.status}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    onFilterByMerchant(transaction.wallet.merchantId)
+                  }
+                >
+                  View Merchant
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+          {/* {paginatedData.map((merchant) => (
             <TableRow key={merchant.transactionId}>
               <TableCell>{merchant.transactionId}</TableCell>
               <TableCell>
@@ -500,7 +598,7 @@ const MerchantsTable = ({
                 </Button>
               </TableCell>
             </TableRow>
-          ))}
+          ))} */}
         </TableBody>
       </Table>
     </div>
