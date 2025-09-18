@@ -20,21 +20,19 @@ import {
   Package,
   ShoppingCart,
   DollarSign,
-  Users,
-  Eye,
   Download,
-  MoreHorizontal,
   ArrowUpRight,
   Clock,
   CheckCircle,
   Truck,
   AlertCircle,
   Upload,
+  TrendingDown,
 } from "lucide-react";
 import { useMerchantOverview } from "@/lib/services/dashboard/merchant-overview";
-import { useGetOrders } from "@/lib/services/order/use-get-orders";
 import { useMerchantGetOrders } from "@/lib/services/order/use-merchant-get-orders";
 import { upperCaseText } from "@/lib/utils";
+import { Skeleton } from "../ui/skeleton";
 
 // Demo data for merchant overview
 const demoMerchantData = {
@@ -153,7 +151,7 @@ function getStatusIcon(status: string) {
 
 export function Overview() {
   const [activeTab, setActiveTab] = useState<"orders" | "products">("orders");
-  const { data: overview } = useMerchantOverview();
+  const { data: overview, loading: overViewLoading } = useMerchantOverview();
   const { data: orders } = useMerchantGetOrders({ limit: 5 });
 
   return (
@@ -205,10 +203,19 @@ export function Overview() {
               <div className="text-xl font-semibold mb-2">
                 {formatNaira(overview?.totalSales || 0)}
               </div>
-              <div className="flex items-center text-sm text-emerald-600">
-                <TrendingUp className="h-4 w-4 mr-2" />
-                +12.5% from last month
-              </div>
+              {overViewLoading ? (
+                <Skeleton className="h-8 w-24" />
+              ) : (
+                <div className="flex items-center text-sm text-emerald-600">
+                  {overview?.metrics.sales.trend === "decrease" ? (
+                    <TrendingDown className="h-4 w-4 mr-2" />
+                  ) : (
+                    <TrendingUp className="h-4 w-4 mr-2" />
+                  )}
+                  {overview?.metrics.sales.trend == "decrease" ? "-" : "+"}
+                  {overview?.metrics.sales.change}% from last month
+                </div>
+              )}
             </CardContent>
           </Card>
         </Link>
@@ -228,12 +235,21 @@ export function Overview() {
             </CardHeader>
             <CardContent className="py-6">
               <div className="text-xl font-semibold mb-2">
-                {overview?.totalOrders}
+                {overview?.totalOrders || 0}
               </div>
-              <div className="flex items-center text-sm text-blue-600">
-                <TrendingUp className="h-4 w-4 mr-2" />
-                +8.2% from last month
-              </div>
+              {overViewLoading ? (
+                <Skeleton className="h-8 w-24" />
+              ) : (
+                <div className="flex items-center text-sm text-blue-600">
+                  {overview?.metrics.orders.trend === "decrease" ? (
+                    <TrendingDown className="h-4 w-4 mr-2" />
+                  ) : (
+                    <TrendingUp className="h-4 w-4 mr-2" />
+                  )}
+                  {overview?.metrics.orders.trend == "decrease" ? "-" : "+"}
+                  {overview?.metrics.orders.change}% from last month
+                </div>
+              )}
             </CardContent>
           </Card>
         </Link>
@@ -256,7 +272,8 @@ export function Overview() {
                 {overview?.totalProducts}
               </div>
               <div className="text-sm text-muted-foreground">
-                +3 new products this month
+                {(overview?.metrics.products.change || 0) >= 0 && "+"}
+                {overview?.metrics.products.change} new products this month
               </div>
             </CardContent>
           </Card>

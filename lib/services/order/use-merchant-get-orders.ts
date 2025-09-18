@@ -106,6 +106,7 @@ type GetProductsParams = {
   limit?: number;
   search?: string | null;
   page?: number;
+  status?: string;
 };
 
 export const merchantGetOrders = async (params?: GetProductsParams) => {
@@ -117,15 +118,16 @@ export const merchantGetOrders = async (params?: GetProductsParams) => {
 };
 
 export const useMerchantGetOrders = (params?: GetProductsParams) => {
-  const { offset = 0, limit = 20, page = 1, search } = params || {};
+  const { offset = 0, limit = 20, page = 1, search, status } = params || {};
   const formattedParams = {
     offset,
     limit,
     page,
     ...(search ? { search } : {}),
+    ...(status ? { status } : {}),
   };
   return useQuery<MerchantOrdersResponseDto>({
-    queryKey: ["ADMIN_ORDERS", formattedParams],
+    queryKey: ["MERCHANT_ORDERS", formattedParams],
     queryFn: async () => await merchantGetOrders(formattedParams),
     staleTime: 5 * 60 * 1000, // 5 minutes cache
   });

@@ -37,6 +37,7 @@ import { useAdminGetOrders } from "@/lib/services/order/use-admin-get-orders";
 import { formatNaira } from "@/lib/currency";
 import { upperCaseText } from "@/lib/utils";
 import { useFetchMerchants } from "@/lib/services/merchant/use-fetch-merchants";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Demo data for all orders
 const generateOrdersData = () => {
@@ -715,6 +716,17 @@ export default function AllOrdersAdminPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
+                {ordersLoading &&
+                  !orders.length &&
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <TableRow key={i} className="border-b">
+                      {Array.from({ length: 13 }).map((_, j) => (
+                        <TableCell key={j} className="p-2">
+                          <Skeleton className="h-8 w-full" />
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
                 {orders.map((order) => (
                   <TableRow
                     key={order.orderId}

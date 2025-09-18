@@ -50,6 +50,9 @@ import {
 import { toast } from "sonner";
 import { useMerchantGetOrders } from "@/lib/services/order/use-merchant-get-orders";
 import { upperCaseText } from "@/lib/utils";
+import { Skeleton } from "../ui/skeleton";
+import { useMerchantTransactionOverview } from "@/lib/services/order/use-merchant-get-transaction-overview";
+import { formatNaira } from "@/lib/currency";
 
 // Demo transactions data
 const demoTransactions = [
@@ -247,7 +250,14 @@ export function Transactions() {
   // Pagination state
   const [page, setPage] = useState(1);
   const rowsPerPage = 50;
-  const { data } = useMerchantGetOrders({ limit: rowsPerPage });
+  const { data, isPending } = useMerchantGetOrders({
+    limit: rowsPerPage,
+    search: searchTerm,
+    status: deliveryStatusFilter,
+  });
+
+  const { data: overview, isPending: overviewLoading } =
+    useMerchantTransactionOverview();
   const totalRows = filteredTransactions.length;
   const totalPages = Math.ceil(totalRows / rowsPerPage);
   const paginatedTransactions = filteredTransactions.slice(
@@ -296,7 +306,8 @@ export function Transactions() {
       <div className="flex gap-2 mx-0">
         <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-2 rounded border border-blue-200 w-[300px] h-[100px]">
           <div className="text-xl font-bold text-blue-800">
-            {demoTransactions.length}
+            {/* {demoTransactions.length} */}
+            {overview?.totalTransactions || 0}
           </div>
           <div className="text-xs text-blue-600 font-medium">
             Total Transactions
@@ -304,10 +315,11 @@ export function Transactions() {
         </div>
         <div className="bg-gradient-to-r from-green-50 to-green-100 p-2 rounded border border-green-200 w-[300px]">
           <div className="text-xl font-bold text-green-800">
-            {
+            {/* {
               demoTransactions.filter((t) => t.paymentStatus === "Completed")
                 .length
-            }
+            } */}
+            {overview?.completedPayments || 0}
           </div>
           <div className="text-xs text-green-600 font-medium">
             Completed Payments
@@ -315,11 +327,12 @@ export function Transactions() {
         </div>
         <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-2 rounded border border-purple-200 w-[300px]">
           <div className="text-xl font-bold text-purple-800">
-            ₦
+            {/* ₦
             {demoTransactions
               .filter((t) => t.paymentStatus === "Completed")
               .reduce((sum, t) => sum + t.amount, 0)
-              .toLocaleString("en-NG")}
+              .toLocaleString("en-NG")} */}
+            {formatNaira(overview?.completedValue || 0)}
           </div>
           <div className="text-xs text-purple-600 font-medium">
             Completed Value
@@ -409,91 +422,109 @@ export function Transactions() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {(data?.data || []).map((order, index) => (
-                      <TableRow
-                        key={order.id}
-                        className="hover:bg-muted/30 h-8"
-                      >
-                        <TableCell className="font-medium">
-                          {/* {order.sn} */}
-                          {String(index + 1).padStart(3, "0")}
-                        </TableCell>
-                        <TableCell className="font-mono text-sm">
-                          {order.order.orderId}
-                        </TableCell>
-                        <TableCell className="font-mono text-sm">
-                          {order.order.transaction.ref}
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          {order.order.user.firstname}{" "}
-                          {order.order.user.lastname}
-                        </TableCell>
-                        <TableCell
-                          className="max-w-[200px] truncate"
-                          title={order.items[0]?.title}
-                        >
-                          {order.items[0]?.title}
-                        </TableCell>
-                        {/* <TableCell>
+                    {isPending
+                      ? Array.from({ length: 7 }).map((_, i) => (
+                          <TableRow key={i}>
+                            {Array.from({ length: 10 }).map((_, j) => (
+                              <TableCell key={j} className="p-2">
+                                <Skeleton className="h-6 w-full" />
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        ))
+                      : (data?.data || []).map((order, index) => (
+                          <TableRow
+                            key={order.id}
+                            className="hover:bg-muted/30 h-8"
+                          >
+                            <TableCell className="font-medium">
+                              {/* {order.sn} */}
+                              {String(index + 1).padStart(3, "0")}
+                            </TableCell>
+                            <TableCell className="font-mono text-sm">
+                              {order.order.orderId}
+                            </TableCell>
+                            <TableCell className="font-mono text-sm">
+                              {order.order.transaction?.[0]?.ref}
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              {order.order.user.firstname}{" "}
+                              {order.order.user.lastname}
+                            </TableCell>
+                            <TableCell
+                              className="max-w-[200px] truncate"
+                              title={order.items[0]?.title}
+                            >
+                              {order.items[0]?.title}
+                            </TableCell>
+                            {/* <TableCell>
                           <Badge variant="outline" className="font-medium">
                             Electronics
                           </Badge>
                         </TableCell> */}
-                        <TableCell className="font-semibold">
-                          ₦{order.subtotal.toLocaleString("en-NG")}
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant="secondary"
-                            className={getPaymentStatusColor(
-                              upperCaseText(order.order.paymentStatus)
-                            )}
-                          >
-                            {upperCaseText(order.order.paymentStatus)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant="secondary"
-                            className={getDeliveryStatusColor(
-                              upperCaseText(order.order.delivery)
-                            )}
-                          >
-                            {upperCaseText(order.order.delivery)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-56">
-                              <DropdownMenuItem
-                                onClick={() => handlePickupLocation(order)}
+                            <TableCell className="font-semibold">
+                              ₦{order.subtotal.toLocaleString("en-NG")}
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant="secondary"
+                                className={getPaymentStatusColor(
+                                  upperCaseText(order.order.paymentStatus)
+                                )}
                               >
-                                <MapPin className="mr-2 h-4 w-4" />
-                                See Pick Location
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => handleCustomerAddress(order)}
+                                {upperCaseText(order.order.paymentStatus)}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant="secondary"
+                                className={getDeliveryStatusColor(
+                                  upperCaseText(order.order.delivery)
+                                )}
                               >
-                                <User className="mr-2 h-4 w-4" />
-                                Customer Address
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => handleProceedToDelivery(order)}
-                              >
-                                <Truck className="mr-2 h-4 w-4" />
-                                Proceed to Delivery
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                                {upperCaseText(order.order.delivery)}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    className="h-8 w-8 p-0"
+                                  >
+                                    <span className="sr-only">Open menu</span>
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent
+                                  align="end"
+                                  className="w-56"
+                                >
+                                  <DropdownMenuItem
+                                    onClick={() => handlePickupLocation(order)}
+                                  >
+                                    <MapPin className="mr-2 h-4 w-4" />
+                                    See Pick Location
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() => handleCustomerAddress(order)}
+                                  >
+                                    <User className="mr-2 h-4 w-4" />
+                                    Customer Address
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() =>
+                                      handleProceedToDelivery(order)
+                                    }
+                                  >
+                                    <Truck className="mr-2 h-4 w-4" />
+                                    Proceed to Delivery
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))}
                   </TableBody>
                 </Table>
               </div>

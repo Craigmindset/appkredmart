@@ -36,6 +36,8 @@ import { Search, MoreHorizontal, MapPin, User, Truck } from "lucide-react";
 import { useMerchantGetOrders } from "@/lib/services/order/use-merchant-get-orders";
 import { upperCaseText } from "@/lib/utils";
 import { useProceedToDeliver } from "@/lib/services/order/use-proceed-deliver";
+import { useMerchantGetOrderOverview } from "@/lib/services/order/use-merchant-get-order-overview";
+import { Skeleton } from "../ui/skeleton";
 
 // Demo orders data
 const demoOrders = [
@@ -134,9 +136,15 @@ const getPaymentColor = (payment: string) => {
 export function MerchantOrders() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const { data, isPending } = useMerchantGetOrders({ search: searchTerm });
+  const { data, isPending } = useMerchantGetOrders({
+    search: searchTerm,
+    status: statusFilter.toLowerCase(),
+  });
   const { mutateAsync: processingDeliverAsync, loading: processingDeliver } =
     useProceedToDeliver();
+
+  const { data: overview, isPending: overviewPending } =
+    useMerchantGetOrderOverview();
 
   const orders = data?.data || [];
 
@@ -180,25 +188,29 @@ export function MerchantOrders() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-yellow-50 p-4 rounded-lg">
           <div className="text-2xl font-bold text-yellow-800">
-            {demoOrders.filter((o) => o.deliveryStatus === "Pending").length}
+            {/* {demoOrders.filter((o) => o.deliveryStatus === "Pending").length} */}
+            {overview?.ordersPending || 0}
           </div>
           <div className="text-sm text-yellow-600">Pending Orders</div>
         </div>
         <div className="bg-blue-50 p-4 rounded-lg">
           <div className="text-2xl font-bold text-blue-800">
-            {demoOrders.filter((o) => o.deliveryStatus === "Processing").length}
+            {/* {demoOrders.filter((o) => o.deliveryStatus === "Processing").length} */}
+            {overview?.ordersProcessing || 0}
           </div>
           <div className="text-sm text-blue-600">Processing</div>
         </div>
         <div className="bg-green-50 p-4 rounded-lg">
           <div className="text-2xl font-bold text-green-800">
-            {demoOrders.filter((o) => o.deliveryStatus === "Ready").length}
+            {/* {demoOrders.filter((o) => o.deliveryStatus === "Ready").length} */}
+            {overview?.ordersReadyToDeliver || 0}
           </div>
           <div className="text-sm text-green-600">Ready to Deliver</div>
         </div>
         <div className="bg-purple-50 p-4 rounded-lg">
           <div className="text-2xl font-bold text-purple-800">
-            {demoOrders.filter((o) => o.deliveryStatus === "Delivered").length}
+            {/* {demoOrders.filter((o) => o.deliveryStatus === "Delivered").length} */}
+            {overview?.ordersDelivered || 0}
           </div>
           <div className="text-sm text-purple-600">Delivered</div>
         </div>
@@ -232,7 +244,7 @@ export function MerchantOrders() {
                 <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="processing">Processing</SelectItem>
                 <SelectItem value="ready">Ready</SelectItem>
-                <SelectItem value="shipped">Delivered</SelectItem>
+                <SelectItem value="shipped">Shipped</SelectItem>
                 <SelectItem value="delivered">Delivered</SelectItem>
               </SelectContent>
             </Select>
@@ -275,7 +287,17 @@ export function MerchantOrders() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {orders.length === 0 ? (
+                  {isPending ? (
+                    Array.from({ length: 7 }).map((_, i) => (
+                      <TableRow key={i}>
+                        {Array.from({ length: 10 }).map((_, j) => (
+                          <TableCell key={j} className="p-2">
+                            <Skeleton className="h-6 w-full" />
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))
+                  ) : orders.length === 0 ? (
                     <TableRow>
                       <TableCell
                         colSpan={10}

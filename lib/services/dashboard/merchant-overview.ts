@@ -6,6 +6,25 @@ interface AdminOverviewResponse {
   totalSales: number;
   totalOrders: number;
   totalProducts: number;
+  metrics: {
+    sales: {
+      current: number;
+      change: number;
+      trend: "increase" | "decrease";
+    };
+    orders: {
+      current: number;
+      previous: number;
+      change: number;
+      trend: "increase" | "decrease";
+    };
+    products: {
+      current: number;
+      previous: number;
+      change: number;
+      trend: "increase" | "decrease";
+    };
+  };
 }
 
 export const merchantOverview = async () => {
