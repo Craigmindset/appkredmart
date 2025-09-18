@@ -1,6 +1,13 @@
 "use client";
 import React from "react";
 import Image from "next/image";
+import { Poppins } from "next/font/google";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "600", "700", "800"],
+  display: "swap",
+});
 
 const PHONE_IMG =
   "https://hlfwfvupabrc8fwr.public.blob.vercel-storage.com/kredmart-mobile.png";
@@ -48,15 +55,15 @@ const HeroMobile: React.FC = () => {
       </svg>
 
       {/* Headline */}
-      <div className="relative z-10">
-        <h1
-          className="
-            text-4xl leading-tight font-extrabold tracking-tight
-            text-[#4A0F0F] drop-shadow-sm
-          "
-        >
-          Wallet Credit
-        </h1>
+      <div className="relative z-10 flex flex-col items-center justify-center w-full mt-10">
+        <Image
+          src="/kredmart-text.png"
+          alt="Smart Shopping Wallet Credit"
+          width={400}
+          height={120}
+          className="mx-auto w-full max-w-[420px] h-auto"
+          priority
+        />
         <p className="mt-2 text-sm text-[#224C56]/80">
           Your credit-powered e-commerce platform. Access instant wallet loans
           and shop top products with the best deal.
@@ -64,13 +71,13 @@ const HeroMobile: React.FC = () => {
         <div className="mt-5  flex flex-row items-center justify-center gap-3 ">
           <a
             href="/sign-up"
-            className="px-5 py-2 rounded-full bg-[#4A0F0F] text-white font-semibold text-sm shadow hover:bg-[#6b1a1a] transition-colors"
+            className="px-8 py-2 rounded-full bg-[#4A0F0F] text-white font-semibold text-sm shadow hover:bg-[#6b1a1a] transition-colors"
           >
             Get Loans
           </a>
           <a
             href="/store"
-            className="px-5 py-2 rounded-full bg-white text-[#224C56] border border-[#224C56] font-semibold text-sm shadow hover:bg-[#e6f7fa] transition-colors"
+            className="px-8 py-2 rounded-full bg-white text-[#224C56] border border-[#224C56] font-semibold text-sm shadow hover:bg-[#e6f7fa] transition-colors"
           >
             Visit Store
           </a>
