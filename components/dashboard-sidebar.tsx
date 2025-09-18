@@ -1,6 +1,6 @@
 "use client";
 
-import type React from "react";
+import React from "react";
 
 import Link from "next/link";
 import { redirect, usePathname, useRouter } from "next/navigation";
@@ -32,6 +32,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Notification from "@/app/dashboard/notification";
 import { useUser } from "@/lib/services/user/user";
 import { useCart, cartSelectors } from "@/store/cart-store";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -52,8 +53,6 @@ const items = [
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const cartCount = useCart(cartSelectors.count);
-
-  // Use user from useUser (React Query)
   const { user, loading } = useUser();
   const router = useRouter();
   const { mutateAsync, isPending } = useLogout();
@@ -62,6 +61,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const email = user?.email || "user@kredmart.com";
   const initials =
     (firstName?.[0] ?? "") + (lastName?.[0] ?? (firstName ? "" : "U"));
+
+  const [showNotification, setShowNotification] = React.useState(false);
 
   if (loading) {
     return <Loader2 className="animate-spin" />;
@@ -76,26 +77,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       localStorage.removeItem("token");
       router.push("/");
     });
-    // Call backend logout endpoint to clear cookies/session
-    // try {
-    //   await fetch("/api/auth/logout", {
-    //     method: "POST",
-    //     credentials: "include",
-    //   });
-    // } catch (e) {
-    //   // Optionally handle error
-    // }
-    // // Remove token from localStorage
-    // if (typeof window !== "undefined") {
-    //   localStorage.removeItem("token");
-    // }
-    // // Invalidate user query if react-query is used
-    // try {
-    //   const { getQueryClient } = require("@/lib/query-client");
-    //   const queryClient = getQueryClient();
-    //   await queryClient.invalidateQueries({ queryKey: ["USER"] });
-    // } catch (e) {}
-    // router.push("/");
   };
 
   // removed duplicate useUser
@@ -225,13 +206,14 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                   )}
                 </Link>
 
-                <Link
-                  href="/dashboard/track-orders"
+                <button
                   aria-label="Notifications"
                   className="inline-flex p-2 rounded-lg hover:bg-slate-100 transition-colors"
+                  onClick={() => router.push("/dashboard/notification")}
+                  type="button"
                 >
                   <Bell className="h-5 w-5 text-slate-600" />
-                </Link>
+                </button>
 
                 <Link
                   href="/dashboard/wallet"
@@ -244,7 +226,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             </div>
           </header>
 
-          <div className="px-4 md:px-6 py-6">{children}</div>
+          <div className="px-4 md:px-6 py-6">
+            {/* Notification display removed; handled by /dashboard/notification route */}
+            {children}
+          </div>
         </SidebarInset>
       </div>
     </SidebarProvider>

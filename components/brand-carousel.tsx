@@ -25,7 +25,7 @@ export default function BrandCarousel() {
     <section className="border-y bg-muted/40">
       <div className="container mx-auto overflow-hidden">
         <div className="relative py-6">
-          <div className="flex gap-10 will-change-transform" ref={trackRef}>
+          <div className="flex gap-4 md:gap-10 will-change-transform" ref={trackRef}>
             {[...brands, ...brands].map((b, i) => (
               <div key={i} className="shrink-0">
                 <img

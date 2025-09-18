@@ -76,14 +76,14 @@ const HeroMobile: React.FC = () => {
       <div className="flex flex-row items-center justify-center gap-3 mt-8 mb-2 z-50">
         <button
           type="button"
-          className="px-6 py-2 rounded-full bg-blue-700 text-white font-semibold text-sm shadow hover:bg-blue-900 transition-colors active:opacity-70"
+          className="px-8 py-2 rounded-full bg-blue-700 text-white font-semibold text-sm shadow hover:bg-blue-900 transition-colors active:opacity-70"
           onClick={() => router.push("/sign-up")}
         >
           Get Loans
         </button>
         <button
           type="button"
-          className="px-6 py-2 rounded-full bg-gray-200 text-blue-900 border border-blue-900 font-semibold text-sm shadow hover:bg-blue-100 transition-colors active:opacity-70"
+          className="px-8 py-2 rounded-full bg-gray-200 text-blue-900 border border-blue-900 font-semibold text-sm shadow hover:bg-blue-100 transition-colors active:opacity-70"
           onClick={() => router.push("/store")}
         >
           Visit Store

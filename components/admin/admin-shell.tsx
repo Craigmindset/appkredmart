@@ -53,7 +53,7 @@ import { useUser } from "@/lib/services/user/user";
 import { useAdminWallet } from "@/lib/services/wallet/use-admin-wallet";
 import { type Permission } from "@/store/admin-rbac-store";
 import Link from "next/link";
-import { redirect, usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useState } from "react";
 
@@ -159,17 +159,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const { data: wallet } = useAdminWallet();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [broadcastSent, setBroadcastSent] = useState(false);
-  const router = useRouter();
 
   const handleLogout = async () => {
-    try {
-      await signOut();
-    } catch (e) {
-      // Optionally log error or show a toast
-      console.error("Logout failed", e);
-    } finally {
-      router.push("/admin");
-    }
+    await signOut();
   };
 
   const handleBroadcast = (e: React.FormEvent<HTMLFormElement>) => {
@@ -340,8 +332,17 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               </Link>
 
               {/* Broadcast */}
-              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="hover:bg-gray-100"
+                title="Send Broadcast"
+                onClick={() => {
+                  const router = require("next/navigation").useRouter();
+                  router().push("/admin/dashboard/broadcast");
+                }}
+              >
+                <Link href="/admin/dashboard/broadcast" passHref legacyBehavior>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -350,56 +351,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                   >
                     <Radio className="h-4 w-4 text-blue-500" />
                   </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Send Broadcast Message</DialogTitle>
-                  </DialogHeader>
-                  <form className="space-y-4" onSubmit={handleBroadcast}>
-                    <div>
-                      <label className="block text-sm font-medium mb-1">
-                        Message
-                      </label>
-                      <textarea
-                        className="w-full border rounded p-2 min-h-[80px]"
-                        placeholder="Enter your broadcast message..."
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1">
-                        Recipients
-                      </label>
-                      <select
-                        className="w-full border rounded p-2"
-                        defaultValue="all"
-                      >
-                        <option value="all">All Users & Merchants</option>
-                        <option value="users">All Users</option>
-                        <option value="merchants">All Merchants</option>
-                      </select>
-                    </div>
-                    <DialogFooter>
-                      <Button
-                        type="submit"
-                        className="w-full bg-blue-700 text-white hover:bg-blue-800"
-                      >
-                        Send Broadcast
-                      </Button>
-                    </DialogFooter>
-                  </form>
-                  {broadcastSent && (
-                    <div className="mt-4">
-                      <Alert>
-                        <AlertTitle>Broadcast sent!</AlertTitle>
-                        <AlertDescription>
-                          Your message was sent to the selected recipients.
-                        </AlertDescription>
-                      </Alert>
-                    </div>
-                  )}
-                </DialogContent>
-              </Dialog>
+                </Link>
+              </Button>
 
               {/* Profile */}
               <Button
