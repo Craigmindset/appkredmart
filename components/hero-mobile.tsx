@@ -73,7 +73,7 @@ const HeroMobile: React.FC = () => {
           and shop top products with the best deal.
         </p>
       </div>
-      <div className="flex flex-row items-center justify-center gap-3 mt-8 mb-2 z-50">
+      <div className="flex flex-row items-center justify-center gap-3 mt-8 mb-2 z-30">
         <button
           type="button"
           className="px-8 py-2 rounded-full bg-blue-700 text-white font-semibold text-sm shadow hover:bg-blue-900 transition-colors active:opacity-70"

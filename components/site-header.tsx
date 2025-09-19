@@ -244,27 +244,27 @@ function HeaderCore() {
                   <span className="sr-only">Open menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-80">
+              <SheetContent side="left" className="w-60 bg-blue-900">
                 <SheetHeader>
-                  <SheetTitle>KredMart</SheetTitle>
+                  <SheetTitle className="text-white">KredMart</SheetTitle>
                 </SheetHeader>
-                <div className="mt-4 space-y-2">
+                <div className="mt-10 space-y-2">
                   <nav className="flex flex-col">
                     {MENU.map((m) => (
                       <Link
                         key={m.href}
                         href={m.href}
-                        className="flex items-center gap-3 rounded px-2 py-3 text-sm hover:bg-muted focus-visible:ring-2 focus-visible:ring-blue-500"
+                        className="flex items-center gap-3 rounded px-2 py-4 text-xl text-white hover:bg-blue-800 focus-visible:ring-2 focus-visible:ring-blue-300"
                       >
-                        {m.label === "Home" && <Home className="h-4 w-4" />}
+                        {m.label === "Home" && <Home className="h-5 w-5" />}
                         {m.label === "Access Loan" && (
-                          <CreditCard className="h-4 w-4" />
+                          <CreditCard className="h-5 w-5" />
                         )}
-                        {m.label === "Store" && <Store className="h-4 w-4" />}
+                        {m.label === "Store" && <Store className="h-5 w-5" />}
                         {m.label === "Kredmart deals" && (
-                          <Tag className="h-4 w-4" />
+                          <Tag className="h-5 w-5" />
                         )}
-                        {m.label === "About" && <Info className="h-4 w-4" />}
+                        {m.label === "About" && <Info className="h-5 w-5" />}
                         {m.label}
                       </Link>
                     ))}
