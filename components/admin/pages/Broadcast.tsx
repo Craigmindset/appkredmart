@@ -2,6 +2,10 @@
 
 import React, { useMemo, useState } from "react";
 import { Bell, Send, Eye, Trash2 } from "lucide-react";
+import { Form } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { useAdminCreateBroadCast } from "@/lib/services/broadcast/use-admin-create-broadcast";
+import { toast } from "sonner";
 
 type NType = "info" | "success" | "warning" | "error";
 type NTag = "Joined" | "Message" | "Comment" | "Connect";
@@ -55,7 +59,8 @@ const BroadcastAdminPage: React.FC<{
   );
   const [actor, setActor] = useState("KredMart Team");
   const [unread, setUnread] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
+  // const [submitting, setSubmitting] = useState(false);
+  const { mutateAsync, loading: submitting } = useAdminCreateBroadCast();
 
   const preview: NotificationRecord = useMemo(
     () => ({
@@ -77,18 +82,31 @@ const BroadcastAdminPage: React.FC<{
       alert("Please add a title and body.");
       return;
     }
-    setSubmitting(true);
-    try {
-      if (onSend) await onSend({ audience, notification: preview });
-      // Or POST to your API here
-      // await fetch("/api/broadcast", { method: "POST", body: JSON.stringify({ audience, notification: preview }) });
-      alert("Broadcast sent!");
-    } catch (e) {
-      console.error(e);
-      alert("Failed to send broadcast.");
-    } finally {
-      setSubmitting(false);
-    }
+
+    await mutateAsync({
+      title,
+      body,
+      actor,
+      unread,
+      type,
+      audience: audience.toLowerCase(),
+      tag: tag.toLowerCase(),
+    }).then(() => {
+      toast.success("Broadcast Sent!");
+      handleClear();
+    });
+    // setSubmitting(true);
+    // try {
+    //   if (onSend) await onSend({ audience, notification: preview });
+    //   // Or POST to your API here
+    //   // await fetch("/api/broadcast", { method: "POST", body: JSON.stringify({ audience, notification: preview }) });
+    //   alert("Broadcast sent!");
+    // } catch (e) {
+    //   console.error(e);
+    //   alert("Failed to send broadcast.");
+    // } finally {
+    //   setSubmitting(false);
+    // }
   }
 
   function handleClear() {
@@ -97,6 +115,17 @@ const BroadcastAdminPage: React.FC<{
     setActor("");
     setUnread(true);
   }
+
+  const form = useForm({
+    defaultValues: {
+      audience: "all",
+      type: "info",
+      title: "",
+      body: "",
+      actor: "KredMart Team",
+      sendAsRead: true,
+    },
+  });
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
@@ -111,131 +140,133 @@ const BroadcastAdminPage: React.FC<{
       </div>
 
       {/* Compose (FULL WIDTH) */}
-      <div className="rounded-2xl border bg-white p-5 shadow-sm">
-        <h2 className="text-lg font-semibold mb-4">Compose message</h2>
+      <Form {...form}>
+        <div className="rounded-2xl border bg-white p-5 shadow-sm">
+          <h2 className="text-lg font-semibold mb-4">Compose message</h2>
 
-        {/* Audience */}
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Audience
-        </label>
-        <div className="flex flex-wrap gap-2 mb-4">
-          {audienceOptions.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => setAudience(opt.value)}
-              className={`rounded-full border px-3 py-1.5 text-sm ${
-                audience === opt.value
-                  ? "bg-gray-900 text-white"
-                  : "bg-white text-gray-700 hover:bg-gray-50"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Type & Tag */}
-        <div className="grid sm:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Type
-            </label>
-            <select
-              value={type}
-              onChange={(e) => setType(e.target.value as NType)}
-              className="w-full rounded-md border px-3 py-2 text-sm"
-            >
-              {typeOptions.map((t) => (
-                <option key={t.value} value={t.value}>
-                  {t.label}
-                </option>
-              ))}
-            </select>
+          {/* Audience */}
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Audience
+          </label>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {audienceOptions.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setAudience(opt.value)}
+                className={`rounded-full border px-3 py-1.5 text-sm ${
+                  audience === opt.value
+                    ? "bg-gray-900 text-white"
+                    : "bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Tag (optional)
-            </label>
-            <select
-              value={tag}
-              onChange={(e) => setTag(e.target.value as NTag)}
-              className="w-full rounded-md border px-3 py-2 text-sm"
-            >
-              <option value="">None</option>
-              {tagOptions.map((t) => (
-                <option key={t.value} value={t.value}>
-                  {t.label}
-                </option>
-              ))}
-            </select>
+
+          {/* Type & Tag */}
+          <div className="grid sm:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Type
+              </label>
+              <select
+                value={type}
+                onChange={(e) => setType(e.target.value as NType)}
+                className="w-full rounded-md border px-3 py-2 text-sm"
+              >
+                {typeOptions.map((t) => (
+                  <option key={t.value} value={t.value}>
+                    {t.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Tag (optional)
+              </label>
+              <select
+                value={tag}
+                onChange={(e) => setTag(e.target.value as NTag)}
+                className="w-full rounded-md border px-3 py-2 text-sm"
+              >
+                <option value="">None</option>
+                {tagOptions.map((t) => (
+                  <option key={t.value} value={t.value}>
+                    {t.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-        </div>
 
-        {/* Title */}
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Title
-        </label>
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="mb-3 w-full rounded-md border px-3 py-2 text-sm"
-          placeholder="e.g., System maintenance scheduled"
-        />
-
-        {/* Body */}
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Body
-        </label>
-        <textarea
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          className="mb-3 w-full min-h-[120px] rounded-md border px-3 py-2 text-sm"
-          placeholder="Write the message detail…"
-        />
-
-        {/* Actor */}
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Actor (optional)
-        </label>
-        <input
-          value={actor}
-          onChange={(e) => setActor(e.target.value)}
-          className="mb-4 w-full rounded-md border px-3 py-2 text-sm"
-          placeholder="e.g., KredMart Team"
-        />
-
-        {/* Unread toggle */}
-        <label className="inline-flex items-center gap-2 text-sm mb-5">
+          {/* Title */}
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Title
+          </label>
           <input
-            type="checkbox"
-            checked={unread}
-            onChange={(e) => setUnread(e.target.checked)}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="mb-3 w-full rounded-md border px-3 py-2 text-sm"
+            placeholder="e.g., System maintenance scheduled"
           />
-          Send as unread
-        </label>
 
-        {/* Actions */}
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={handleSend}
-            disabled={submitting}
-            className="inline-flex items-center gap-2 rounded-full bg-gray-900 text-white px-4 py-2 text-sm font-semibold hover:bg-black active:opacity-90"
-          >
-            <Send className="h-4 w-4" />
-            {submitting ? "Sending…" : "Send broadcast"}
-          </button>
-          <button
-            type="button"
-            onClick={handleClear}
-            className="inline-flex items-center gap-2 rounded-full bg-red-50 text-red-700 px-4 py-2 text-sm font-semibold hover:bg-red-100 active:opacity-90"
-          >
-            <Trash2 className="h-4 w-4" />
-            Clear
-          </button>
+          {/* Body */}
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Body
+          </label>
+          <textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            className="mb-3 w-full min-h-[120px] rounded-md border px-3 py-2 text-sm"
+            placeholder="Write the message detail…"
+          />
+
+          {/* Actor */}
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Actor (optional)
+          </label>
+          <input
+            value={actor}
+            onChange={(e) => setActor(e.target.value)}
+            className="mb-4 w-full rounded-md border px-3 py-2 text-sm"
+            placeholder="e.g., KredMart Team"
+          />
+
+          {/* Unread toggle */}
+          <label className="inline-flex items-center gap-2 text-sm mb-5">
+            <input
+              type="checkbox"
+              checked={unread}
+              onChange={(e) => setUnread(e.target.checked)}
+            />
+            Send as unread
+          </label>
+
+          {/* Actions */}
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={handleSend}
+              disabled={submitting}
+              className="inline-flex items-center gap-2 rounded-full bg-gray-900 text-white px-4 py-2 text-sm font-semibold hover:bg-black active:opacity-90"
+            >
+              <Send className="h-4 w-4" />
+              {submitting ? "Sending…" : "Send broadcast"}
+            </button>
+            <button
+              type="button"
+              onClick={handleClear}
+              className="inline-flex items-center gap-2 rounded-full bg-red-50 text-red-700 px-4 py-2 text-sm font-semibold hover:bg-red-100 active:opacity-90"
+            >
+              <Trash2 className="h-4 w-4" />
+              Clear
+            </button>
+          </div>
         </div>
-      </div>
+      </Form>
 
       {/* --- Preview (UNDERNEATH) --- */}
       <div className="mt-6 rounded-2xl border bg-white p-5 shadow-sm">

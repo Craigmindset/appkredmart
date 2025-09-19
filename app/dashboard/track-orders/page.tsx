@@ -85,7 +85,7 @@ export default function TrackOrdersPage() {
 
         {!data ? (
           <div className="text-sm text-muted-foreground">
-            No orders available. Go to My Orders to place or seed demo.
+            No orders available.
           </div>
         ) : (
           <>

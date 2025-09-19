@@ -9,6 +9,18 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  async rewrites() {
+    return [
+      {
+        source: "/api/google",
+        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`,
+      },
+      {
+        source: "/api/google/callback",
+        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google/callback`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

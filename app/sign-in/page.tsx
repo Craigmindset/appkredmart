@@ -41,6 +41,12 @@ export default function SignInPage() {
   const { useAuth } = require("@/store/auth-store");
   const setUser = useAuth((s: any) => s.setUser);
 
+  const handleGoogleLogin = async () => {
+    // await setRedirectCookie(pathname); // Store the current page in a cookie
+    // router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/api/google`);
+    router.push("/api/google");
+  };
+
   async function onSubmit(data: loginSchemaType) {
     // Cache email in localStorage
     if (typeof window !== "undefined") {
@@ -227,6 +233,7 @@ export default function SignInPage() {
                   <Button
                     type="button"
                     variant="outline"
+                    onClick={handleGoogleLogin}
                     className="w-full h-11 bg-transparent"
                   >
                     <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-background text-[10px]">
