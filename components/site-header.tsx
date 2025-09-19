@@ -68,7 +68,7 @@ const categoryIcons: Record<string, React.ReactNode> = {
 
 function TopBar() {
   return (
-    <div className="w-full bg-blue-900  text-white text-xs py-1 flex items-center justify-end gap-4 pr-4">
+    <div className="w-full bg-blue-900 text-white text-xs py-2 flex items-center justify-center gap-4 pr-4 ">
       <div className="flex items-center gap-2">
         <Truck className="h-4 w-4 mr-1 inline-block" />
         <span>Return Policy</span>
@@ -244,12 +244,18 @@ function HeaderCore() {
                   <span className="sr-only">Open menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-60 bg-blue-900">
-                <SheetHeader>
+              <SheetContent
+                side="left"
+                className="w-64 bg-blue-900 h-dvh grid grid-rows-[auto_1fr_auto] p-0"
+              >
+                {/* Row 1: Header */}
+                <SheetHeader className="px-5 py-4">
                   <SheetTitle className="text-white">KredMart</SheetTitle>
                 </SheetHeader>
-                <div className="mt-10 space-y-2">
-                  <nav className="flex flex-col">
+
+                {/* Row 2: Scrollable menu area */}
+                <div className="overflow-y-auto px-2 py-6">
+                  <nav className="flex flex-col gap-2">
                     {MENU.map((m) => (
                       <Link
                         key={m.href}
@@ -269,6 +275,11 @@ function HeaderCore() {
                       </Link>
                     ))}
                   </nav>
+                </div>
+
+                {/* Row 3: Footer pinned to bottom */}
+                <div className="px-4 py-4 text-center text-xs text-blue-100">
+                  Powered by KredMart &copy; {new Date().getFullYear()}
                 </div>
               </SheetContent>
             </Sheet>

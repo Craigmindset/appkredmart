@@ -57,13 +57,13 @@ export default function TestimonialGrid() {
         What Our Customers Say
       </h2>
       <div className="relative">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="flex gap-6 overflow-x-auto md:grid md:grid-cols-3 md:overflow-visible scrollbar-hide pb-2">
           {visibleTestimonials.map((t, idx) => (
             <div
               key={startIdx + idx}
-              className={`${
-                bgColors[(startIdx + idx) % bgColors.length]
-              } rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-100 hover:shadow-lg transition-all duration-200 hover:scale-95`}
+              className={`min-w-[260px] max-w-xs flex-shrink-0 md:min-w-0 md:max-w-none $
+                {bgColors[(startIdx + idx) % bgColors.length]}
+              rounded-xl shadow-md p-6 flex flex-col items-center text-center border border-gray-100 hover:shadow-lg transition-all duration-200 hover:scale-95`}
             >
               <div className="w-14 h-14 mb-3 rounded-full overflow-hidden flex items-center justify-center">
                 <Image
