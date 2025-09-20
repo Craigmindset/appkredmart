@@ -7,17 +7,21 @@ import { appFontClass } from "@/lib/fonts";
 type LayoutShellProps = {
   children: React.ReactNode;
   showFooter?: boolean;
+  hideHeader?: boolean;
 };
 
 export default function LayoutShell({
   children,
   showFooter = true,
+  hideHeader = false,
 }: LayoutShellProps) {
   return (
     <div className={appFontClass}>
-      <Suspense fallback={null}>
-        <SiteHeader />
-      </Suspense>
+      {!hideHeader && (
+        <Suspense fallback={null}>
+          <SiteHeader />
+        </Suspense>
+      )}
       <main>{children}</main>
       {showFooter ? <SiteFooter /> : null}
     </div>

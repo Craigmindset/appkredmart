@@ -271,7 +271,7 @@ export default function CategoryPage() {
   };
 
   return (
-    <LayoutShell>
+    <LayoutShell hideHeader>
       <section className="container mx-auto px-4 pt-6">
         {/* Category banner */}
         <div
