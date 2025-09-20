@@ -62,10 +62,10 @@ export default function ThreeColumnAd() {
         <div
           className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center w-full"
           style={{
-            maxWidth: 400,
+            maxWidth: "100vw",
             width: "100%",
-            height: 260, // increased height for more padding
-            margin: "0 auto",
+            height: 260,
+            margin: 0,
           }}
         >
           <img
@@ -84,10 +84,10 @@ export default function ThreeColumnAd() {
         <div
           className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center w-full"
           style={{
-            maxWidth: 400,
+            maxWidth: "100vw",
             width: "100%",
-            height: 260, // increased height for more padding
-            margin: "0 auto",
+            height: 260,
+            margin: 0,
           }}
         >
           <img
@@ -166,10 +166,10 @@ export default function ThreeColumnAd() {
         <div
           className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center w-full"
           style={{
-            maxWidth: 400,
+            maxWidth: "100vw",
             width: "100%",
-            height: 260, // increased height for more padding
-            margin: "0 auto",
+            height: 260,
+            margin: 0,
           }}
         >
           <img
@@ -188,10 +188,10 @@ export default function ThreeColumnAd() {
         <div
           className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center w-full"
           style={{
-            maxWidth: 400,
+            maxWidth: "100vw",
             width: "100%",
-            height: 260, // increased height for more padding
-            margin: "0 auto",
+            height: 260,
+            margin: 0,
           }}
         >
           <img
