@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function ThreeColumnAd() {
+  const router = useRouter();
   const row1Ref = useRef<HTMLDivElement>(
     null
   ) as React.RefObject<HTMLDivElement>;
@@ -60,13 +62,17 @@ export default function ThreeColumnAd() {
       {/* First row for mobile (Airpods Pro, Apple Watch) - stacked, no slider */}
       <div className="flex flex-col gap-4 sm:hidden w-full">
         <div
-          className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center w-full"
+          className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center w-full cursor-pointer"
           style={{
             maxWidth: "100vw",
             width: "100%",
             height: 260,
             margin: 0,
           }}
+          onClick={() => router.push("/store?search=Airpods")}
+          tabIndex={0}
+          role="button"
+          aria-label="Go to Airpods in store"
         >
           <img
             src="/StoreBanner/kredmart-1.gif"
@@ -89,10 +95,14 @@ export default function ThreeColumnAd() {
             height: 260,
             margin: 0,
           }}
+          onClick={() => router.push("/store/electronics")}
+          tabIndex={0}
+          role="button"
+          aria-label="Go to Airpods in store"
         >
           <img
-            src="/StoreBanner/kredmart-1 (2).png"
-            alt="Apple Watch"
+            src="/StoreBanner/shopnow.gif"
+            alt="smart purchase"
             style={{
               width: "100%",
               height: "100%",
@@ -110,8 +120,12 @@ export default function ThreeColumnAd() {
         className="hidden sm:flex gap-6 justify-center overflow-x-auto scrollbar-hide sm:flex-row flex-nowrap sm:overflow-visible"
       >
         <div
-          className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center min-w-[60vw] sm:min-w-0"
+          className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center min-w-[60vw] sm:min-w-0 cursor-pointer"
           style={{ width: 300, height: 250 }}
+          onClick={() => router.push("/store?search=Airpods")}
+          tabIndex={0}
+          role="button"
+          aria-label="Go to Airpods in store"
         >
           <img
             src="/StoreBanner/kredmart-1 (3).png"
