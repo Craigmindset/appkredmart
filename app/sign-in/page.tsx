@@ -52,7 +52,15 @@ export default function SignInPage() {
     if (typeof window !== "undefined") {
       localStorage.setItem("kredmart_email", data.email);
     }
-    await mutateAsync(data).then(async (result) => {
+    await mutateAsync({ ...data }).then(async (result) => {
+      // Store token based on remember
+      if (result?.token) {
+        if (remember) {
+          localStorage.setItem("kredmart_token", result.token);
+        } else {
+          sessionStorage.setItem("kredmart_token", result.token);
+        }
+      }
       // Fetch user profile from backend
       try {
         const { fetchUser } = require("@/lib/services/user/user");
@@ -143,10 +151,7 @@ export default function SignInPage() {
                           Email
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="johnsondoe@nomail.com"
-                            {...field}
-                          />
+                          <Input placeholder="youremail@mail.com" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

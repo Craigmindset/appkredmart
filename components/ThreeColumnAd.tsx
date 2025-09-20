@@ -56,10 +56,58 @@ export default function ThreeColumnAd() {
 
   return (
     <div className="w-full max-w-6xl mx-auto flex flex-col gap-6 p-6 justify-center">
-      {/* First row as slider on small screens */}
+      {/* Mobile: Only show Airpods Pro and Apple Watch in first row, Clear Speakers and VR Gaming in second row. Desktop: show all as before. */}
+      {/* First row for mobile (Airpods Pro, Apple Watch) - stacked, no slider */}
+      <div className="flex flex-col gap-4 sm:hidden w-full">
+        <div
+          className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center w-full"
+          style={{
+            maxWidth: 400,
+            width: "100%",
+            height: 260, // increased height for more padding
+            margin: "0 auto",
+          }}
+        >
+          <img
+            src="/StoreBanner/kredmart-1.gif"
+            alt="Airpods Pro"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              transition: "transform 0.4s cubic-bezier(.4,2,.6,1)",
+              willChange: "transform",
+            }}
+            className="group-hover:scale-110"
+          />
+        </div>
+        <div
+          className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center w-full"
+          style={{
+            maxWidth: 400,
+            width: "100%",
+            height: 260, // increased height for more padding
+            margin: "0 auto",
+          }}
+        >
+          <img
+            src="/StoreBanner/kredmart-1 (2).png"
+            alt="Apple Watch"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              transition: "transform 0.4s cubic-bezier(.4,2,.6,1)",
+              willChange: "transform",
+            }}
+            className="group-hover:scale-110"
+          />
+        </div>
+      </div>
+      {/* First row for desktop (all three) */}
       <div
         ref={row1Ref}
-        className="flex gap-6 justify-center overflow-x-auto scrollbar-hide sm:flex-row flex-nowrap sm:overflow-visible"
+        className="hidden sm:flex gap-6 justify-center overflow-x-auto scrollbar-hide sm:flex-row flex-nowrap sm:overflow-visible"
       >
         <div
           className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center min-w-[60vw] sm:min-w-0"
@@ -67,7 +115,7 @@ export default function ThreeColumnAd() {
         >
           <img
             src="/StoreBanner/kredmart-1 (3).png"
-            alt="Ad banner 1"
+            alt="Airpods Pro"
             style={{
               width: "100%",
               height: "100%",
@@ -84,7 +132,7 @@ export default function ThreeColumnAd() {
         >
           <img
             src="/StoreBanner/kredmart-1 (2).png"
-            alt="Ad banner 2"
+            alt="Apple Watch"
             style={{
               width: "100%",
               height: "100%",
@@ -113,10 +161,57 @@ export default function ThreeColumnAd() {
           />
         </div>
       </div>
-      {/* Second row as slider on small screens */}
+      {/* Second row for mobile (Clear Speakers, VR Gaming) - stacked, no slider */}
+      <div className="flex flex-col gap-4 sm:hidden w-full mt-2">
+        <div
+          className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center w-full"
+          style={{
+            maxWidth: 400,
+            width: "100%",
+            height: 260, // increased height for more padding
+            margin: "0 auto",
+          }}
+        >
+          <img
+            src="/StoreBanner/kredmart-img (2).png"
+            alt="Clear Speakers"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              transition: "transform 0.4s cubic-bezier(.4,2,.6,1)",
+              willChange: "transform",
+            }}
+            className="group-hover:scale-110"
+          />
+        </div>
+        <div
+          className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center w-full"
+          style={{
+            maxWidth: 400,
+            width: "100%",
+            height: 260, // increased height for more padding
+            margin: "0 auto",
+          }}
+        >
+          <img
+            src="/StoreBanner/kredmart-img (3).png"
+            alt="VR Gaming"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              transition: "transform 0.4s cubic-bezier(.4,2,.6,1)",
+              willChange: "transform",
+            }}
+            className="group-hover:scale-110"
+          />
+        </div>
+      </div>
+      {/* Second row for desktop (all three) */}
       <div
         ref={row2Ref}
-        className="flex gap-6 justify-center overflow-x-auto scrollbar-hide sm:flex-row flex-nowrap sm:overflow-visible"
+        className="hidden sm:flex gap-6 justify-center overflow-x-auto scrollbar-hide sm:flex-row flex-nowrap sm:overflow-visible"
       >
         <div
           className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center min-w-[80vw] sm:min-w-0"
@@ -124,7 +219,7 @@ export default function ThreeColumnAd() {
         >
           <img
             src="/StoreBanner/kredmart-img (2).png"
-            alt="Ad banner 4"
+            alt="Clear Speakers"
             style={{
               width: "100%",
               height: "100%",
@@ -158,7 +253,7 @@ export default function ThreeColumnAd() {
         >
           <img
             src="/StoreBanner/kredmart-img (3).png"
-            alt="Ad banner 6"
+            alt="VR Gaming"
             style={{
               width: "100%",
               height: "100%",
