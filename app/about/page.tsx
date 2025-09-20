@@ -1,9 +1,8 @@
 import Image from "next/image";
-import LayoutShell from "@/components/layout-shell";
 
 export default function AboutPage() {
   return (
-    <LayoutShell>
+    <>
       {/* HERO */}
       <section className="relative overflow-hidden bg-[#d0e6f5] bg-opacity-40">
         <img
@@ -90,6 +89,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-    </LayoutShell>
+    </>
   );
 }

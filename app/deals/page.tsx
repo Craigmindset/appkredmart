@@ -1,4 +1,3 @@
-import LayoutShell from "@/components/layout-shell";
 import { getQueryClient } from "@/lib/query-client";
 import { getProducts } from "@/lib/services/products/use-get-products";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
@@ -21,11 +20,9 @@ export default async function DealsPage() {
   });
 
   return (
-    <LayoutShell>
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <PageClient />
-      </HydrationBoundary>
-    </LayoutShell>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <PageClient />
+    </HydrationBoundary>
   );
 }
 

@@ -52,9 +52,9 @@ export default function StorePage() {
 
   return (
     <>
-      <section className="container mx-auto px-4 pt-6 ">
+      <section className="w-full px-1 sm:px-4 pt-6 ">
         {/* Top: Categories (20%), StoreBanner (80%) */}
-        <div className="grid gap-2 md:grid-cols-[20%_80%] mx-4 items-stretch">
+        <div className="grid gap-2 md:grid-cols-[20%_80%] items-stretch">
           <aside className="hidden md:block md:col-span-1 rounded-lg  bg-blue-100 p-4 h-[400px]">
             <h4 className="mb-3 text-sm font-semibold">Categories</h4>
             <ul className="space-y-0.2 text-sm">

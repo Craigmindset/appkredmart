@@ -248,7 +248,7 @@ export default function StoreHeader({ onOpenCategories }: Props) {
                     onChange={(e) => setTerm(e.target.value)}
                     placeholder="Search for products, brands and categories..."
                     aria-label="Search products"
-                    className="flex-1 h-11 px-4 min-w-[280px] md:min-w-[400px] lg:min-w-[500px] bg-transparent text-gray-800 placeholder-gray-500 focus:outline-none"
+                    className="flex-1 h-9 px-3 min-w-[220px] md:min-w-[320px] lg:min-w-[400px] bg-transparent text-gray-800 placeholder-gray-500 focus:outline-none text-sm"
                     autoComplete="off"
                     onFocus={() => setShowSuggestions(suggestions.length > 0)}
                     onBlur={() =>
@@ -276,7 +276,7 @@ export default function StoreHeader({ onOpenCategories }: Props) {
                 <button
                   type="submit"
                   aria-label="Search"
-                  className="h-11 px-4 bg-yellow-500 hover:bg-yellow-600 text-white"
+                  className="h-9 px-3 bg-yellow-500 hover:bg-yellow-600 text-white text-sm"
                 >
                   <Search className="h-5 w-5" />
                 </button>
@@ -286,23 +286,23 @@ export default function StoreHeader({ onOpenCategories }: Props) {
 
           {/* Desktop right actions */}
           <div className="ml-auto hidden md:flex items-center gap-6">
-            <button className="inline-flex items-center gap-2 text-white/90 hover:text-white">
-              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/20">
+            <button className="inline-flex items-center gap-1 text-xs text-white/90 hover:text-white">
+              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/20">
                 <HelpCircle className="h-4 w-4" />
               </span>
-              <span className="font-medium">Help</span>
-              <span className="text-white/80">✓</span>
+              <span className="font-normal">Help</span>
+              <span className="text-white/80 text-xs">✓</span>
             </button>
 
             {loading ? (
-              <Skeleton className="h-8 w-20 rounded" />
+              <Skeleton className="h-7 w-16 rounded" />
             ) : !user ? (
-              <Link href="/sign-in" className="hover:underline">
+              <Link href="/sign-in" className="hover:underline text-xs">
                 Login / Signup
               </Link>
             ) : (
               <button
-                className="inline-flex items-center gap-2 text-white/90 hover:text-white"
+                className="inline-flex items-center gap-1 text-xs text-white/90 hover:text-white"
                 onClick={() =>
                   router.push(
                     user.role === "admin"
@@ -314,19 +314,19 @@ export default function StoreHeader({ onOpenCategories }: Props) {
                 }
               >
                 <User className="h-4 w-4" />
-                <span className="font-medium">Profile</span>
+                <span className="font-normal">Profile</span>
               </button>
             )}
 
             <Link
               href="/cart"
               aria-label="My Cart"
-              className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-3 py-2 hover:bg-green-700 focus:outline-none"
+              className="inline-flex items-center gap-1 rounded bg-green-600 px-2 py-1 hover:bg-green-700 focus:outline-none text-xs"
             >
-              <ShoppingCart className="h-5 w-5" />
-              <span className="font-semibold">My Cart</span>
+              <ShoppingCart className="h-4 w-4" />
+              <span className="font-normal">My Cart</span>
               {itemCount > 0 && (
-                <span className="ml-1 grid h-5 min-w-[1.25rem] place-items-center rounded-sm bg-white px-1.5 text-sm font-bold text-black leading-none">
+                <span className="ml-1 grid h-4 min-w-[1rem] place-items-center rounded-sm bg-white px-1 text-[10px] font-bold text-black leading-none">
                   {itemCount}
                 </span>
               )}
@@ -404,19 +404,19 @@ export default function StoreHeader({ onOpenCategories }: Props) {
 
         {/* ------------------------- Centered main menu ------------------------- */}
         <nav className="hidden md:flex justify-center py-2">
-          <ul className="flex items-center gap-6">
+          <ul className="flex items-center gap-4">
             {MAIN_MENU.map((m) => (
               <li key={m.href}>
                 <Link
                   href={m.href}
-                  className={`inline-flex items-center gap-2 px-3 py-2 rounded-md transition ${
+                  className={`inline-flex items-center gap-1 px-2 py-1 rounded-md transition text-xs ${
                     pathname === m.href
                       ? "bg-white/15 ring-1 ring-white/25"
                       : "hover:bg-white/10"
                   }`}
                 >
                   {m.icon}
-                  <span className="text-sm font-medium">{m.label}</span>
+                  <span className="font-normal">{m.label}</span>
                 </Link>
               </li>
             ))}

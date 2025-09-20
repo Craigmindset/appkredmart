@@ -77,20 +77,20 @@ export default function StoreBanner() {
         <button
           aria-label="Previous"
           onClick={prevSlide}
-          className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/85 hover:bg-white rounded-full px-2 py-1 text-black shadow"
+          className="hidden md:block absolute left-2 top-1/2 -translate-y-1/2 bg-white/85 hover:bg-white rounded-full px-2 py-1 text-black shadow"
         >
           &#8592;
         </button>
         <button
           aria-label="Next"
           onClick={nextSlide}
-          className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/85 hover:bg-white rounded-full px-2 py-1 text-black shadow"
+          className="hidden md:block absolute right-2 top-1/2 -translate-y-1/2 bg-white/85 hover:bg-white rounded-full px-2 py-1 text-black shadow"
         >
           &#8594;
         </button>
 
         {/* dots */}
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+        <div className="hidden md:flex absolute bottom-3 left-1/2 -translate-x-1/2 gap-2">
           {sliderImages.map((_, i) => (
             <button
               key={i}
