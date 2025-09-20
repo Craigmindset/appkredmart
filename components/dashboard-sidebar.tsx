@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-
+import { useSidebar } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { redirect, usePathname, useRouter } from "next/navigation";
 import {
@@ -32,7 +32,6 @@ import {
   Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Notification from "@/app/dashboard/notification";
 import { useUser } from "@/lib/services/user/user";
 import { useCart, cartSelectors } from "@/store/cart-store";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -56,17 +55,15 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const { user, loading } = useUser();
   const router = useRouter();
   const { mutateAsync, isPending } = useLogout();
+  const { isMobile, setOpenMobile } = useSidebar();
+
   const firstName = user?.firstname || "Kred";
   const lastName = user?.lastname || "User";
   const email = user?.email || "user@kredmart.com";
   const initials =
     (firstName?.[0] ?? "") + (lastName?.[0] ?? (firstName ? "" : "U"));
 
-  const [showNotification, setShowNotification] = React.useState(false);
-
-  if (loading) {
-    return <Loader2 className="animate-spin" />;
-  }
+  if (loading) return <Loader2 className="animate-spin" />;
 
   if (!user || user.role !== "user") {
     redirect("/sign-in");
@@ -79,16 +76,15 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     });
   };
 
-  // removed duplicate useUser
   return (
-    <SidebarProvider>
-      <div className="flex min-h-svh w-full bg-slate-50">
-        <Sidebar collapsible="icon" className="border-r border-sidebar-border">
+    <div className="flex min-h-svh w-full bg-slate-50">
+      <Sidebar collapsible="icon" className="border-r border-sidebar-border">
           <SidebarHeader className="border-b border-sidebar-border bg-sidebar">
             <div className="px-3 py-4">
-              <BrandLogo size="md" variant="light" showText={true} />
+              <BrandLogo size="md" variant="light" showText />
             </div>
           </SidebarHeader>
+
           <SidebarContent className="bg-sidebar">
             <SidebarGroup>
               <SidebarGroupLabel className="text-sidebar-foreground/70 font-medium">
@@ -96,24 +92,30 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {items.map((i) => (
-                    <SidebarMenuItem key={i.href}>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={pathname === i.href}
-                        className="data-[active=true]:bg-white data-[active=true]:text-black hover:bg-sidebar-accent/50"
-                      >
-                        <Link href={i.href}>
-                          <i.icon className="h-4 w-4" />
-                          <span>{i.label}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
+                  <SidebarMenu className="space-y-2 md:space-y-0">
+                    {items.map((i) => (
+                      <SidebarMenuItem key={i.href}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={pathname === i.href}
+                          className="text-base md:text-sm data-[active=true]:bg-blue-600 data-[active=true]:text-white hover:bg-blue-500 hover:text-white"
+                          onClick={() => {
+                            if (isMobile) setOpenMobile(false);
+                          }}
+                        >
+                          <Link href={i.href}>
+                            <i.icon className="h-4 w-4" />
+                            <span>{i.label}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>
+
           <SidebarFooter className="border-t border-sidebar-border bg-sidebar px-3 pb-3">
             <div className="flex items-center gap-3 px-2 py-2 rounded-lg bg-sidebar-accent/30">
               <Avatar className="h-8 w-8">
@@ -144,19 +146,74 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         </Sidebar>
 
         <SidebarInset className="w-full bg-slate-50">
-          {/* Dashboard header with dark blue theme */}
+          {/* Sticky header */}
           <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/75">
-            <div className="w-full px-4 md:px-6 h-16 grid grid-cols-3 items-center">
-              {/* Left: Sidebar trigger and brand */}
-              <div className="flex items-center gap-3">
+            {/* ---------- Mobile header: brand left, actions right ---------- */}
+            <div className="md:hidden flex h-14 items-center justify-between px-4">
+              <div className="flex items-center gap-2">
                 <SidebarTrigger className="text-slate-600 hover:text-slate-900" />
                 <Link href="/" className="flex items-center gap-2">
-                  <BrandLogo size="sm" variant="gradient" showText={true} />
+                  <BrandLogo size="sm" variant="gradient" showText />
                 </Link>
               </div>
 
-              {/* Center: Navigation */}
-              <nav className="hidden md:flex items-center justify-center gap-6">
+              <div className="flex items-center gap-1.5">
+                <Link
+                  href="/cart"
+                  aria-label="Cart"
+                  className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg hover:bg-slate-100 transition"
+                >
+                  <ShoppingCart className="h-5 w-5 text-slate-700" />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 px-1 text-xs font-medium text-white">
+                      {cartCount}
+                    </span>
+                  )}
+                </Link>
+
+                <button
+                  type="button"
+                  aria-label="Notifications"
+                  onClick={() => router.push("/dashboard/notification")}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg hover:bg-slate-100 transition"
+                >
+                  <Bell className="h-5 w-5 text-slate-700" />
+                </button>
+
+                <Link
+                  href="/dashboard/wallet"
+                  aria-label="Wallet"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg hover:bg-slate-100 transition"
+                >
+                  <Wallet className="h-5 w-5 text-slate-700" />
+                </Link>
+
+                <Link
+                  href="/dashboard/account"
+                  aria-label="User profile"
+                  className="inline-flex h-9 w-9 items-center justify-center"
+                >
+                  <Avatar className="h-9 w-9 ring-2 ring-blue-100">
+                    <AvatarFallback className="text-xs bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+                      {initials.toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </Link>
+              </div>
+            </div>
+
+            {/* ---------- Desktop header: brand | centered nav | actions ---------- */}
+            <div className="hidden md:grid w-full h-16 grid-cols-[auto_1fr_auto] items-center px-6">
+              {/* Left: Sidebar trigger + brand */}
+              <div className="flex items-center gap-3">
+                <SidebarTrigger className="text-slate-600 hover:text-slate-900" />
+                <Link href="/" className="flex items-center gap-2">
+                  <BrandLogo size="sm" variant="gradient" showText />
+                </Link>
+              </div>
+
+              {/* Center nav */}
+              <nav className="flex items-center justify-center gap-6">
                 <Link
                   href="/"
                   className={`text-sm font-medium transition-colors ${
@@ -179,8 +236,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 </Link>
               </nav>
 
-              {/* Right: User actions */}
-              <div className="flex items-center justify-end gap-2 md:gap-3">
+              {/* Right actions */}
+              <div className="flex items-center justify-end gap-2">
                 <Link
                   href="/dashboard/account"
                   aria-label="User profile"
@@ -226,12 +283,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             </div>
           </header>
 
-          <div className="px-4 md:px-6 py-6">
-            {/* Notification display removed; handled by /dashboard/notification route */}
-            {children}
-          </div>
+          <div className="px-4 md:px-6 py-6">{children}</div>
         </SidebarInset>
       </div>
-    </SidebarProvider>
   );
 }
