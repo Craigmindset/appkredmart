@@ -1,6 +1,5 @@
 "use client";
 
-import LayoutShell from "@/components/layout-shell";
 import ProductsGrid from "@/components/products-grid";
 import StoreBanner from "@/components/StoreBanner";
 import Link from "next/link";
@@ -52,7 +51,7 @@ export default function StorePage() {
   const products = data?.pages.flatMap((page) => page.data) ?? [];
 
   return (
-    <LayoutShell>
+    <>
       <section className="container mx-auto px-4 pt-6 ">
         {/* Top: Categories (20%), StoreBanner (80%) */}
         <div className="grid gap-2 md:grid-cols-[20%_80%] mx-4 items-stretch">
@@ -99,6 +98,6 @@ export default function StorePage() {
           items={products}
         />
       </div>
-    </LayoutShell>
+    </>
   );
 }

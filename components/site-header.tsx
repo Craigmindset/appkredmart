@@ -110,7 +110,9 @@ function CountrySelector() {
             alt={`${selected.label} flag`}
             className="w-5 h-5 rounded-full object-cover"
           />
-          <span className="text-xs font-medium">{selected.label}</span>
+          <span className="hidden md:inline text-xs font-medium">
+            {selected.label}
+          </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -238,7 +240,7 @@ function HeaderCore() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="md:hidden focus-visible:ring-2 focus-visible:ring-blue-500"
+                  className="md:hidden focus-visible:ring-2 focus-visible:ring-blue-500 text-black"
                 >
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Open menu</span>
