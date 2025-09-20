@@ -240,9 +240,9 @@ export default function MerchantSignUpPage() {
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/55 via-black/25 to-transparent" />
 
         <div className="container mx-auto px-4">
-          <div className="grid min-h-[calc(100svh-64px)] items-center gap-8 md:grid-cols-2">
+          <div className="flex flex-col-reverse md:grid md:min-h-[calc(100svh-64px)] min-h-[40vh] pt-14 md:pt-0 items-center gap-8 md:grid-cols-2">
             {/* Left: Brand + Headline */}
-            <div className="max-w-xl py-10 text-white">
+            <div className="max-w-xl py-10 text-white md:order-1">
               <div className="mb-10 inline-flex items-center gap-3">
                 <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25">
                   <div className="h-5 w-5 rounded-full bg-white" />
@@ -262,7 +262,7 @@ export default function MerchantSignUpPage() {
             </div>
 
             {/* Right: Sign Up Card */}
-            <div className="flex w-full items-center justify-center py-10 ">
+            <div className="flex w-full items-center justify-center py-10 md:order-2 ">
               <div className="w-full max-w-lg rounded-2xl border bg-card p-6 shadow-lg backdrop-blur-md md:p-8">
                 <Timeline current={step} />
                 <div className="text-xs font-medium text-muted-foreground">

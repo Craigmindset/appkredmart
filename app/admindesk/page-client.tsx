@@ -31,8 +31,8 @@ export default function MerchantSignInPage() {
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
 
       <div className="container mx-auto px-4">
-        <div className="grid min-h-[calc(100svh-64px)] items-center gap-8 md:grid-cols-2">
-          <div className="max-w-xl py-10 text-white">
+        <div className="flex flex-col-reverse md:grid md:min-h-[calc(100svh-64px)] min-h-[40vh] pt-14 md:pt-0 items-center gap-8 md:grid-cols-2">
+          <div className="max-w-xl py-10 text-white md:order-1">
             <div className="mb-10 inline-flex items-center gap-3">
               <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25">
                 <div className="h-5 w-5 rounded-full bg-white" />
@@ -50,7 +50,7 @@ export default function MerchantSignInPage() {
             </p>
           </div>
 
-          <div className="flex w-full items-center justify-center py-10">
+          <div className="flex w-full items-center justify-center py-10 md:order-2">
             <div className="w-full max-w-md rounded-2xl border bg-card p-6 shadow-lg backdrop-blur-md md:p-8">
               <div className="text-xs font-medium text-muted-foreground">
                 MERCHANT ACCESS
