@@ -105,9 +105,6 @@ export default function AccessLoanPage() {
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center px-2 sm:px-8">
             {/* Left Side: Text */}
             <div className="flex flex-col items-center md:items-start text-center md:text-left w-full">
-              <div className="inline-flex items-center text-base font-semibold px-4 py-1 rounded-full bg-gray-100 text-gray-700 mb-4">
-                <span className="mr-2">🚀</span> Customers Come First
-              </div>
 
               <h1 className="text-4xl xs:text-5xl sm:text-6xl font-extrabold text-gray-900 leading-tight mb-6 sm:mb-8 tracking-tight">
                 Top Lenders <br />

@@ -98,7 +98,7 @@ export default function ThreeColumnAd() {
           onClick={() => router.push("/store/electronics")}
           tabIndex={0}
           role="button"
-          aria-label="Go to Airpods in store"
+          aria-label="Go to Electronics in store"
         >
           <img
             src="/StoreBanner/shopnow.gif"

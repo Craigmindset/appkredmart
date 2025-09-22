@@ -281,4 +281,6 @@ export const allCategories = [
   "Lifestyle",
   "Watches",
   "Premium Devices",
+  "Beauty Products",
+  "Fashion",
 ];
