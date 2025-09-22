@@ -135,21 +135,38 @@ export default function StoreHeader({ onOpenCategories }: Props) {
       <div className="container mx-auto px-4">
         {/* ---------------------- Desktop-only GIF Bar (cover) ---------------------- */}
         <div className="hidden md:block">
-          <a
-            href="/deals"
+          <div
             aria-label="Promotional ad"
             className="relative block mb-2 rounded-md border border-white/20 overflow-hidden"
           >
             {/* ↓ Reduce height as needed: h-14 lg:h-16 (you can change to h-12/h-14/h-16) */}
-            <div className="relative h-14 lg:h-16">
+            <div
+              className="relative h-14 lg:h-16 cursor-pointer"
+              onClick={() => {
+                if (!user) {
+                  router.push("/sign-in");
+                } else {
+                  router.push(
+                    user.role === "admin"
+                      ? "/admin/dashboard/overview"
+                      : user.role === "merchant"
+                      ? "/admindesk/dashboard/overview"
+                      : "/dashboard"
+                  );
+                }
+              }}
+              tabIndex={0}
+              role="button"
+              aria-label="Go to dashboard or sign in"
+            >
               <img
-                src="/kredmart-top-strip-ad.gif" // place the file in /public
+                src="/kredmart-wallet.gif" // place the file in /public
                 alt="KredMart promo"
                 className="absolute inset-0 h-full w-full object-cover"
                 loading="eager"
               />
             </div>
-          </a>
+          </div>
         </div>
 
         {/* ---------------------- Top row: brand + actions ---------------------- */}
