@@ -19,6 +19,10 @@ const nextConfig = {
         source: "/api/google/callback",
         destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google/callback`,
       },
+      {
+        source: "/api/auth/google/callback",
+        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google/callback`,
+      },
     ];
   },
 };

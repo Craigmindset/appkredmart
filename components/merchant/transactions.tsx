@@ -48,11 +48,16 @@ import {
   Share2,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useMerchantGetOrders } from "@/lib/services/order/use-merchant-get-orders";
+import {
+  MerchantOrderResponse,
+  MerchantOrdersResponse,
+  useMerchantGetOrders,
+} from "@/lib/services/order/use-merchant-get-orders";
 import { upperCaseText } from "@/lib/utils";
 import { Skeleton } from "../ui/skeleton";
 import { useMerchantTransactionOverview } from "@/lib/services/order/use-merchant-get-transaction-overview";
 import { formatNaira } from "@/lib/currency";
+import { useProceedToDeliver } from "@/lib/services/order/use-proceed-deliver";
 
 // Demo transactions data
 const demoTransactions = [
@@ -220,7 +225,8 @@ export function Transactions() {
   const [searchTerm, setSearchTerm] = useState("");
   const [deliveryStatusFilter, setDeliveryStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<MerchantOrdersResponse | null>(null);
   const [dialogType, setDialogType] = useState<
     "pickup" | "customer" | "delivery" | null
   >(null);
@@ -276,6 +282,7 @@ export function Transactions() {
   };
 
   const handleProceedToDelivery = (transaction: any) => {
+    console.log({ transaction });
     setSelectedTransaction(transaction);
     setDialogType("delivery");
   };
@@ -284,7 +291,7 @@ export function Transactions() {
     if (selectedTransaction) {
       // Simulate sharing to 3rd party delivery service
       toast.success(
-        `Transaction ${selectedTransaction.transactionId} shared with delivery service`
+        `Transaction ${selectedTransaction.order.orderId} shared with delivery service`
       );
       setDialogType(null);
       setSelectedTransaction(null);
@@ -683,14 +690,18 @@ export function Transactions() {
               </div>
               <div className="flex justify-between">
                 <span className="font-semibold text-purple-900">Item:</span>
-                <span className="text-purple-800">
-                  {selectedTransaction?.itemSold}
+                <span className="text-purple-800 truncate max-w-40">
+                  {selectedTransaction?.items[0].title}{" "}
+                  {selectedTransaction?.items.length &&
+                    selectedTransaction.items.length > 1 &&
+                    `${selectedTransaction.items.length - 1} more`}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="font-semibold text-purple-900">Amount:</span>
                 <span className="text-purple-800 font-semibold">
-                  ₦{selectedTransaction?.amount.toLocaleString("en-NG")}
+                  {/* ₦{selectedTransaction?.amount.toLocaleString("en-NG")} */}
+                  {formatNaira(selectedTransaction?.subtotal || 0)}
                 </span>
               </div>
             </div>

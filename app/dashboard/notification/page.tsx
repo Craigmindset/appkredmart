@@ -199,9 +199,9 @@ const NotificationRow: React.FC<{
               </p>
               {item.actor && (
                 <div
-                  className={`mt-1 text-[13px] font-semibold ${
-                    item.actorAccent ?? ""
-                  }`}
+                  className={`mt-1 text-[13px] font-semibold`}
+                  // ${item.actorAccent ?? ""}
+                  // `}
                 >
                   {item.actor}
                 </div>

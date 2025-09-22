@@ -38,6 +38,7 @@ import { upperCaseText } from "@/lib/utils";
 import { useProceedToDeliver } from "@/lib/services/order/use-proceed-deliver";
 import { useMerchantGetOrderOverview } from "@/lib/services/order/use-merchant-get-order-overview";
 import { Skeleton } from "../ui/skeleton";
+import { toast } from "sonner";
 
 // Demo orders data
 const demoOrders = [
@@ -171,8 +172,9 @@ export function MerchantOrders() {
   };
 
   const handleProceedToDeliver = async (orderId: string) => {
-    // alert(`Proceed to Deliver Order: ${orderId}`);
-    await processingDeliverAsync(orderId);
+    await processingDeliverAsync(orderId).then((response) => {
+      toast.success(response.message || "Order submitted for delivery");
+    });
   };
 
   return (
@@ -395,17 +397,20 @@ export function MerchantOrders() {
                                   <User className="mr-2 h-4 w-4" />
                                   Customer Address
                                 </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    handleProceedToDeliver(order.orderId)
-                                  }
-                                  disabled={processingDeliver}
-                                >
-                                  <Truck className="mr-2 h-4 w-4" />
-                                  {processingDeliver
-                                    ? "Processing delivery..."
-                                    : "Proceed to Deliver"}
-                                </DropdownMenuItem>
+                                {(order.order.delivery === "CONFIRMED" ||
+                                  order.order.delivery === "PROCESSING") && (
+                                  <DropdownMenuItem
+                                    onClick={() =>
+                                      handleProceedToDeliver(order.orderId)
+                                    }
+                                    disabled={processingDeliver}
+                                  >
+                                    <Truck className="mr-2 h-4 w-4" />
+                                    {processingDeliver
+                                      ? "Processing delivery..."
+                                      : "Proceed to Deliver"}
+                                  </DropdownMenuItem>
+                                )}
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </TableCell>
