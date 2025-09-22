@@ -15,6 +15,12 @@ import {
   MessageSquare,
   Link2,
 } from "lucide-react";
+import {
+  useMarkAsRead,
+  useNotifications,
+} from "@/lib/services/notifications/use-notification";
+import { upperCaseText } from "@/lib/utils";
+import { INotification } from "@/lib/services/notifications/notification-service";
 
 type NType = "info" | "success" | "warning" | "error";
 type NTag = "Joined" | "Message" | "Comment" | "Connect";
@@ -118,12 +124,14 @@ function formatDate(d: string) {
 }
 
 const NotificationRow: React.FC<{
-  item: NotificationRecord;
+  // item: NotificationRecord;
+  item: INotification;
   expanded: boolean;
   onToggle: () => void;
   onDelete: () => void;
   onMarkReadToggle: () => void;
 }> = ({ item, expanded, onToggle, onDelete, onMarkReadToggle }) => {
+  const itemTag = upperCaseText(item.tag || "");
   return (
     <div
       className={`rounded-lg border ${
@@ -158,14 +166,14 @@ const NotificationRow: React.FC<{
         </button>
 
         {/* Tag */}
-        {item.tag && (
+        {itemTag && (
           <span
             className={`inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-[11px] font-semibold ${
-              tagStyles[item.tag]
+              tagStyles[itemTag as NTag]
             }`}
           >
-            {tagIcons[item.tag]}
-            {item.tag}
+            {tagIcons[itemTag as NTag]}
+            {itemTag}
           </span>
         )}
 
@@ -177,12 +185,12 @@ const NotificationRow: React.FC<{
                 {typeIcons[item.type]}
                 <h3
                   className={`text-sm sm:text-[15px] font-semibold ${
-                    item.unread ? "text-gray-900" : "text-gray-800"
+                    !item.isRead ? "text-gray-900" : "text-gray-800"
                   }`}
                 >
                   {item.title}
                 </h3>
-                {item.unread && (
+                {!item.isRead && (
                   <span className="ml-1 inline-block h-2 w-2 rounded-full bg-sky-500" />
                 )}
               </div>
@@ -227,7 +235,7 @@ const NotificationRow: React.FC<{
               onClick={onMarkReadToggle}
               className="rounded-full border px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 active:opacity-80"
             >
-              {item.unread ? "Mark as read" : "Mark as unread"}
+              {!item.isRead ? "Mark as read" : "Mark as unread"}
             </button>
             <button
               onClick={onToggle}
@@ -248,7 +256,6 @@ const NotificationRow: React.FC<{
   );
 };
 
-
 // --- NotificationPage: Replace demoNotifications with real backend data when ready ---
 const NotificationPage: React.FC = () => {
   // Replace demoNotifications with your backend data here
@@ -258,6 +265,8 @@ const NotificationPage: React.FC = () => {
   // ...
   const [items, setItems] = useState<NotificationRecord[]>(demoNotifications);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const { data: notifications, isLoading, error } = useNotifications(false);
+  const markAsRead = useMarkAsRead(false);
 
   const unreadCount = useMemo(
     () => items.filter((n) => n.unread).length,
@@ -277,9 +286,10 @@ const NotificationPage: React.FC = () => {
   };
 
   const handleMarkReadToggle = (id: string) => {
-    setItems((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, unread: !n.unread } : n))
-    );
+    // setItems((prev) =>
+    //   prev.map((n) => (n.id === id ? { ...n, unread: !n.unread } : n))
+    // );
+    markAsRead.mutate(id);
   };
 
   return (
@@ -299,14 +309,28 @@ const NotificationPage: React.FC = () => {
 
       {/* Container: Replace items with your backend data when ready */}
       <div className="rounded-xl border bg-white/80 shadow-sm p-2 sm:p-3">
-        {items.length === 0 ? (
+        {isLoading ? (
+          <div className="py-8 text-center text-gray-500">
+            Loadng notifications...
+          </div>
+        ) : notifications?.length === 0 ? (
           <div className="py-8 text-center text-gray-500">
             No notifications yet.
           </div>
         ) : (
           <div className="space-y-3">
             {/* Render each notification row. Replace items with your backend data. */}
-            {items.map((n) => (
+            {notifications?.map((notification) => (
+              <NotificationRow
+                key={notification.id}
+                item={notification}
+                expanded={expandedId == notification.id}
+                onToggle={() => handleToggle(notification.id)}
+                onDelete={() => handleDelete(notification.id)}
+                onMarkReadToggle={() => handleMarkReadToggle(notification.id)}
+              />
+            ))}
+            {/* {items.map((n) => (
               <NotificationRow
                 key={n.id}
                 item={n}
@@ -315,7 +339,7 @@ const NotificationPage: React.FC = () => {
                 onDelete={() => handleDelete(n.id)}
                 onMarkReadToggle={() => handleMarkReadToggle(n.id)}
               />
-            ))}
+            ))} */}
           </div>
         )}
       </div>

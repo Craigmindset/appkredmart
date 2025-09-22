@@ -18,6 +18,7 @@ import { useUser } from "@/lib/services/user/user";
 import { Eye, EyeOff, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { uploadMedia } from "@/lib/services/upload/useUploadMedia";
 
 export default function AccountPage() {
   // const { user, setUser } = useAuth();
@@ -85,14 +86,19 @@ export default function AccountPage() {
       });
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => {
-      const url = String(reader.result || "");
-      setAvatarUrl(url);
-      // setUser({ firstName, lastName, email, phone, avatarUrl: url });
-      toast.success("Profile image updated");
-    };
-    reader.readAsDataURL(file);
+
+    await uploadMedia(file).then(async (response) => {
+      await mutateAsync({ picture: response.original });
+    });
+
+    // const reader = new FileReader();
+    // reader.onload = () => {
+    //   const url = String(reader.result || "");
+    //   setAvatarUrl(url);
+    //   // setUser({ firstName, lastName, email, phone, avatarUrl: url });
+    //   toast.success("Profile image updated");
+    // };
+    // reader.readAsDataURL(file);
   };
 
   const onUpdatePassword = async () => {
