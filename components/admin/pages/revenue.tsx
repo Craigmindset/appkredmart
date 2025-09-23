@@ -182,7 +182,8 @@ export default function RevenueAdminPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatCurrency(summary?.totalMarkup || 0)}
+              {/* {formatCurrency(summary?.totalMarkup || 0)} */}%
+              {summary?.totalMarkup || 0}
             </div>
             <p className="text-xs opacity-80">Platform earnings</p>
           </CardContent>
@@ -306,7 +307,8 @@ export default function RevenueAdminPage() {
                       {formatCurrency(revenue.amount)}
                     </TableCell>
                     <TableCell className="text-right font-mono text-blue-600">
-                      {formatCurrency(revenue.totalMarkup)}
+                      {/* {formatCurrency(revenue.totalMarkup)} */}%
+                      {revenue.totalMarkup}
                     </TableCell>
                     <TableCell className="text-right font-mono text-orange-600">
                       {formatCurrency(revenue.vat)}
