@@ -10,7 +10,7 @@ import {
 export const useNotifications = (includeRead?: boolean) => {
   return useQuery({
     queryKey: ["notifications", includeRead],
-    queryFn: () => notificationService.getUserNotifications(includeRead),
+    queryFn: () => notificationService.getNotifications(includeRead),
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 2,
   });

@@ -48,6 +48,12 @@ export interface MarkAllAsReadResponse {
 }
 
 export const notificationService = {
+  getNotifications: async (includeRead?: boolean): Promise<INotification[]> => {
+    const params = includeRead ? { includeRead: "true" } : {};
+    const response = await backendAxios.get("/notifications", { params });
+    return response.data;
+  },
+
   // Get user notifications
   getUserNotifications: async (
     includeRead?: boolean
@@ -70,6 +76,11 @@ export const notificationService = {
 
   // Get unread count
   getUnreadCount: async (): Promise<number> => {
+    const response = await backendAxios.get("/notifications/unread-count");
+    return response.data;
+  },
+
+  getUserUnreadCount: async (): Promise<number> => {
     const response = await backendAxios.get("/user/notifications/unread-count");
     return response.data;
   },
