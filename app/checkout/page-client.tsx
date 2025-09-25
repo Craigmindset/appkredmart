@@ -232,6 +232,7 @@ export default function CheckoutPage() {
   ) => {
     const { name, value } = e.target;
     setGuestInfo((p) => ({ ...p, [name]: value }));
+    setDeliveryFetched(false);
   };
 
   /** ------------------------ Payment flows ------------------------ */

@@ -519,14 +519,18 @@ export function Transactions() {
                                     <User className="mr-2 h-4 w-4" />
                                     Customer Address
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem
-                                    onClick={() =>
-                                      handleProceedToDelivery(order)
-                                    }
-                                  >
-                                    <Truck className="mr-2 h-4 w-4" />
-                                    Proceed to Delivery
-                                  </DropdownMenuItem>
+
+                                  {(order.order.delivery === "CONFIRMED" ||
+                                    order.order.delivery === "PROCESSING") && (
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        handleProceedToDelivery(order)
+                                      }
+                                    >
+                                      <Truck className="mr-2 h-4 w-4" />
+                                      Proceed to Delivery
+                                    </DropdownMenuItem>
+                                  )}
                                 </DropdownMenuContent>
                               </DropdownMenu>
                             </TableCell>

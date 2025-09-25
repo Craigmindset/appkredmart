@@ -37,6 +37,7 @@ import {
 } from "lucide-react";
 import { useMerchantFetchProducts } from "@/lib/services/products/use-merchant-fetch-products";
 import { useMerchantFetchProductsSummary } from "@/lib/services/products/use-merchant-fetch-products-summary";
+import { cn } from "@/lib/utils";
 
 // Demo products data
 const demoProducts = [
@@ -196,7 +197,7 @@ const getStockStatus = (quantity: number) => {
       color: "bg-red-100 text-red-800",
       icon: XCircle,
     };
-  if (quantity <= 10)
+  if (quantity < 10)
     return {
       status: "Low Stock",
       color: "bg-yellow-100 text-yellow-800",
@@ -532,7 +533,7 @@ export function Inventory() {
                         <TableCell>
                           <Badge
                             variant="secondary"
-                            className={stockInfo.color}
+                            className={cn(stockInfo.color, "text-nowrap")}
                           >
                             <stockInfo.icon className="w-3 h-3 mr-1" />
                             {stockInfo.status}
