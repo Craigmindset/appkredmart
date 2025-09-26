@@ -7,9 +7,10 @@ export type PaymentMethod = "Wallet" | "Card" | "Pay on Delivery";
 export type PaymentStatus = "Paid" | "Pending" | "Refunded" | "Failed";
 export type Fulfillment =
   | "Processing"
-  | "Ready for Delivery"
-  | "Rider on Move"
+  | "Ready For Delivery"
+  | "Rider On Move"
   | "Delivered"
+  | "Item Picked"
   | "Canceled";
 // export type DeliveryStatus = "Arriving Today" | "In Progress";
 export type DeliveryStatus =

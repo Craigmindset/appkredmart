@@ -8,6 +8,7 @@ export type CustomerOrderItemResponseDto = {
   orderId: string;
   createdAt: string;
   fulfillment: Fulfillment;
+  delivery: string;
 };
 
 export const trackOrder = async (orderId: string | null) => {

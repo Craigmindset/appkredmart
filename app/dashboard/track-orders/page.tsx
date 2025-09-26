@@ -39,8 +39,9 @@ function fulfillmentToStep(fulfillment: Order["fulfillment"]) {
     case "Processing":
       return 2; // confirmed + packed
     case "Ready for Delivery":
+    case "Item Picked":
       return 3; // item picked
-    case "Rider on Move":
+    case "Rider On Move":
       return 4;
     case "Delivered":
       return 5;
@@ -61,9 +62,10 @@ export default function TrackOrdersPage() {
   const current = found ?? orders[0] ?? null;
   const [orderId, setOrderId] = useState<string | null>(null);
   const { data, isLoading } = useTrackOrder(orderId);
+  console.log({ fulfillment: data?.fulfillment, data });
   const currentStep = fulfillmentToStep(
-    (upperCaseText(data?.fulfillment || "") as Order["fulfillment"]) ||
-      undefined
+    // (upperCaseText(data?.fulfillment || "") as Order["fulfillment"]) ||
+    (upperCaseText(data?.delivery || "") as Order["fulfillment"]) || undefined
   );
 
   return (
