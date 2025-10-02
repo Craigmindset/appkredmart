@@ -183,7 +183,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               >
                 <Bell className="h-5 w-5 text-slate-700" />
 
-                {unreadCount && unreadCount > 0 && (
+                {!!unreadCount && unreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 px-1 text-xs font-medium text-white">
                     {unreadCount}
                   </span>

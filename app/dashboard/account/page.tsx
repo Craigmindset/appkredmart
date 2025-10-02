@@ -19,6 +19,7 @@ import { Eye, EyeOff, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { uploadMedia } from "@/lib/services/upload/useUploadMedia";
+import { useSendCustomerSupport } from "@/lib/services/user/use-send-customer-support";
 
 export default function AccountPage() {
   // const { user, setUser } = useAuth();
@@ -39,6 +40,8 @@ export default function AccountPage() {
   const [updatingPwd, setUpdatingPwd] = useState(false);
 
   // Support dialog
+  const { mutateAsync: sendSupportAsync, loading: supportSubmitting } =
+    useSendCustomerSupport();
   const [supportOpen, setSupportOpen] = useState(false);
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
@@ -126,15 +129,17 @@ export default function AccountPage() {
 
   const submitSupport = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 900));
-    setSubmitting(false);
-    setSupportOpen(false);
-    setSubject("");
-    setMessage("");
-    toast.success("Message sent", {
-      description: "Support will get back to you shortly.",
+
+    console.log({ message, subject });
+    await sendSupportAsync({ subject, message }).then(() => {
+      setSubject("");
+      setMessage("");
+      toast.success("Message sent", {
+        description: "Support will get back to you shortly.",
+      });
+      setSupportOpen(false);
     });
+    // await new Promise((r) => setTimeout(r, 900));
   };
 
   return (
@@ -338,10 +343,10 @@ export default function AccountPage() {
             <div className="flex justify-end">
               <Button
                 type="submit"
-                disabled={submitting}
+                disabled={supportSubmitting}
                 className="w-full md:w-auto"
               >
-                {submitting ? "Sending..." : "Send Message"}
+                {supportSubmitting ? "Sending..." : "Send Message"}
               </Button>
             </div>
           </form>

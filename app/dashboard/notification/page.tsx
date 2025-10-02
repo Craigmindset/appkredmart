@@ -18,6 +18,7 @@ import {
 import {
   useMarkAsRead,
   useNotifications,
+  useUnreadCount,
 } from "@/lib/services/notifications/use-notification";
 import { upperCaseText } from "@/lib/utils";
 import { INotification } from "@/lib/services/notifications/notification-service";
@@ -265,19 +266,28 @@ const NotificationPage: React.FC = () => {
   // ...
   const [items, setItems] = useState<NotificationRecord[]>(demoNotifications);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const { data: notifications, isLoading, error } = useNotifications(false);
+  const {
+    data: notifications,
+    isLoading,
+    error,
+    refetch,
+  } = useNotifications(false);
   const markAsRead = useMarkAsRead(false);
+  const { data: unreadCount } = useUnreadCount();
 
-  const unreadCount = useMemo(
-    () => items.filter((n) => n.unread).length,
-    [items]
-  );
+  // const unreadCount = useMemo(
+  //   () => items.filter((n) => n.unread).length,
+  //   [items]
+  // );
 
-  const handleToggle = (id: string) => {
+  const handleToggle = async (id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
-    setItems((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, unread: false } : n))
-    );
+    await markAsRead.mutateAsync(id).then(async (response) => {
+      await refetch();
+    });
+    // setItems((prev) =>
+    //   prev.map((n) => (n.id === id ? { ...n, unread: false } : n))
+    // );
   };
 
   const handleDelete = (id: string) => {

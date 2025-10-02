@@ -16,7 +16,7 @@ export const useNotifications = (includeRead?: boolean) => {
   });
 };
 
-export const useMerchantNotifications = (includeRead?: boolean) => {
+export const useMerchantNotifications = (includeRead: boolean = false) => {
   return useQuery({
     queryKey: ["merchant-notifications", includeRead],
     queryFn: () => notificationService.getMerchantNotifications(includeRead),
