@@ -96,9 +96,9 @@ export default function SignInPage() {
       <img
         src="https://hlfwfvupabrc8fwr.public.blob.vercel-storage.com/young-african-ladies-viewing-something-their-mobile-phones-while-carrying-shopping-bags.png"
         alt="Background"
-        className="pointer-events-none absolute inset-0 -z-15 h-full w-full object-cover left-8 md:left-10"
+        className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover"
       />
-      <div className="absolute inset-0 -z-10  bg-[#0F3D73]/90" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
 
       <div className="container mx-auto px-4">
         <div className="flex flex-col-reverse md:grid md:min-h-[calc(100svh-64px)] min-h-[40vh] pt-14 md:pt-0 items-center gap-8 md:grid-cols-2">
@@ -129,10 +129,10 @@ export default function SignInPage() {
           {/* Right: Auth Card */}
           <div className="flex w-full items-center justify-center py-10 md:order-2">
             <div className="w-full max-w-md rounded-2xl border bg-card p-6 shadow-lg backdrop-blur-md md:p-8">
-              <div className="text-xs font-medium text-[#0F3D73] text-muted-foreground">
+              <div className="text-xs font-medium text-muted-foreground">
                 {"WELCOME BACK"}
               </div>
-              <h2 className="mt-1 text-xl text-[#0F3D73] font-semibold tracking-tight md:text-2xl">
+              <h2 className="mt-1 text-xl font-semibold tracking-tight md:text-2xl">
                 {"Log In to your Account"}
               </h2>
               <Form {...form}>
@@ -219,7 +219,7 @@ export default function SignInPage() {
                   {/* Continue */}
                   <Button
                     type="submit"
-                    className="mt-2 w-full h-11 bg-[#0F3D73]"
+                    className="mt-2 w-full h-11"
                     disabled={loading}
                   >
                     {loading ? "Continuing..." : "CONTINUE"}
