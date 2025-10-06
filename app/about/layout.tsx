@@ -1,4 +1,5 @@
-import StoreHeader from "@/components/store-header";
+import SiteHeader from "@/components/site-header";
+import SiteFooter from "@/components/site-footer";
 
 export default function AboutLayout({
   children,
@@ -7,8 +8,9 @@ export default function AboutLayout({
 }) {
   return (
     <>
-      <StoreHeader />
+      <SiteHeader />
       {children}
+      <SiteFooter />
     </>
   );
 }

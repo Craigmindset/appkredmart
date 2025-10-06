@@ -64,6 +64,22 @@ const categoryIcons: Record<string, React.ReactNode> = {
   "Premium Devices": <Star className="h-4 w-4 mr-2" />,
 };
 
+const MAIN_MENU = [
+  { href: "/", label: "Home", icon: <Home className="h-4 w-4" /> },
+  {
+    href: "/access-loan",
+    label: "Access Loan",
+    icon: <CreditCard className="h-4 w-4" />,
+  },
+  { href: "/store", label: "Store", icon: <Store className="h-4 w-4" /> },
+  {
+    href: "/deals",
+    label: "Kredmart deals",
+    icon: <Tag className="h-4 w-4" />,
+  },
+  { href: "/about", label: "About", icon: <Info className="h-4 w-4" /> },
+];
+
 /* ---------------------------- Top bar only (static) ---------------------------- */
 
 function TopBar() {
@@ -145,24 +161,8 @@ function HeaderCore() {
   // --- Search Suggestions State ---
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  // Dummy product names for suggestions (replace with API call or real data as needed)
-  const productNames = [
-    "iPhone 15 Pro Max",
-    "Samsung Galaxy S24 Ultra",
-    "HP Pavilion Laptop",
-    "Sony Bravia TV",
-    "Infinix Hot 40",
-    "Tecno Camon 20",
-    "Apple Watch Series 9",
-    "JBL Bluetooth Speaker",
-    "Dell XPS 13",
-    "Oraimo Power Bank",
-    "Hisense Refrigerator",
-    "Nike Sneakers",
-    "Adidas Backpack",
-    "Canon EOS Camera",
-    "PlayStation 5 Console",
-  ];
+  // Product names for suggestions (to be populated from API or real data)
+  const productNames: string[] = [];
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -222,11 +222,23 @@ function HeaderCore() {
   }, [term]);
 
   const MENU = [
-    { href: "/", label: "Home" },
-    { href: "/access-loan", label: "Access Loan" },
-    { href: "/store", label: "Store" },
-    { href: "/deals", label: "Kredmart deals" },
-    { href: "/about", label: "About" },
+    { href: "/", label: "Home", icon: <Home className="h-4 w-4" /> },
+    {
+      href: "/access-loan",
+      label: "Access Loan",
+      icon: <CreditCard className="h-5 w-5 mr-1" />,
+    },
+    {
+      href: "/store",
+      label: "Store",
+      icon: <Store className="h-5 w-5 mr-1" />,
+    },
+    {
+      href: "/deals",
+      label: "Kredmart deals",
+      icon: <Tag className="h-5 w-5 mr-1" />,
+    },
+    { href: "/about", label: "About", icon: <Info className="h-5 w-5 mr-1" /> },
   ];
 
   return (
@@ -258,22 +270,14 @@ function HeaderCore() {
                 {/* Row 2: Scrollable menu area */}
                 <div className="overflow-y-auto px-2 py-6">
                   <nav className="flex flex-col gap-2">
-                    {MENU.map((m) => (
+                    {MAIN_MENU.map((m) => (
                       <Link
                         key={m.href}
                         href={m.href}
-                        className="flex items-center gap-3 rounded px-2 py-4 text-xl text-white hover:bg-blue-800 focus-visible:ring-2 focus-visible:ring-blue-300"
+                        className="flex items-center gap-2 rounded px-2 py-4 text-xl text-white hover:bg-blue-800 focus-visible:ring-2 focus-visible:ring-blue-300"
                       >
-                        {m.label === "Home" && <Home className="h-5 w-5" />}
-                        {m.label === "Access Loan" && (
-                          <CreditCard className="h-5 w-5" />
-                        )}
-                        {m.label === "Store" && <Store className="h-5 w-5" />}
-                        {m.label === "Kredmart deals" && (
-                          <Tag className="h-5 w-5" />
-                        )}
-                        {m.label === "About" && <Info className="h-5 w-5" />}
-                        {m.label}
+                        {m.icon}
+                        <span>{m.label}</span>
                       </Link>
                     ))}
                   </nav>
@@ -286,24 +290,30 @@ function HeaderCore() {
               </SheetContent>
             </Sheet>
 
-            <Link href="/" className="text-xl font-semibold tracking-tight">
-              KredMart
+            <Link href="/" className="flex items-center h-10">
+              <img
+                src="/Kredmart Logo-01.png"
+                alt="Kredmart Logo"
+                className="h-6 w-auto"
+                style={{ maxWidth: 180 }}
+              />
             </Link>
           </div>
 
           {/* Center: Menu (desktop) */}
-          <nav className="hidden md:flex items-center justify-center gap-5">
-            {MENU.map((m) => (
+          <nav className="hidden md:flex items-center gap-4">
+            {MAIN_MENU.map((m) => (
               <Link
                 key={m.href}
                 href={m.href}
-                className={`text-sm transition-colors px-2 py-1 rounded focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                className={`inline-flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 ${
                   pathname === m.href
-                    ? "font-medium bg-blue-900 text-white"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-[#0F3D73] ring-1 ring-white/25 text-white"
+                    : "hover:bg-white/10 text-[#0F3D73]"
                 }`}
               >
-                {m.label}
+                {m.icon}
+                <span>{m.label}</span>
               </Link>
             ))}
           </nav>
@@ -378,7 +388,7 @@ function HeaderCore() {
                 </Link>
                 <Link
                   href="/sign-up"
-                  className="hidden md:inline-flex h-8 items-center justify-center rounded-md border border-input bg-background px-3 text-sm focus-visible:ring-2 focus-visible:ring-blue-500"
+                  className="hidden md:inline-flex h-8 items-center justify-center rounded-md border border-input  px-3 text-sm font-bold focus-visible:ring-2 focus-visible:ring-blue-500"
                 >
                   Sign Up
                 </Link>

@@ -26,13 +26,18 @@ const WHATSAPP_LINK = "https://wa.me/2349057871672";
 
 export default function SiteFooter() {
   return (
-    <footer className="bg-black text-white">
+    <footer className="bg-[#0F3D73] text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 lg:pl-24 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-8 gap-x-8">
           {/* Brand */}
           <div className="lg:col-span-3">
-            <Link href="/" className="text-2xl font-bold text-blue-400">
-              KredMart
+            <Link href="/" className="inline-flex items-center h-10">
+              <img
+                src="/Kredmart Logo-02.png"
+                alt="Kredmart Logo"
+                className="h-6 w-auto"
+                style={{ maxWidth: 180 }}
+              />
             </Link>
             <p className="mt-3 text-gray-300 text-sm leading-relaxed">
               Your credit-powered e-commerce platform. Access instant wallet

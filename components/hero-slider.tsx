@@ -62,7 +62,7 @@ export default function HeroSection() {
   const slide = slides[current];
 
   return (
-    <section className="relative bg-[#d0e6f5] min-h-[400px] md:min-h-[600px] lg:min-h-[700px] overflow-hidden">
+    <section className="relative bg-[#0F3D73] min-h-[400px] md:min-h-[600px] lg:min-h-[700px] overflow-hidden">
       {/* Background image with opacity */}
       <div
         className="absolute inset-0 w-full h-full z-0"
@@ -80,23 +80,23 @@ export default function HeroSection() {
           <div className="space-y-4 md:space-y-6 flex flex-col justify-center pt-2 md:pt-4 px-0 md:px-4">
             <div className="space-y-1">
               <h1
-                className={`${poppins.className} text-3xl sm:text-6xl md:text-7xl lg:text-7xl font-black text-gray-900 leading-tight tracking-tighter drop-shadow-lg whitespace-nowrap text-center lg:text-left`}
+                className={`${poppins.className} text-3xl sm:text-6xl md:text-7xl lg:text-7xl font-black text-white leading-tight tracking-tighter drop-shadow-lg whitespace-nowrap text-center lg:text-left`}
               >
                 {slide.headline}
               </h1>
               <h2
-                className={`${poppins.className} text-2xl sm:text-3xl lg:text-4xl font-semibold text-gray-900 leading-tight tracking-tighter text-center lg:text-left`}
+                className={`${poppins.className} text-2xl sm:text-3xl lg:text-4xl font-semibold text-white leading-tight tracking-tighter text-center lg:text-left`}
               >
                 {slide.subheadline}
               </h2>
             </div>
-            <p className="text-xs sm:text-sm md:text-base text-gray-700 leading-normal max-w-lg">
+            <p className="text-xs sm:text-sm md:text-base text-[#F4F6F8] leading-normal max-w-lg">
               {slide.description}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 md:pt-4 w-full">
               <Button
                 size="lg"
-                className="bg-green-900 hover:bg-gray-800 shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200 w-full sm:w-auto"
+                className="bg-[#1A73E8] hover:bg-gray-800 shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200 w-full sm:w-auto"
                 onClick={() => router.push("/sign-up")}
               >
                 {slides[0].button1.text}
@@ -104,7 +104,7 @@ export default function HeroSection() {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200 bg-transparent w-full sm:w-auto"
+                className="border-[#D4AF37] text-white hover:bg-gray-900 hover:text-white shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200 bg-transparent w-full sm:w-auto"
                 onClick={() => (window.location.href = slides[0].button2.href)}
               >
                 {slides[0].button2.text}
@@ -126,7 +126,7 @@ export default function HeroSection() {
                     aria-label={`Go to slide ${idx + 1}`}
                     onClick={() => goToSlide(idx)}
                     className={`w-3 h-3 rounded-full ${
-                      current === idx ? "bg-green-900" : "bg-gray-300"
+                      current === idx ? "bg-[#1A73E8]" : "bg-gray-300"
                     } transition`}
                   />
                 ))}

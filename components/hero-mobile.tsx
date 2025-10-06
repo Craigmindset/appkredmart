@@ -21,7 +21,7 @@ const HeroMobile: React.FC = () => {
     <section
       className="
         md:hidden relative overflow-hidden
-        bg-[#9FE3F3]  /* soft blue like your mock */
+        bg-[#0F3D73]  /* soft blue like your mock */
         text-center
         px-5 pt-10 pb-4
         min-h-[92vh] flex flex-col
@@ -68,7 +68,7 @@ const HeroMobile: React.FC = () => {
           className="mx-auto w-full max-w-[420px] h-auto"
           priority
         />
-        <p className="mt-2 text-sm text-[#224C56]/80">
+        <p className="mt-2 text-sm text-[#ffffff]/80">
           Your credit-powered e-commerce platform. Access instant wallet loans
           and shop top products with the best deal.
         </p>
