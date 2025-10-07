@@ -52,6 +52,8 @@ const categoryIcons: Record<string, ReactNode> = {
   Lifestyle: <Heart className="h-4 w-4 mr-2" />,
   Watches: <Watch className="h-4 w-4 mr-2" />,
   "Premium Devices": <Star className="h-4 w-4 mr-2" />,
+  "Beauty Products": <Heart className="h-4 w-4 mr-2 text-pink-500" />,
+  Fashion: <Star className="h-4 w-4 mr-2 text-yellow-500" />,
 };
 
 type Props = {
@@ -339,10 +341,10 @@ export default function StoreHeader({ onOpenCategories }: Props) {
             <Link
               href="/cart"
               aria-label="My Cart"
-              className="inline-flex items-center gap-1 rounded bg-green-600 px-2 py-1 hover:bg-green-700 focus:outline-none text-xs"
+              className="inline-flex items-center gap-1 rounded bg-[#D4AF37] px-2 py-1 hover:bg-green-700 focus:outline-none text-xs"
             >
               <ShoppingCart className="h-4 w-4" />
-              <span className="font-normal">My Cart</span>
+              <span className="font-medium">My Cart</span>
               {itemCount > 0 && (
                 <span className="ml-1 grid h-4 min-w-[1rem] place-items-center rounded-sm bg-white px-1 text-[10px] font-bold text-black leading-none">
                   {itemCount}

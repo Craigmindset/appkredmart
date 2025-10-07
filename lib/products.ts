@@ -275,7 +275,7 @@ export const allCategories = [
   "Phones and Tablets",
   "Computing",
   "Electronics",
-  "Generators",
+  "Power",
   "Accessories",
   "Home & Kitchen",
   "Lifestyle",
