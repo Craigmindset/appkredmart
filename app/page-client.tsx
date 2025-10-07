@@ -71,7 +71,7 @@ export const ProductDeals = () => {
           </p>
         </div>
         <a
-          href="/store"
+          href="/deals"
           className="inline-block mt-2 md:mt-0 text-blue-700 font-medium text-sm underline underline-offset-4 hover:text-blue-900 transition-colors"
         >
           View All Products
