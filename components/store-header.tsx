@@ -131,7 +131,7 @@ export default function StoreHeader({ onOpenCategories }: Props) {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-blue-700 text-white shadow">
+    <header className="sticky top-0 z-50 bg-[#0F3D73] text-white shadow">
       <div className="container mx-auto px-4">
         {/* ---------------------- Desktop-only GIF Bar (cover) ---------------------- */}
         <div className="hidden md:block">
@@ -173,10 +173,11 @@ export default function StoreHeader({ onOpenCategories }: Props) {
         <div className="flex h-14 md:h-16 items-center gap-3">
           {/* Brand */}
           <Link href="/store" className="shrink-0 flex items-center gap-2">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-lg">
-              🙂
-            </span>
-            <span className="text-2xl font-bold tracking-tight">KredMart</span>
+            <img
+              src="/Kredmart Logo-02.png"
+              alt="KredMart Logo"
+              className="h-6 md:h-6 w-auto object-contain"
+            />
           </Link>
 
           {/* Mobile actions (top-right): Login + Cart (smaller) */}
@@ -426,7 +427,7 @@ export default function StoreHeader({ onOpenCategories }: Props) {
               <li key={m.href}>
                 <Link
                   href={m.href}
-                  className={`inline-flex items-center gap-1 px-2 py-1 rounded-md transition text-xs ${
+                  className={`inline-flex items-center gap-1 px-2 py-1 rounded-md transition text-sm ${
                     pathname === m.href
                       ? "bg-white/15 ring-1 ring-white/25"
                       : "hover:bg-white/10"
