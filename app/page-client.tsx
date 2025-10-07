@@ -53,14 +53,20 @@ export const ProductDeals = () => {
   };
 
   return (
-    <section className="container mx-auto px-6 md:px-12 py-10">
+    <section className="container mx-auto px-6 md:px-12 py-10 bg-[#F4F6F8]">
       <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between md:text-left items-center justify-center text-center gap-2">
         <div>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">
+          <h2
+            className="text-3xl md:text-4xl font-bold tracking-tight mb-2"
+            style={{ fontFamily: "Poppins, sans-serif" }}
+          >
             <span className="text-black">KredMart</span>
             <span className="text-red-600"> Shop</span>
           </h2>
-          <p className="text-sm md:text-base text-muted-foreground max-w-xl">
+          <p
+            className="text-sm md:text-base text-muted-foreground max-w-xl"
+            style={{ fontFamily: "sans-serif" }}
+          >
             Shopping experience that gives you the flexibility to shop more
           </p>
         </div>

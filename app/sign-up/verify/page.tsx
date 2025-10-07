@@ -14,7 +14,9 @@ import { useVerifyEmailOtp } from "@/lib/services/auth/use-verify-email-otp";
 export default function VerifyPage() {
   const [resendIsBlue, setResendIsBlue] = useState(true);
   const [resendPressed, setResendPressed] = useState(false);
+  const [resendIsRed, setResendIsRed] = useState(false);
   const resendTimeout = useRef<NodeJS.Timeout | null>(null);
+  const resendRedTimeout = useRef<NodeJS.Timeout | null>(null);
   const [code, setCode] = useState("");
   const { setVerified } = useAuth();
   const router = useRouter();
@@ -90,9 +92,22 @@ export default function VerifyPage() {
                     <button
                       type="button"
                       className={`underline ml-1 transition-colors duration-150 ${
-                        resendIsBlue ? "text-blue-600" : "text-primary"
+                        resendIsRed
+                          ? "text-red-600"
+                          : resendIsBlue
+                          ? "text-blue-600"
+                          : "text-primary"
                       } ${resendPressed ? "opacity-60" : "opacity-100"}`}
                       style={{ padding: 0, background: "none", border: "none" }}
+                      onClick={() => {
+                        setResendIsRed(true);
+                        if (resendRedTimeout.current)
+                          clearTimeout(resendRedTimeout.current);
+                        resendRedTimeout.current = setTimeout(
+                          () => setResendIsRed(false),
+                          5000
+                        );
+                      }}
                       onMouseDown={() => {
                         setResendPressed(true);
                         if (resendTimeout.current)

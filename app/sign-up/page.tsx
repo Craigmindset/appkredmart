@@ -337,7 +337,7 @@ export default function SignUpPage() {
                         />
 
                         <Button
-                          className="mt-2 h-11 w-full"
+                          className="mt-2 h-11 w-full bg-[#0F3D73]"
                           type="submit"
                           disabled={loading}
                         >

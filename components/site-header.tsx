@@ -306,7 +306,7 @@ function HeaderCore() {
               <Link
                 key={m.href}
                 href={m.href}
-                className={`inline-flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                className={`inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 ${
                   pathname === m.href
                     ? "bg-[#0F3D73] ring-1 ring-white/25 text-white"
                     : "hover:bg-white/10 text-[#0F3D73]"

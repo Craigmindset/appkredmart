@@ -219,7 +219,7 @@ export default function SignInPage() {
                   {/* Continue */}
                   <Button
                     type="submit"
-                    className="mt-2 w-full h-11"
+                    className="mt-2 w-full h-11 bg-[#0F3D73]"
                     disabled={loading}
                   >
                     {loading ? "Continuing..." : "CONTINUE"}
@@ -241,7 +241,7 @@ export default function SignInPage() {
                     onClick={handleGoogleLogin}
                     className="w-full h-11 bg-transparent"
                   >
-                    <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-background text-[10px]">
+                    <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#0F3D73] text-background text-[10px]">
                       {"G"}
                     </span>
                     {"Log In with Google"}

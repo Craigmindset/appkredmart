@@ -84,7 +84,11 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       <Sidebar collapsible="icon" className="border-r border-sidebar-border">
         <SidebarHeader className="border-b border-sidebar-border bg-sidebar">
           <div className="px-3 py-4">
-            <BrandLogo size="md" variant="light" showText />
+            <img
+              src="/Kredmart Logo-02.png"
+              alt="KredMart Logo"
+              className="h-8 w-auto object-contain"
+            />
           </div>
         </SidebarHeader>
 

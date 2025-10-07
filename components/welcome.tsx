@@ -32,25 +32,30 @@ export default function Welcome({ username = "User" }: WelcomeProps) {
         {/* Welcome Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-3 mb-6">
-            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-              <div className="h-6 w-6 rounded-full bg-white" />
-            </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              KredMart
-            </span>
+            <img
+              src="/Kredmart Logo-01.png"
+              alt="KredMart Logo"
+              className="h-8 md:h-8 w-auto object-contain"
+            />
           </div>
 
-          <h1 className="text-4xl md:text-4xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent">
+          <h1
+            className="text-4xl md:text-4xl font-bold mb-4"
+            style={{ fontFamily: "Poppins, sans-serif" }}
+          >
+            <span className="bg-gradient-to-r from-gray-900 via-blue-800 to-[#D4AF37]/80 bg-clip-text text-transparent">
               Welcome back,
             </span>
             <br />
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent text-2xl md:text-3xl">
               {username}!
             </span>
           </h1>
 
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p
+            className="text-lg text-gray-600 max-w-2xl mx-auto"
+            style={{ fontFamily: "Geometric Sans Serif, sans-serif" }}
+          >
             Ready to continue your journey? Choose what you'd like to do next
             and let's make it happen.
           </p>
@@ -74,10 +79,16 @@ export default function Welcome({ username = "User" }: WelcomeProps) {
                 </Badge>
               </div>
 
-              <h3 className="text-xl font-bold mb-3 group-hover:text-blue-600 transition-colors">
+              <h3
+                className="text-xl font-bold mb-3 group-hover:text-blue-600 transition-colors"
+                style={{ fontFamily: "Poppins, sans-serif" }}
+              >
                 Continue to Dashboard
               </h3>
-              <p className="text-gray-600 mb-6 text-sm leading-relaxed">
+              <p
+                className="text-gray-600 mb-6 text-sm leading-relaxed"
+                style={{ fontFamily: "Geometric Sans Serif, sans-serif" }}
+              >
                 Access your personal dashboard to view orders, track deliveries,
                 and manage your account.
               </p>
@@ -107,16 +118,22 @@ export default function Welcome({ username = "User" }: WelcomeProps) {
                 </Badge>
               </div>
 
-              <h3 className="text-xl font-bold mb-3 group-hover:text-green-600 transition-colors">
+              <h3
+                className="text-xl font-bold mb-3 group-hover:text-green-600 transition-colors"
+                style={{ fontFamily: "Poppins, sans-serif" }}
+              >
                 Request a Loan
               </h3>
-              <p className="text-gray-600 mb-6 text-sm leading-relaxed">
+              <p
+                className="text-gray-600 mb-6 text-sm leading-relaxed"
+                style={{ fontFamily: "Geometric Sans Serif, sans-serif" }}
+              >
                 Get instant access to credit for your purchases with our quick
                 and easy loan application process.
               </p>
 
               <Link href="/create-wallet">
-                <Button className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 group-hover:shadow-lg transition-all duration-300">
+                <Button className="w-full bg-gradient-to-r from-green-800 to-green-600 hover:from-green-600 hover:to-green-700 group-hover:shadow-lg transition-all duration-300">
                   Apply for Loan
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
@@ -140,10 +157,16 @@ export default function Welcome({ username = "User" }: WelcomeProps) {
                 </Badge>
               </div>
 
-              <h3 className="text-xl font-bold mb-3 group-hover:text-purple-600 transition-colors">
+              <h3
+                className="text-xl font-bold mb-3 group-hover:text-purple-600 transition-colors"
+                style={{ fontFamily: "Poppins, sans-serif" }}
+              >
                 Continue Shopping
               </h3>
-              <p className="text-gray-600 mb-6 text-sm leading-relaxed">
+              <p
+                className="text-gray-600 mb-6 text-sm leading-relaxed"
+                style={{ fontFamily: "Geometric Sans Serif, sans-serif" }}
+              >
                 Explore our latest products and exclusive deals. Find everything
                 you need in one place.
               </p>
