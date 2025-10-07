@@ -356,6 +356,9 @@ export default function SignUpPage() {
                           type="button"
                           variant="outline"
                           className="h-11 w-full bg-transparent"
+                          onClick={async () => {
+                            router.push("/api/google");
+                          }}
                         >
                           <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-background text-[10px]">
                             {"G"}
