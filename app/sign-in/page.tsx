@@ -42,8 +42,7 @@ export default function SignInPage() {
   const setUser = useAuth((s: any) => s.setUser);
 
   const handleGoogleLogin = async () => {
-    // await setRedirectCookie(pathname); // Store the current page in a cookie
-    // router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/api/google`);
+    
     router.push("/api/google");
   };
 
