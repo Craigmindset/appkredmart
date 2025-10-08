@@ -60,8 +60,8 @@ export const ProductDeals = () => {
             className="text-3xl md:text-4xl font-bold tracking-tight mb-2"
             style={{ fontFamily: "Poppins, sans-serif" }}
           >
-            <span className="text-black">KredMart</span>
-            <span className="text-red-600"> Shop</span>
+            <span className="text-black">Today's</span>
+            <span className="text-[#D4AF37]"> Deals</span>
           </h2>
           <p
             className="text-sm md:text-base text-muted-foreground max-w-xl"
