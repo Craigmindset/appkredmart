@@ -9,22 +9,22 @@ export default function AdBanner() {
     {
       label: "Apple",
       title: ["Silver", "MACBOOK PRO"],
-      desc: "13.3-inch (diagonal) LED-backlit display with IPS technology; 2560-by-1600 native resolution at 227 pixels per inch with support for millions of colors",
+      desc: "6.9 inch Super Retina XDR OLED, Triple 48 mp camera, 16GB RAM, 1TB SSD, 8-core CPU, 10-core GPU, and more.",
       img: "https://hlfwfvupabrc8fwr.public.blob.vercel-storage.com/apple-m1.png",
       cta: { href: "/category/audio", text: "Shop by Apple Brand" },
     },
     {
-      label: "Samsung",
-      title: ["Galaxy", "S24 Ultra"],
+      label: "Apple",
+      title: ["Iphone 17", "512GB Dual SIM"],
       desc: "6.8-inch QHD+ Dynamic AMOLED 2X, 200MP camera, 5000mAh battery, S Pen support, and more.",
-      img: "/StoreBanner/kredmart-img (3).png",
-      cta: { href: "/category/phones", text: "Shop Samsung Phones" },
+      img: "/StoreBanner/IPHONE 17.png",
+      cta: { href: "/store?search=iphone+17", text: "Buy Now" },
     },
     {
-      label: "JBL",
+      label: "SMART TV",
       title: ["Clear", "SPEAKERS"],
       desc: "Amazing sound, deep bass, portable Bluetooth speakers for every occasion.",
-      img: "/StoreBanner/kredmart-img (3).png",
+      img: "/StoreBanner/TV Stand.png",
       cta: { href: "/category/audio", text: "Shop JBL Speakers" },
     },
   ];
@@ -39,36 +39,18 @@ export default function AdBanner() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
-    }, 4000); // 4 seconds
+    }, 8000); // 8 seconds
     return () => clearInterval(interval);
   }, [slides.length]);
 
   const slide = slides[current];
 
   return (
-    <section className="w-full max-w-6xl mx-auto bg-gradient-to-tr from-[#bcc7d1] to-[#123d61] rounded-2xl border-4 border-[#e2e8f0] overflow-hidden shadow-md p-2 md:p-6 flex flex-col md:flex-row items-center justify-between min-h-[80px] md:min-h-[150px] relative">
-      {/* Left Arrow */}
-      <button
-        aria-label="Previous"
-        onClick={prevSlide}
-        className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/70 hover:bg-white text-[#123d61] rounded-full p-2 shadow-md transition"
-        style={{ outline: "none" }}
-      >
-        <svg
-          width="24"
-          height="24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <polyline points="15 18 9 12 15 6"></polyline>
-        </svg>
-      </button>
+    <section className="w-full max-w-6xl mx-auto bg-gradient-to-tr from-[#0F3D73] to-[#D4AF37] rounded-2xl border-4 border-[#e2e8f0] overflow-hidden shadow-md p-1 md:p-4 flex flex-col md:flex-row items-center justify-between min-h-[60px] md:min-h-[100px] relative">
+      {/* Left Arrow hidden */}
 
       {/* Text Content */}
-      <div className="flex flex-col ml-12 gap-4 text-center md:text-left md:max-w-xl">
+      <div className="flex flex-col ml-6 gap-3 text-center md:text-left md:max-w-xl">
         <span className="text-white/80 text-sm md:text-base">
           {slide.label}
         </span>
@@ -86,35 +68,17 @@ export default function AdBanner() {
       </div>
 
       {/* Image */}
-      <div className="relative w-full max-w-md mt-8 md:mt-0">
+      <div className="relative w-full max-w-xs md:max-w-md mt-4 md:mt-0">
         <Image
           src={slide.img}
           alt={slide.title[1]}
-          width={500}
-          height={500}
-          className="object-contain w-full h-auto"
+          width={300}
+          height={300}
+          className="object-contain w-full h-auto max-h-[120px] md:max-h-[300px]"
         />
       </div>
 
-      {/* Right Arrow */}
-      <button
-        aria-label="Next"
-        onClick={nextSlide}
-        className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/70 hover:bg-white text-[#123d61] rounded-full p-2 shadow-md transition"
-        style={{ outline: "none" }}
-      >
-        <svg
-          width="24"
-          height="24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      </button>
+      {/* Right Arrow hidden */}
     </section>
   );
 }
