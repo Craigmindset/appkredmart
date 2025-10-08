@@ -27,7 +27,7 @@ html {
 }
         `}</style>
       </head>
-      <body>
+      <body className="bg-[#F4F6F8]">
         <RootProviders>
           {children}
           <Toaster />

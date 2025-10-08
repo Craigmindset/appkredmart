@@ -1,4 +1,5 @@
 import StoreHeader from "@/components/store-header";
+import SiteHeader from "@/components/site-header";
 
 export default function StoreLayout({
   children,
@@ -7,7 +8,7 @@ export default function StoreLayout({
 }) {
   return (
     <>
-      <StoreHeader />
+      <SiteHeader />
       {children}
     </>
   );
