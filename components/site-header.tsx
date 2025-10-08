@@ -12,7 +12,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetContent,
@@ -21,7 +20,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { slugifyCategory } from "@/lib/categories";
-import { appFontClass } from "@/lib/fonts";
 import { allCategories } from "@/lib/products";
 import { useUser } from "@/lib/services/user/user";
 import { cartSelectors, useCart } from "@/store/cart-store";
@@ -46,12 +44,13 @@ import {
   Heart,
   Watch,
   Star,
+  Search,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Skeleton } from "./ui/skeleton";
 
-// Map category names to Lucide icons
+/* ----------------------- Category → icon mapping ----------------------- */
 const categoryIcons: Record<string, React.ReactNode> = {
   "Phones & Tablets": <Smartphone className="h-4 w-4 mr-2" />,
   Computing: <Laptop className="h-4 w-4 mr-2" />,
@@ -80,11 +79,10 @@ const MAIN_MENU = [
   { href: "/about", label: "About", icon: <Info className="h-4 w-4" /> },
 ];
 
-/* ---------------------------- Top bar only (static) ---------------------------- */
-
+/* ---------------------------- Top bar (static) ---------------------------- */
 function TopBar() {
   return (
-    <div className="w-full bg-blue-900 text-white text-xs py-2 flex items-center justify-center gap-4 pr-4 ">
+    <div className="w-full bg-blue-900 text-white text-xs py-2 flex items-center justify-center gap-4 pr-4">
       <div className="flex items-center gap-2">
         <Truck className="h-4 w-4 mr-1 inline-block" />
         <span>Return Policy</span>
@@ -106,8 +104,7 @@ function TopBar() {
   );
 }
 
-/* ------------------------------- Country picker ------------------------------- */
-
+/* ----------------------------- Country picker ----------------------------- */
 type Country = { code: "NGN" | "GHA" | "GB"; label: string; flag: string };
 const COUNTRIES: Country[] = [
   { code: "NGN", label: "Nigeria", flag: "/images/flags/ng.png" },
@@ -123,7 +120,7 @@ function CountrySelector() {
         <Button variant="ghost" className="flex items-center gap-2 px-2">
           <img
             src={selected.flag}
-            alt={`${selected.label} flag`}
+            alt=""
             className="w-5 h-5 rounded-full object-cover"
           />
           <span className="hidden md:inline text-xs font-medium">
@@ -142,7 +139,7 @@ function CountrySelector() {
           >
             <img
               src={country.flag}
-              alt={`${country.label} flag`}
+              alt=""
               className="w-5 h-5 rounded-full object-cover"
             />
             <span className="text-xs font-medium">{country.label}</span>
@@ -153,16 +150,13 @@ function CountrySelector() {
   );
 }
 
-/* ------------------------ The hook-using header content ----------------------- */
-/* This is the ONLY place we call usePathname/useSearchParams/useRouter.         */
-/* We wrap THIS component with <Suspense> in the default export below.            */
-
+/* ------------------------------- Header Core ------------------------------- */
 function HeaderCore() {
-  // --- Search Suggestions State ---
+  // search + suggestions
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  // Product names for suggestions (to be populated from API or real data)
-  const productNames: string[] = [];
+  const productNames: string[] = []; // plug in real data when ready
+
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -178,7 +172,7 @@ function HeaderCore() {
   const { user, loading } = useUser();
   const itemCount = useCart(cartSelectors.count);
 
-  // Keep search term in sync with URL ?search=
+  // tie input to ?search=
   const [term, setTerm] = useState("");
   const q = (searchParams?.get("search") ?? "").toString();
   useEffect(() => setTerm(q), [q]);
@@ -186,95 +180,73 @@ function HeaderCore() {
   const submitSearch = (e?: React.FormEvent) => {
     e?.preventDefault();
     const next = term.trim();
-    if (storeSegment) {
-      router.push(
-        next
-          ? `/store/${storeSegment}?search=${encodeURIComponent(next)}`
-          : `/store/${storeSegment}`
-      );
-    } else {
-      router.push(
-        next ? `/store?search=${encodeURIComponent(next)}` : "/store"
-      );
-    }
+    const to = storeSegment
+      ? next
+        ? `/store/${storeSegment}?search=${encodeURIComponent(next)}`
+        : `/store/${storeSegment}`
+      : next
+      ? `/store?search=${encodeURIComponent(next)}`
+      : "/store";
+
+    router.push(to);
     setShowSuggestions(false);
-    // Auto-scroll to results after navigation
-    setTimeout(() => {
-      const el = document.getElementById("results");
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    }, 500);
+    setTimeout(
+      () =>
+        document
+          .getElementById("results")
+          ?.scrollIntoView({ behavior: "smooth" }),
+      400
+    );
   };
 
-  // Update suggestions as user types
   useEffect(() => {
     if (term.length < 2) {
       setSuggestions([]);
       setShowSuggestions(false);
       return;
     }
-    const filtered = productNames.filter((name) =>
-      name.toLowerCase().includes(term.toLowerCase())
+    const filtered = productNames.filter((n) =>
+      n.toLowerCase().includes(term.toLowerCase())
     );
     setSuggestions(filtered);
     setShowSuggestions(filtered.length > 0);
   }, [term]);
 
-  const MENU = [
-    { href: "/", label: "Home", icon: <Home className="h-4 w-4" /> },
-    {
-      href: "/access-loan",
-      label: "Access Loan",
-      icon: <CreditCard className="h-5 w-5 mr-1" />,
-    },
-    {
-      href: "/store",
-      label: "Store",
-      icon: <Store className="h-5 w-5 mr-1" />,
-    },
-    {
-      href: "/deals",
-      label: "Kredmart deals",
-      icon: <Tag className="h-5 w-5 mr-1" />,
-    },
-    { href: "/about", label: "About", icon: <Info className="h-5 w-5 mr-1" /> },
-  ];
-
   return (
-    <header className="sticky top-0 z-50 bg-[#d3e7f6] border-b">
+    <header className="sticky top-0 z-50 bg-[#d3e7f6]">
       <div className="container mx-auto px-4">
+        {/* ---------------------------- Row 1: Top nav ---------------------------- */}
         <div className="flex h-16 md:h-20 items-center justify-between">
-          {/* Left: Mobile menu + Site name */}
+          {/* Left: mobile drawer + logo */}
           <div className="flex items-center gap-2">
             <Sheet>
               <SheetTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="md:hidden focus-visible:ring-2 focus-visible:ring-blue-500 text-black"
+                  className="md:hidden text-black"
                 >
                   <Menu className="h-5 w-5" />
                   <span className="sr-only">Open menu</span>
                 </Button>
               </SheetTrigger>
+
+              {/* Mobile drawer */}
               <SheetContent
                 side="left"
                 className="w-64 bg-blue-900 h-dvh grid grid-rows-[auto_1fr_auto] p-0"
               >
-                {/* Row 1: Header */}
                 <SheetHeader className="px-5 py-4">
                   <SheetTitle className="text-white">KredMart</SheetTitle>
                 </SheetHeader>
 
-                {/* Row 2: Scrollable menu area */}
                 <div className="overflow-y-auto px-2 py-6">
                   <nav className="flex flex-col gap-2">
                     {MAIN_MENU.map((m) => (
                       <Link
                         key={m.href}
                         href={m.href}
-                        className="flex items-center gap-2 rounded px-2 py-4 text-xl text-white hover:bg-blue-800 focus-visible:ring-2 focus-visible:ring-blue-300"
+                        className="flex items-center gap-2 rounded px-2 py-4 text-xl text-white hover:bg-blue-800"
                       >
                         {m.icon}
                         <span>{m.label}</span>
@@ -283,7 +255,6 @@ function HeaderCore() {
                   </nav>
                 </div>
 
-                {/* Row 3: Footer pinned to bottom */}
                 <div className="px-4 py-4 text-center text-xs text-blue-100">
                   Powered by KredMart &copy; {new Date().getFullYear()}
                 </div>
@@ -300,13 +271,13 @@ function HeaderCore() {
             </Link>
           </div>
 
-          {/* Center: Menu (desktop) */}
-          <nav className="hidden md:flex items-center gap-4">
+          {/* Center: desktop menu (kept) */}
+          <nav className="hidden md:flex items-center gap-3">
             {MAIN_MENU.map((m) => (
               <Link
                 key={m.href}
                 href={m.href}
-                className={`inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                className={`inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition ${
                   pathname === m.href
                     ? "bg-[#0F3D73] ring-1 ring-white/25 text-white"
                     : "hover:bg-white/10 text-[#0F3D73]"
@@ -318,12 +289,11 @@ function HeaderCore() {
             ))}
           </nav>
 
-          {/* Right: Country dropdown, Cart, Auth */}
-          <div className="flex items-center justify-end gap-2">
-            {/* Mobile icons */}
+          {/* Right: country + cart + auth */}
+          <div className="flex items-center gap-1 md:gap-2">
+            {/* mobile country & auth */}
             <div className="flex items-center gap-1 md:hidden">
               <CountrySelector />
-
               {loading ? (
                 <Skeleton className="w-10 h-10" />
               ) : !user ? (
@@ -355,7 +325,7 @@ function HeaderCore() {
               )}
             </div>
 
-            {/* Desktop country selector */}
+            {/* desktop country */}
             <div className="hidden md:block">
               <CountrySelector />
             </div>
@@ -365,7 +335,7 @@ function HeaderCore() {
               size="icon"
               aria-label="Cart"
               onClick={() => router.push("/cart")}
-              className="relative focus-visible:ring-2 focus-visible:ring-blue-500"
+              className="relative"
             >
               <ShoppingCart className="h-5 w-5" />
               {itemCount > 0 && (
@@ -374,123 +344,119 @@ function HeaderCore() {
                 </Badge>
               )}
             </Button>
-
-            {/* Desktop auth links */}
-            {loading ? (
-              <Skeleton className="w-10 h-8 ml-2" />
-            ) : !user ? (
-              <>
-                <Link
-                  href="/sign-in"
-                  className="hidden md:inline text-sm hover:underline focus-visible:ring-2 focus-visible:ring-blue-500"
-                >
-                  Login
-                </Link>
-                <Link
-                  href="/sign-up"
-                  className="hidden md:inline-flex h-8 items-center justify-center rounded-md border border-input  px-3 text-sm font-bold focus-visible:ring-2 focus-visible:ring-blue-500"
-                >
-                  Sign Up
-                </Link>
-              </>
-            ) : (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() =>
-                  router.push(
-                    user.role === "admin"
-                      ? "/admin/dashboard/overview"
-                      : user.role === "merchant"
-                      ? "/admindesk/dashboard/overview"
-                      : "/dashboard"
-                  )
-                }
-              >
-                <User className="h-4 w-4" />
-                <span className="sr-only">Profile</span>
-              </Button>
-            )}
           </div>
         </div>
 
-        {/* Store toolbar: category picker + search + action */}
+        {/* ---------------------- NEW: Mobile horizontal pills ---------------------- */}
+        <nav className="md:hidden -mt-1 pb-2">
+          <ul className="flex items-center gap-2 overflow-x-auto whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {MAIN_MENU.map((m) => {
+              const active = pathname === m.href;
+              return (
+                <li key={m.href} className="shrink-0">
+                  <Link
+                    href={m.href}
+                    className={[
+                      "inline-flex items-center gap-2 rounded-full px-3 py-2 text-[13px]",
+                      active
+                        ? "bg-[#0F3D73] text-white"
+                        : m.href === "/access-loan"
+                        ? "bg-white/70 text-[#0F3D73]"
+                        : "bg-white/40 text-[#0F3D73]/90",
+                    ].join(" ")}
+                  >
+                    {m.icon}
+                    {m.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        {/* --------------- Store toolbar: categories + SEARCH (restyled) --------------- */}
         {isStore && (
-          <div className="border-t py-2 px-6 bg-blue-500">
+          <div className="pb-3">
             <form
               onSubmit={submitSearch}
-              className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+              className="flex items-center gap-3"
+              role="search"
             >
-              <div className="flex items-center gap-2">
-                {/* Categories */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      aria-label="Browse categories"
-                    >
-                      <AlignJustify className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-64">
-                    <DropdownMenuLabel>All Categories</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {allCategories.map((c) => (
-                      <DropdownMenuItem
-                        key={c}
-                        onClick={() =>
-                          router.push(`/store/${slugifyCategory(c)}`)
-                        }
-                        className="cursor-pointer flex items-center"
-                      >
-                        {categoryIcons[c] || <Tag className="h-4 w-4 mr-2" />}{" "}
-                        {c}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                {/* Search */}
-                <div className="flex-1 flex items-center gap-2">
-                  <div className="relative w-full">
-                    <Input
-                      value={term}
-                      onChange={(e) => setTerm(e.target.value)}
-                      placeholder="Search products, brands, categories"
-                      className="w-full min-w-0 sm:min-w-[280px] md:min-w-[400px] lg:min-w-[500px] transition-opacity focus:opacity-90 active:opacity-80"
-                      aria-label="Search products"
-                      autoComplete="off"
-                      onFocus={() => setShowSuggestions(suggestions.length > 0)}
-                      onBlur={() =>
-                        setTimeout(() => setShowSuggestions(false), 100)
+              {/* Blue circular hamburger */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    aria-label="Browse categories"
+                    className="grid h-10 w-10 place-items-center rounded-full bg-[#3a5686] text-white shadow-sm ring-1 ring-black/10 hover:brightness-110"
+                  >
+                    <AlignJustify className="h-5 w-5" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-64">
+                  <DropdownMenuLabel>All Categories</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {allCategories.map((c) => (
+                    <DropdownMenuItem
+                      key={c}
+                      onClick={() =>
+                        router.push(`/store/${slugifyCategory(c)}`)
                       }
-                      style={{ opacity: 0.95 }}
-                    />
-                    {showSuggestions && (
-                      <ul className="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded shadow-lg z-50 max-h-56 overflow-y-auto transition-opacity opacity-95 hover:opacity-100">
-                        {suggestions.map((s, i) => (
-                          <li
-                            key={s + i}
-                            className="px-4 py-2 cursor-pointer hover:bg-blue-100 text-sm text-gray-800 transition-opacity active:opacity-80"
-                            onMouseDown={() => {
-                              setTerm(s);
-                              setShowSuggestions(false);
-                            }}
-                          >
-                            {s}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                  <Button type="submit">Search</Button>
+                      className="cursor-pointer flex items-center"
+                    >
+                      {categoryIcons[c] || <Tag className="h-4 w-4 mr-2" />} {c}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* White search pill + gold button */}
+              <div className="relative flex min-h-10 flex-1 overflow-hidden rounded-full bg-white ring-1 ring-black/10">
+                <div className="relative w-full">
+                  <input
+                    value={term}
+                    onChange={(e) => setTerm(e.target.value)}
+                    placeholder="Search for products, brands and categories..."
+                    aria-label="Search products"
+                    autoComplete="off"
+                    onFocus={() => setShowSuggestions(suggestions.length > 0)}
+                    onBlur={() =>
+                      setTimeout(() => setShowSuggestions(false), 100)
+                    }
+                    className="h-10 w-full bg-transparent px-4 text-[15px] text-[#123] placeholder:text-[#6b7a8b] focus:outline-none"
+                  />
+                  {showSuggestions && (
+                    <ul className="absolute left-0 right-0 z-50 mt-1 max-h-56 overflow-y-auto rounded-lg border border-gray-200 bg-white text-sm shadow-lg">
+                      {suggestions.map((s, i) => (
+                        <li
+                          key={s + i}
+                          className="cursor-pointer px-4 py-2 hover:bg-blue-50"
+                          onMouseDown={() => {
+                            setTerm(s);
+                            setShowSuggestions(false);
+                          }}
+                        >
+                          {s}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
+
+                {/* Gold search button flush right */}
+                <button
+                  type="submit"
+                  aria-label="Search"
+                  className="grid h-10 w-14 place-items-center self-end rounded-l-none bg-[#D4AF37] text-white transition hover:brightness-110"
+                >
+                  <Search className="h-5 w-5" />
+                </button>
               </div>
 
+              {/* Optional CTA at the far right (kept) */}
               <Link
                 href="/access-loan"
-                className="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium"
+                className="hidden sm:inline-flex h-10 items-center justify-center rounded-full border border-input bg-white/60 px-4 text-sm font-medium text-[#0F3D73] hover:bg-white/80"
               >
                 Get loans to Shop
               </Link>
@@ -503,12 +469,10 @@ function HeaderCore() {
 }
 
 /* ----------------------------- Public export ----------------------------- */
-
 export default function SiteHeader() {
   return (
     <>
       <TopBar />
-      {/* 👇 This Suspense fixes the build error for pages like /checkout */}
       <Suspense fallback={<HeaderFallback />}>
         <HeaderCore />
       </Suspense>
@@ -516,10 +480,10 @@ export default function SiteHeader() {
   );
 }
 
-/* Lightweight fallback to avoid layout jump */
+/* ------------------------ Lightweight suspense fallback ------------------------ */
 function HeaderFallback() {
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-blue-800">
+    <header className="sticky top-0 z-40 w-full bg-[#d3e7f6]">
       <div className="container mx-auto px-4">
         <div className="h-16" />
       </div>

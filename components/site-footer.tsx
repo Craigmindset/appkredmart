@@ -26,7 +26,7 @@ const WHATSAPP_LINK = "https://wa.me/2349057871672";
 
 export default function SiteFooter() {
   return (
-    <footer className="bg-[#0F3D73] text-white">
+    <footer className="bg-black text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 lg:pl-24 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-8 gap-x-8">
           {/* Brand */}

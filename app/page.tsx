@@ -26,7 +26,7 @@ export default async function Page() {
         <div className="block md:hidden">
           <HeroMobile />
         </div>
-        <div className="hidden md:block">
+        <div className="hidden md:block bg-black">
           <HeroSlider />
         </div>
       </div>
