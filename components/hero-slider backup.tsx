@@ -119,10 +119,48 @@ export default function HeroSection() {
               </Button>
             </div>
 
-            {/* Slider controls hidden */}
+            {/* Slider controls */}
+            <div className="hidden sm:flex items-center gap-3 md:gap-4 pt-6 md:pt-8">
+              <button
+                aria-label="Previous Slide"
+                onClick={goToPrev}
+                className="p-2 rounded-full bg-gray-200/90 hover:bg-gray-400 transition"
+              >
+                &#8592;
+              </button>
+              <div className="flex gap-2">
+                {slides.map((_, idx) => (
+                  <button
+                    key={idx}
+                    aria-label={`Go to slide ${idx + 1}`}
+                    onClick={() => goToSlide(idx)}
+                    className={`w-3 h-3 rounded-full transition ${
+                      current === idx ? "bg-[#1A73E8]" : "bg-gray-300"
+                    }`}
+                  />
+                ))}
+              </div>
+              <button
+                aria-label="Next Slide"
+                onClick={goToNext}
+                className="p-2 rounded-full bg-gray-200/90 hover:bg-gray-400 transition"
+              >
+                &#8594;
+              </button>
+            </div>
           </div>
 
-          {/* Right: hero image (per slide) hidden */}
+          {/* Right: hero image (per slide) */}
+          <div className="relative w-full h-[220px] sm:h-[320px] md:h-[400px] lg:h-[600px] flex items-end justify-center pt-6 md:pt-8">
+            <Image
+              src={slide.src}
+              alt={slide.alt}
+              fill
+              className="object-contain"
+              priority
+              sizes="(max-width: 768px) 90vw, (max-width: 1200px) 50vw, 500px"
+            />
+          </div>
         </div>
       </div>
     </section>
