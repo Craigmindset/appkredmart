@@ -10,6 +10,8 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { StepProgress } from "@/components/step-progress";
 import { useVerifyEmailOtp } from "@/lib/services/auth/use-verify-email-otp";
+import { useResendVerifyEmail } from "@/lib/services/auth/use-resend-verify-email";
+import { toast } from "sonner";
 
 export default function VerifyPage() {
   const [resendIsBlue, setResendIsBlue] = useState(true);
@@ -21,6 +23,7 @@ export default function VerifyPage() {
   const { setVerified } = useAuth();
   const router = useRouter();
   const { verifyOtp, loading } = useVerifyEmailOtp();
+  const { mutateAsync, isPending: resending } = useResendVerifyEmail();
 
   const onVerify = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,34 +102,40 @@ export default function VerifyPage() {
                           : "text-primary"
                       } ${resendPressed ? "opacity-60" : "opacity-100"}`}
                       style={{ padding: 0, background: "none", border: "none" }}
-                      onClick={() => {
+                      onClick={async () => {
                         setResendIsRed(true);
-                        if (resendRedTimeout.current)
-                          clearTimeout(resendRedTimeout.current);
-                        resendRedTimeout.current = setTimeout(
-                          () => setResendIsRed(false),
-                          5000
-                        );
+                        await mutateAsync()
+                          .then(() => {
+                            toast.success("Sent successfully");
+                          })
+                          .finally(() => {
+                            if (resendRedTimeout.current)
+                              clearTimeout(resendRedTimeout.current);
+                            resendRedTimeout.current = setTimeout(
+                              () => setResendIsRed(false),
+                              5000
+                            );
+                          });
                       }}
-                      onMouseDown={() => {
-                        setResendPressed(true);
-                        if (resendTimeout.current)
-                          clearTimeout(resendTimeout.current);
-                        resendTimeout.current = setTimeout(
-                          () => setResendPressed(false),
-                          200
-                        );
-                      }}
-                      onMouseUp={() => {
-                        setResendPressed(false);
-                        if (resendTimeout.current)
-                          clearTimeout(resendTimeout.current);
-                      }}
-                      onMouseLeave={() => {
-                        setResendPressed(false);
-                        if (resendTimeout.current)
-                          clearTimeout(resendTimeout.current);
-                      }}
+                      // onMouseDown={() => {
+                      //   setResendPressed(true);
+                      //   if (resendTimeout.current)
+                      //     clearTimeout(resendTimeout.current);
+                      //   resendTimeout.current = setTimeout(
+                      //     () => setResendPressed(false),
+                      //     200
+                      //   );
+                      // }}
+                      // onMouseUp={() => {
+                      //   setResendPressed(false);
+                      //   if (resendTimeout.current)
+                      //     clearTimeout(resendTimeout.current);
+                      // }}
+                      // onMouseLeave={() => {
+                      //   setResendPressed(false);
+                      //   if (resendTimeout.current)
+                      //     clearTimeout(resendTimeout.current);
+                      // }}
                     >
                       Resend
                     </button>

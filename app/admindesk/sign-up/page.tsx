@@ -184,15 +184,6 @@ export default function MerchantSignUpPage() {
       });
       setStep(4);
     });
-    // setVerifyingOtp(true);
-    // await new Promise((r) => setTimeout(r, 600));
-    // setVerifyingOtp(false);
-    // if (otp === DEMO_OTP) {
-    // } else {
-    //   toast.error("Incorrect OTP", {
-    //     description: "Use 111111 as the demo code.",
-    //   });
-    // }
   }
 
   // Step 4: password
