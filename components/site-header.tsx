@@ -213,7 +213,7 @@ function HeaderCore() {
   }, [term]);
 
   return (
-    <header className="sticky top-0 z-50 bg-[#d3e7f6]">
+    <header className="sticky top-0 z-50 bg-[#d3e7f6] border-b-2 border-[#d4af37]">
       <div className="container mx-auto px-4">
         {/* ---------------------------- Row 1: Top nav ---------------------------- */}
         <div className="flex h-16 md:h-20 items-center justify-between">
