@@ -325,9 +325,38 @@ function HeaderCore() {
               )}
             </div>
 
-            {/* desktop country */}
-            <div className="hidden md:block">
+            {/* desktop country & auth */}
+            <div className="hidden md:flex items-center gap-2">
               <CountrySelector />
+              {loading ? (
+                <Skeleton className="w-10 h-10" />
+              ) : !user ? (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => router.push("/sign-in")}
+                >
+                  <Lock className="h-4 w-4" />
+                  <span className="sr-only">Login</span>
+                </Button>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() =>
+                    router.push(
+                      user.role === "admin"
+                        ? "/admin/dashboard/overview"
+                        : user.role === "merchant"
+                        ? "/admindesk/dashboard/overview"
+                        : "/dashboard"
+                    )
+                  }
+                >
+                  <User className="h-4 w-4" />
+                  <span className="sr-only">Profile</span>
+                </Button>
+              )}
             </div>
 
             <Button

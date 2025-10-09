@@ -11,6 +11,9 @@ type GetProductsParams = {
   page?: number;
   brand?: string;
   deals?: boolean;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  color?: string;
 };
 
 export const getProducts = async (params?: GetProductsParams) => {
@@ -21,7 +24,7 @@ export const getProducts = async (params?: GetProductsParams) => {
 export const useInfiniteProducts = (
   params?: Omit<GetProductsParams, "offset">
 ) => {
-  const { limit = 20, category, page = 1, brand, search, deals } = params || {};
+  const { limit = 20, category, page = 1, brand, search, deals, sortBy, sortOrder, color } = params || {};
   const formattedParams = {
     limit,
     page,
@@ -29,6 +32,9 @@ export const useInfiniteProducts = (
     ...(brand ? { brand } : {}),
     ...(search ? { search } : {}),
     ...(deals ? { deals } : {}),
+    ...(sortBy ? { sortBy } : {}),
+    ...(sortOrder ? { sortOrder } : {}),
+    ...(color ? { color } : {}),
   };
 
   return useInfiniteQuery<ProductsResponseDto>({
@@ -41,6 +47,9 @@ export const useInfiniteProducts = (
         ...(brand ? { brand } : {}),
         ...(search ? { search } : {}),
         ...(deals ? { deals } : {}),
+        ...(sortBy ? { sortBy } : {}),
+        ...(sortOrder ? { sortOrder } : {}),
+        ...(color ? { color } : {}),
       };
       return getProducts(formattedParams);
     },

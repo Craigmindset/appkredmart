@@ -1,10 +1,11 @@
 "use client";
 
 import ProductsGrid from "@/components/products-grid";
+import ProductFilter from "@/components/product-filter";
 import StoreBanner from "@/components/StoreBanner";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 
 import { slugifyCategory } from "@/lib/categories";
 import { allCategories } from "@/lib/products";
@@ -39,18 +40,67 @@ export default function StorePage() {
   const searchParams = useSearchParams();
   const q = (searchParams?.get("search") || "").toString().trim();
 
-  const [brand, setBrand] = useState<string>("all");
-  const [onlyDeals, setOnlyDeals] = useState(false);
-  const [sort, setSort] = useState<"htl" | "lth" | "none">("none");
+  // Unified filter state for ProductFilter
+  const [filter, setFilter] = useState({
+    brand: "all",
+    price: "none",
+    color: "",
+    dealsOnly: false,
+  });
+
+  const handleFilterChange = useCallback(
+    (next: {
+      brand: string;
+      price: string;
+      color: string;
+      dealsOnly: boolean;
+    }) => {
+      setFilter(next);
+    },
+    []
+  );
+
+  // Map price filter to sortBy/sortOrder
+  let sortBy: string | undefined = undefined;
+  let sortOrder: "asc" | "desc" | undefined = undefined;
+  if (filter.price === "low-high") {
+    sortBy = "price";
+    sortOrder = "asc";
+  } else if (filter.price === "high-low") {
+    sortBy = "price";
+    sortOrder = "desc";
+  }
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteProducts({
-      ...(brand == "all" ? {} : { brand }),
       limit: 20,
       search: q,
+      brand: filter.brand === "all" ? undefined : filter.brand,
+      color: filter.color || undefined,
+      deals: filter.dealsOnly || undefined,
+      sortBy,
+      sortOrder,
     });
 
+  // Flatten products from all pages
   const products = data?.pages.flatMap((page) => page.data) ?? [];
+
+  // Client-side price sorting to match /store/categories
+  const sortedProducts = useMemo(() => {
+    if (!products.length) return products;
+    if (filter.price === "low-high") {
+      return [...products].sort(
+        (a, b) => Number(a.price ?? 0) - Number(b.price ?? 0)
+      );
+    }
+    if (filter.price === "high-low") {
+      return [...products].sort(
+        (a, b) => Number(b.price ?? 0) - Number(a.price ?? 0)
+      );
+    }
+    // treat 'none' as default
+    return products;
+  }, [products, filter.price]);
 
   return (
     <>
@@ -95,22 +145,35 @@ export default function StorePage() {
             <StoreBanner />
           </div>
         </div>
-      </section>
 
-      <div id="results">
-        <ProductsGrid
-          title={q ? `Search results for “${q}”` : "All Products"}
-          description={
-            q
-              ? undefined
-              : "Browse a curated selection of electronics, phones, audio and more."
-          }
-          fetchNextPage={fetchNextPage}
-          hasNextPage={hasNextPage}
-          isFetchingNextPage={isFetchingNextPage}
-          items={products}
-        />
-      </div>
+        {/* Product Filter above all products, sticky in context */}
+        <div className="w-full my-0 sticky top-20 z-30   py-14">
+          <div className="flex justify-center">
+            <ProductFilter
+              brand={filter.brand}
+              price={filter.price}
+              color={filter.color}
+              dealsOnly={filter.dealsOnly}
+              onChange={handleFilterChange}
+            />
+          </div>
+        </div>
+
+        <div id="results" className="-mt-10">
+          <ProductsGrid
+            title={q ? `Search results for “${q}”` : "All Products"}
+            description={
+              q
+                ? undefined
+                : "Browse a curated selection of electronics, phones, audio and more."
+            }
+            fetchNextPage={fetchNextPage}
+            hasNextPage={hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+            items={sortedProducts}
+          />
+        </div>
+      </section>
     </>
   );
 }
