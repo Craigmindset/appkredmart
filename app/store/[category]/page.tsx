@@ -1,7 +1,7 @@
 import { getQueryClient } from "@/lib/query-client";
 import { getProducts } from "@/lib/services/products/use-get-products";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import CategoryPage from "./page-cient";
+import CategoryPage from "./page-client";
 import { getCategoryFromSlug } from "@/lib/categories";
 
 const Page = async ({ params }: { params: Promise<{ category: string }> }) => {

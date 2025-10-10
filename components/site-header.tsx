@@ -45,6 +45,7 @@ import {
   Watch,
   Star,
   Search,
+  Crown,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -57,10 +58,12 @@ const categoryIcons: Record<string, React.ReactNode> = {
   Electronics: <Tv className="h-4 w-4 mr-2" />,
   Generators: <Zap className="h-4 w-4 mr-2" />,
   Accessories: <Plug className="h-4 w-4 mr-2" />,
-  "Home & Kitchen": <Utensils className="h-4 w-4 mr-2" />,
+  "Home & Kitchen": <Home className="h-4 w-4 mr-2" />,
   Lifestyle: <Heart className="h-4 w-4 mr-2" />,
   Watches: <Watch className="h-4 w-4 mr-2" />,
-  "Premium Devices": <Star className="h-4 w-4 mr-2" />,
+  "Premium Devices": <Crown className="h-4 w-4 mr-2" />,
+  "Beauty Products": <Heart className="h-4 w-4 mr-2" />,
+  Fashion: <Crown className="h-4 w-4 mr-2" />,
 };
 
 const MAIN_MENU = [

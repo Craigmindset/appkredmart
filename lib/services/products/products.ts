@@ -49,7 +49,7 @@ export interface ProductsQueryParams {
   search?: string;
   category?: string | null;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
   limit?: number;
   page?: number;
 }
@@ -61,12 +61,11 @@ class ProductsService {
   ): Promise<ProductsResponse> {
     const queryParams = new URLSearchParams();
 
-
-  if (params.search) queryParams.append("search", params.search);
-  if (params.sortBy) queryParams.append("sortBy", params.sortBy);
-  if (params.sortOrder) queryParams.append("sortOrder", params.sortOrder);
-  if (params.limit) queryParams.append("pageSize", params.limit.toString());
-  if (params.page) queryParams.append("page", params.page.toString());
+    if (params.search) queryParams.append("search", params.search);
+    if (params.sortBy) queryParams.append("sortBy", params.sortBy);
+    if (params.sortOrder) queryParams.append("sortOrder", params.sortOrder);
+    if (params.limit) queryParams.append("pageSize", params.limit.toString());
+    if (params.page) queryParams.append("page", params.page.toString());
 
     const fullUrl = `${this.baseUrl}?${queryParams.toString()}`;
     const response = await backendAxios.get(fullUrl);

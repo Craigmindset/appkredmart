@@ -19,47 +19,25 @@ const HeroMobile: React.FC = () => {
   const router = useRouter();
   return (
     <section
-      className="
-        md:hidden relative overflow-hidden
-        bg-[#0F3D73]  /* soft blue like your mock */
-        text-center
-        px-5 pt-10 pb-4
-        min-h-[92vh] flex flex-col
-      "
+      className="md:hidden relative overflow-hidden bg-[#0F3D73] text-center px-5 pt-10 pb-4 min-h-[92vh] flex flex-col"
       aria-label="KredMart wallet credit hero"
     >
-      {/* Dotted world pattern */}
-      <svg
-        className="pointer-events-none absolute inset-0 opacity-40"
-        width="100%"
-        height="100%"
-        viewBox="0 0 360 740"
-        aria-hidden="true"
-      >
-        <defs>
-          <pattern
-            id="dots"
-            x="0"
-            y="0"
-            width="8"
-            height="8"
-            patternUnits="userSpaceOnUse"
-          >
-            <circle cx="1" cy="1" r="1" fill="#6CC2D1" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#dots)" />
-        <rect
-          width="100%"
-          height="45%"
-          y="0"
-          fill="url(#dots)"
-          opacity="0.35"
-        />
-      </svg>
+      {/* Background VIDEO */}
+      <video
+        className="absolute inset-0 h-full w-full object-cover z-0"
+        src="https://hlfwfvupabrc8fwr.public.blob.vercel-storage.com/Kredmart-video.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+      />
+      {/* Dark/brand overlay to keep text readable */}
+      <div className="absolute inset-0 z-[1] bg-black/40" />
+      {/* Dotted world pattern hidden */}
 
       {/* Headline */}
-      <div className="relative z-10 flex flex-col items-center justify-center w-full mt-10">
+      <div className="relative z-10 flex flex-col items-center justify-center w-full mt-10 z-[3]">
         <Image
           src="/kredmart-text.png"
           alt="Smart Shopping Wallet Credit"
@@ -73,7 +51,7 @@ const HeroMobile: React.FC = () => {
           and shop top products with the best deal.
         </p>
       </div>
-      <div className="flex flex-row items-center justify-center gap-3 mt-8 mb-2 z-30">
+      <div className="flex flex-row items-center justify-center gap-3 mt-8 mb-2 z-30 z-[3]">
         <button
           type="button"
           className="px-8 py-2 rounded-full bg-blue-700 text-white font-semibold text-sm shadow hover:bg-blue-900 transition-colors active:opacity-70"
@@ -90,19 +68,7 @@ const HeroMobile: React.FC = () => {
         </button>
       </div>
       {/* Phone image overflowing below bottom */}
-      <div className="relative z-10 flex-1 flex items-end justify-center pb-0 ">
-        <div className="absolute left-1/2 bottom-[-60px] -translate-x-1/2 w-[96%] max-w-[360px]">
-          <Image
-            src={PHONE_IMG}
-            alt="KredMart mobile app showing wallet credit shopping screen"
-            width={720}
-            height={1560}
-            priority
-            className="-ml-12"
-            style={{ marginTop: 0 }}
-          />
-        </div>
-      </div>
+      {/* Phone image hidden for this version */}
     </section>
   );
 };

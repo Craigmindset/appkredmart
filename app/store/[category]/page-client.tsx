@@ -110,7 +110,7 @@ const CATEGORY_BANNERS = {
     bgColor: "bg-gradient-to-r from-indigo-600 to-blue-600",
     textColor: "text-white",
   },
-  "home-kitchen": {
+  "home-&-kitchen": {
     title: "Home & Kitchen",
     subtitle: "Appliances and essentials for modern living",
     image: "/placeholder.svg?height=340&width=600",

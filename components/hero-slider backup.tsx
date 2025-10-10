@@ -4,9 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Poppins } from "next/font/google";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/store/auth-store";
-
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "600", "700", "800"],
@@ -34,13 +31,16 @@ const slides = [
     button1: { text: "Browse Products", href: "/store" },
     button2: { text: "Learn More", href: "/about" },
   },
+  // Only two slides now
 ];
+
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/store/auth-store";
 
 export default function HeroSection() {
   const [current, setCurrent] = useState(0);
   const slideCount = slides.length;
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
@@ -58,32 +58,25 @@ export default function HeroSection() {
 
   const router = useRouter();
   const { user } = useAuth();
+
   const slide = slides[current];
 
   return (
     <section className="relative bg-[#0F3D73] min-h-[400px] md:min-h-[600px] lg:min-h-[700px] overflow-hidden">
-      {/* Background VIDEO */}
-      <video
-        ref={videoRef}
-        className="absolute inset-0 h-full w-full object-cover z-0"
-        src="https://hlfwfvupabrc8fwr.public.blob.vercel-storage.com/0_Woman_Online_Shopping_1280x720.mp4"
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        // poster optional: provides a still on slow networks
-        // poster="/background-img.jpg"
+      {/* Background image with opacity */}
+      <div
+        className="absolute inset-0 w-full h-full z-0"
+        style={{
+          backgroundImage: `url('/background-img.jpg')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          opacity: 0.05,
+          transition: "background-image 0.5s ease-in-out",
+        }}
       />
-      {/* Dark/brand overlay to keep text readable */}
-      <div className="absolute inset-0 z-[1] bg-black/40 md:bg-black/35" />
-      {/* Optional subtle gradient from left for copy legibility */}
-      <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-black/35 via-black/20 to-transparent" />
-
-      {/* Foreground content */}
-      <div className="relative z-10 max-w-[1100px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+      <div className="relative max-w-[1100px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center h-full min-h-[300px] md:min-h-[500px] lg:min-h-[600px]">
-          {/* Left: copy */}
+          {/* Left Column - Content */}
           <div className="space-y-4 md:space-y-6 flex flex-col justify-center pt-2 md:pt-4 px-0 md:px-4">
             <div className="space-y-1">
               <h1
@@ -100,12 +93,11 @@ export default function HeroSection() {
             <p className="text-xs sm:text-sm md:text-base text-[#F4F6F8] leading-normal max-w-lg">
               {slide.description}
             </p>
-
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 md:pt-4 w-full">
               <Button
                 size="lg"
                 className="bg-[#1A73E8] hover:bg-gray-800 shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200 w-full sm:w-auto"
-                onClick={() => router.push(slides[0].button1.href)}
+                onClick={() => router.push("/sign-up")}
               >
                 {slides[0].button1.text}
               </Button>
@@ -118,13 +110,12 @@ export default function HeroSection() {
                 {slides[0].button2.text}
               </Button>
             </div>
-
-            {/* Slider controls */}
+            {/* Slider Controls - hidden on mobile */}
             <div className="hidden sm:flex items-center gap-3 md:gap-4 pt-6 md:pt-8">
               <button
                 aria-label="Previous Slide"
                 onClick={goToPrev}
-                className="p-2 rounded-full bg-gray-200/90 hover:bg-gray-400 transition"
+                className="p-2 rounded-full bg-gray-200 hover:bg-gray-400 transition"
               >
                 &#8592;
               </button>
@@ -134,23 +125,22 @@ export default function HeroSection() {
                     key={idx}
                     aria-label={`Go to slide ${idx + 1}`}
                     onClick={() => goToSlide(idx)}
-                    className={`w-3 h-3 rounded-full transition ${
+                    className={`w-3 h-3 rounded-full ${
                       current === idx ? "bg-[#1A73E8]" : "bg-gray-300"
-                    }`}
+                    } transition`}
                   />
                 ))}
               </div>
               <button
                 aria-label="Next Slide"
                 onClick={goToNext}
-                className="p-2 rounded-full bg-gray-200/90 hover:bg-gray-400 transition"
+                className="p-2 rounded-full bg-gray-200 hover:bg-gray-400 transition"
               >
                 &#8594;
               </button>
             </div>
           </div>
-
-          {/* Right: hero image (per slide) */}
+          {/* Right Column - Image aligned bottom */}
           <div className="relative w-full h-[220px] sm:h-[320px] md:h-[400px] lg:h-[600px] flex items-end justify-center pt-6 md:pt-8">
             <Image
               src={slide.src}

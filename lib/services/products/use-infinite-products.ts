@@ -12,7 +12,7 @@ type GetProductsParams = {
   brand?: string;
   deals?: boolean;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
   color?: string;
 };
 
@@ -24,7 +24,17 @@ export const getProducts = async (params?: GetProductsParams) => {
 export const useInfiniteProducts = (
   params?: Omit<GetProductsParams, "offset">
 ) => {
-  const { limit = 20, category, page = 1, brand, search, deals, sortBy, sortOrder, color } = params || {};
+  const {
+    limit = 20,
+    category,
+    page = 1,
+    brand,
+    search,
+    deals,
+    sortBy,
+    sortOrder,
+    color,
+  } = params || {};
   const formattedParams = {
     limit,
     page,

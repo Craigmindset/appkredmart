@@ -40,10 +40,9 @@ export default function StorePage() {
   const searchParams = useSearchParams();
   const q = (searchParams?.get("search") || "").toString().trim();
 
-  // Unified filter state for ProductFilter
   const [filter, setFilter] = useState({
-    brand: "all",
-    price: "none",
+    brand: "",
+    price: "",
     color: "",
     dealsOnly: false,
   });
@@ -60,7 +59,6 @@ export default function StorePage() {
     []
   );
 
-  // Map price filter to sortBy/sortOrder
   let sortBy: string | undefined = undefined;
   let sortOrder: "asc" | "desc" | undefined = undefined;
   if (filter.price === "low-high") {
@@ -75,17 +73,15 @@ export default function StorePage() {
     useInfiniteProducts({
       limit: 20,
       search: q,
-      brand: filter.brand === "all" ? undefined : filter.brand,
+      brand: filter.brand || undefined,
       color: filter.color || undefined,
       deals: filter.dealsOnly || undefined,
       sortBy,
       sortOrder,
     });
 
-  // Flatten products from all pages
   const products = data?.pages.flatMap((page) => page.data) ?? [];
 
-  // Client-side price sorting to match /store/categories
   const sortedProducts = useMemo(() => {
     if (!products.length) return products;
     if (filter.price === "low-high") {
@@ -98,13 +94,12 @@ export default function StorePage() {
         (a, b) => Number(b.price ?? 0) - Number(a.price ?? 0)
       );
     }
-    // treat 'none' as default
     return products;
   }, [products, filter.price]);
 
   return (
     <>
-      <section className="w-full px-1 sm:px-4 pt-6 ">
+      <section className="w-full px-1 sm:px-4 pt-6">
         {/* Top: Categories (20%), StoreBanner (80%) */}
         <div className="grid gap-2 md:grid-cols-[20%_80%] items-stretch">
           <aside className="hidden md:block md:col-span-1 rounded-lg bg-blue-100 p-4 h-[400px]">
@@ -141,13 +136,15 @@ export default function StorePage() {
             </ul>
           </aside>
 
-          <div className="md:col-span-1 rounded-lg border bg-card h-[600px] md:h-[400px]">
+          {/* ⬇️ Mobile: auto height; Desktop: keep 400px */}
+          <div className="md:col-span-1 rounded-lg border bg-card h-auto md:h-[400px]">
             <StoreBanner />
           </div>
         </div>
 
         {/* Product Filter above all products, sticky in context */}
-        <div className="w-full my-0 sticky top-20 z-30   py-14">
+        {/* ⬇️ Less padding on mobile to avoid big gaps */}
+        <div className="w-full my-0 sticky top-20 z-30 py-3 md:py-14">
           <div className="flex justify-center">
             <ProductFilter
               brand={filter.brand}
