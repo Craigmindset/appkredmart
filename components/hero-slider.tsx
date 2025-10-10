@@ -17,10 +17,10 @@ const slides = [
   {
     src: "https://hlfwfvupabrc8fwr.public.blob.vercel-storage.com/shopella-hero-img.png",
     alt: "Shopella Hero Section",
-    headline: "Shop Smarter",
-    subheadline: "Access Loans",
+    headline: "Shop Freely",
+    subheadline: "Pay Flexibly",
     description:
-      "Welcome to shopella! Your credit-powered e-commerce platform. Access instant wallet loans and shop top products with the best deal.",
+      " your credit-powered marketplace where you can shop top products, unlock wallet loans instantly, and get the best deals all in one place..",
     button1: { text: "Get Loans", href: "/sign-up" },
     button2: { text: "Visit Store", href: "/store" },
   },
@@ -30,7 +30,7 @@ const slides = [
     headline: "Wallet Credit!",
     subheadline: "When you need it most.",
     description:
-      "Get your wallet backed up loan to shop your favourite brand at Shopella. Access to over N500,000 shopping credit to make your purchase and pay flexibly.",
+      "Get instant shopping power with Kredmart Wallet Credit. Access flexible shopping credit to buy your favorite products and pay at your own pace.",
     button1: { text: "Browse Products", href: "/store" },
     button2: { text: "Learn More", href: "/about" },
   },

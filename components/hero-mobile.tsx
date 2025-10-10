@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Poppins } from "next/font/google";
@@ -15,8 +15,46 @@ const poppins = Poppins({
 const PHONE_IMG =
   "https://hlfwfvupabrc8fwr.public.blob.vercel-storage.com/kredmart-mobile.png";
 
+// Use the same slides array as hero-slider
+const slides = [
+  {
+    src: "https://hlfwfvupabrc8fwr.public.blob.vercel-storage.com/shopella-hero-img.png",
+    alt: "Shopella Hero Section",
+    headline: "Shop Freely",
+    subheadline: "Pay Flexibly",
+    description:
+      " your credit-powered marketplace where you can shop top products, unlock wallet loans instantly, and get the best deals all in one place..",
+    button1: { text: "Get Loans", href: "/sign-up" },
+    button2: { text: "Visit Store", href: "/store" },
+  },
+  {
+    src: "/Shopella-hero-slider.png",
+    alt: "Shopella Hero Slider",
+    headline: "Wallet Credit!",
+    subheadline: "When you need it most.",
+    description:
+      "Get instant shopping power with Kredmart Wallet Credit. Access flexible shopping credit to buy your favorite products and pay at your own pace.",
+    button1: { text: "Browse Products", href: "/store" },
+    button2: { text: "Learn More", href: "/about" },
+  },
+];
+
 const HeroMobile: React.FC = () => {
   const router = useRouter();
+  const [current, setCurrent] = useState(0);
+  const slideCount = slides.length;
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % slideCount);
+    }, 8000);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [slideCount]);
+
+  const slide = slides[current];
   return (
     <section
       className="md:hidden relative overflow-hidden bg-[#0F3D73] text-center px-5 pt-10 pb-4 min-h-[92vh] flex flex-col"
@@ -37,34 +75,34 @@ const HeroMobile: React.FC = () => {
       {/* Dotted world pattern hidden */}
 
       {/* Headline */}
-      <div className="relative z-10 flex flex-col items-center justify-center w-full mt-10 z-[3]">
-        <Image
-          src="/kredmart-text.png"
-          alt="Smart Shopping Wallet Credit"
-          width={400}
-          height={120}
-          className="mx-auto w-full max-w-[420px] h-auto"
-          priority
-        />
-        <p className="mt-2 text-sm text-[#ffffff]/80">
-          Your credit-powered e-commerce platform. Access instant wallet loans
-          and shop top products with the best deal.
+      <div className="relative z-10 flex flex-col items-center justify-center w-full mt-10 ">
+        <h1
+          className={`${poppins.className} text-5xl sm:text-6xl md:text-7xl font-extrabold text-white mb-1 drop-shadow-lg leading-tight break-words max-w-full tracking-tighter`}
+        >
+          {slide.headline}
+        </h1>
+        <h2 className="text-xl font-semibold text-white mb-2 drop-shadow">
+          {slide.subheadline}
+        </h2>
+        <p className="mt-2 text-sm text-[#ffffff]/80 max-w-md mx-auto">
+          {slide.description}
         </p>
       </div>
+      {/* Always show Get Loans and Visit Store buttons, regardless of slide */}
       <div className="flex flex-row items-center justify-center gap-3 mt-8 mb-2 z-30 z-[3]">
         <button
           type="button"
           className="px-8 py-2 rounded-full bg-blue-700 text-white font-semibold text-sm shadow hover:bg-blue-900 transition-colors active:opacity-70"
-          onClick={() => router.push("/sign-up")}
+          onClick={() => router.push(slides[0].button1.href)}
         >
-          Get Loans
+          {slides[0].button1.text}
         </button>
         <button
           type="button"
           className="px-8 py-2 rounded-full bg-gray-200 text-blue-900 border border-blue-900 font-semibold text-sm shadow hover:bg-blue-100 transition-colors active:opacity-70"
-          onClick={() => router.push("/store")}
+          onClick={() => router.push(slides[0].button2.href)}
         >
-          Visit Store
+          {slides[0].button2.text}
         </button>
       </div>
       {/* Phone image overflowing below bottom */}
