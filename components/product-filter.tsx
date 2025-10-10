@@ -92,22 +92,28 @@ export default function ProductFilter({
     <div className="w-full bg-black/5 py-0">
       {/* container */}
       <div
-        className="
-          w-screen max-w-none flex flex-col gap-6 px-4 py-0 bg-[#d3e7f6]
-          md:flex-row md:flex-wrap md:items-center md:gap-x-10 md:gap-y-3 md:px-4 md:py-3 border-[#0F3D73] border-b-2
-          relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]
-        "
+        className={`
+          /* Mobile: rounded card centered with tight spacing */
+          mx-auto max-w-[960px] w-[92%] rounded-2xl bg-[#d3e7f6] px-4 py-3
+          grid grid-cols-2 gap-x-3 gap-y-3
+          border-[#0F3D73] border
+          /* Desktop: keep your previous full-bleed & layout */
+          md:w-screen md:max-w-none md:rounded-none md:bg-[#d3e7f6]
+          md:flex md:flex-row md:flex-wrap md:items-center
+          md:gap-x-10 md:gap-y-3 md:px-4 md:py-3 md:border-0
+          md:relative md:left-1/2 md:right-1/2 md:-ml-[50vw] md:-mr-[50vw]
+        `}
       >
-        {/* gold tag */}
+        {/* gold tag (desktop only) */}
         <div className="hidden md:flex h-10 shrink-0 items-center rounded-r-xl bg-[#d4af37] px-8 py-2 text-lg font-semibold text-white">
           Filter
         </div>
 
         {/* BRAND */}
-        <div className="min-w-0 flex w-full flex-col md:w-auto md:flex-row md:items-center md:gap-3">
+        <div className="col-span-1 min-w-0 flex flex-col md:w-auto md:flex-row md:items-center md:gap-3">
           <Label
             htmlFor="brand-select"
-            className="mb-1 text-sm font-medium text-[#2b0f0f] md:mb-0"
+            className="mb-1 text-sm font-semibold text-[#2b0f0f] md:mb-0"
             style={{ fontFamily: "sans-serif" }}
           >
             Brand
@@ -116,14 +122,14 @@ export default function ProductFilter({
             <SelectTrigger
               id="brand-select"
               className="
-                h-8 w-full md:max-w-[440px] rounded-full border border-black/15 pl-8 pr-8 text-xs
-                focus:ring-0 focus:ring-offset-0
+                h-8 w-full md:max-w-[440px] rounded-full border border-black/15
+                bg-white pl-8 pr-8 text-xs focus:ring-0 focus:ring-offset-0
               "
             >
-              <SelectValue placeholder="All brands" />
+              <SelectValue placeholder="all brands" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All brands</SelectItem>
+              <SelectItem value="all">all brands</SelectItem>
               {BRANDS.map((b) => (
                 <SelectItem key={b} value={b}>
                   {b}
@@ -134,20 +140,20 @@ export default function ProductFilter({
         </div>
 
         {/* PRICING */}
-        <div className="min-w-0 flex w-full flex-col md:w-auto md:flex-row md:items-center md:gap-3">
+        <div className="col-span-1 min-w-0 flex flex-col md:w-auto md:flex-row md:items-center md:gap-3">
           <Label
             htmlFor="price-select"
-            className="mb-1 text-sm font-medium text-[#2b0f0f] md:mb-0"
+            className="mb-1 text-sm font-semibold text-[#2b0f0f] md:mb-0"
             style={{ fontFamily: "sans-serif" }}
           >
-            Pricing
+            Price
           </Label>
           <Select value={price} onValueChange={(v) => handleChange("price", v)}>
             <SelectTrigger
               id="price-select"
               className="
-                h-8 w-full md:max-w-[440px] rounded-full border border-black/15 pl-8 pr-8 text-xs
-                focus:ring-0 focus:ring-offset-0
+                h-8 w-full md:max-w-[440px] rounded-full border border-black/15
+                bg-white pl-8 pr-8 text-xs focus:ring-0 focus:ring-offset-0
               "
             >
               <SelectValue placeholder="Default" />
@@ -162,11 +168,11 @@ export default function ProductFilter({
 
         {/* COLOR */}
         <div
-          className="min-w-0 flex w-full flex-col md:w-auto md:flex-row md:items-center md:gap-3"
+          className="col-span-1 min-w-0 flex flex-col md:w-auto md:flex-row md:items-center md:gap-3"
           ref={colorRef}
         >
           <span
-            className="mb-1 text-sm font-medium text-[#2b0f0f] md:mb-0"
+            className="mb-1 text-sm font-semibold text-[#2b0f0f] md:mb-0"
             style={{ fontFamily: "sans-serif" }}
           >
             Color
@@ -177,8 +183,8 @@ export default function ProductFilter({
             aria-expanded={openColors}
             onClick={() => setOpenColors((o) => !o)}
             className="
-              relative h-8 w-full md:max-w-[440px] rounded-full border border-black/15 bg-white pl-8 pr-8 text-left text-xs text-gray-900
-              focus:outline-none
+              relative h-8 w-full md:max-w-[440px] rounded-full border border-black/15
+              bg-white pl-8 pr-8 text-left text-xs text-gray-900 focus:outline-none
             "
           >
             {color || "Default"}
@@ -199,7 +205,8 @@ export default function ProductFilter({
             <div
               role="listbox"
               className="
-                absolute left-1/2 top-[125%] z-50 w-[min(94vw,600px)] -translate-x-1/2 rounded-full bg-[#E6E7EA] px-3 py-2 shadow-md ring-1 ring-black/10
+                absolute left-1/2 top-[125%] z-50 w-[min(94vw,600px)] -translate-x-1/2 rounded-full
+                bg-[#E6E7EA] px-3 py-2 shadow-md ring-1 ring-black/10
                 md:left-auto md:right-auto md:translate-x-0 md:max-w-[480px]
               "
             >
@@ -249,10 +256,10 @@ export default function ProductFilter({
         </div>
 
         {/* DEALS + RESET */}
-        <div className="flex w-full items-center justify-between md:ml-auto md:w-auto md:justify-start md:gap-6">
+        <div className="col-span-1 flex items-center justify-between md:ml-auto md:w-auto md:justify-start md:gap-6">
           <div className="flex items-center gap-3">
             <span className="text-sm font-semibold text-[#2b0f0f]">
-              Deals Only
+              Deals only
             </span>
             <Switch
               id="deals-switch"
@@ -261,13 +268,16 @@ export default function ProductFilter({
               className="h-6 w-11 border-0 data-[state=unchecked]:bg-gray-300 data-[state=checked]:bg-[#B8C2CF] focus-visible:ring-2 focus-visible:ring-blue-500"
             />
           </div>
+        </div>
 
+        {/* Reset spans full width on mobile, right-aligned */}
+        <div className="col-span-2 flex justify-end md:ml-0 md:w-auto">
           <button
             type="button"
             onClick={reset}
-            className="ml-4 mr-4 md:mr-8 text-sm font-semibold text-[#EB3B3B] hover:underline"
+            className="text-sm font-semibold text-[#EB3B3B] hover:underline"
           >
-            Reset Filters
+            Reset Filter
           </button>
         </div>
       </div>
