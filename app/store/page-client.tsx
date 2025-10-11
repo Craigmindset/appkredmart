@@ -167,6 +167,8 @@ export default function StorePage() {
             fetchNextPage={fetchNextPage}
             hasNextPage={hasNextPage}
             isFetchingNextPage={isFetchingNextPage}
+            isLoading={data === undefined}
+            isFetching={data === undefined}
             items={sortedProducts}
           />
         </div>

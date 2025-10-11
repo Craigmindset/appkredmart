@@ -455,8 +455,32 @@ function HeaderCore() {
                     onBlur={() =>
                       setTimeout(() => setShowSuggestions(false), 100)
                     }
-                    className="h-10 w-full bg-transparent px-4 text-[15px] text-[#123] placeholder:text-[#6b7a8b] focus:outline-none"
+                    className="h-10 w-full bg-transparent px-4 pr-10 text-[15px] text-[#123] placeholder:text-[#6b7a8b] focus:outline-none"
                   />
+                  {term && (
+                    <button
+                      type="button"
+                      aria-label="Clear search"
+                      onClick={() => setTerm("")}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-gray-100 text-gray-400 focus:outline-none"
+                      tabIndex={0}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  )}
                   {showSuggestions && (
                     <ul className="absolute left-0 right-0 z-50 mt-1 max-h-56 overflow-y-auto rounded-lg border border-gray-200 bg-white text-sm shadow-lg">
                       {suggestions.map((s, i) => (

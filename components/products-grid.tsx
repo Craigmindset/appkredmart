@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import ProductCard from "./product-card";
+import Spinner from "@/components/ui/spinner";
 
 export default function ProductsGrid({
   title,
@@ -10,6 +11,8 @@ export default function ProductsGrid({
   hasNextPage,
   fetchNextPage,
   showDealBadge = false,
+  isLoading = false,
+  isFetching = false,
 }: {
   title?: string;
   description?: string;
@@ -17,6 +20,8 @@ export default function ProductsGrid({
   items: any[];
   hasNextPage?: boolean;
   isFetchingNextPage?: boolean;
+  isLoading?: boolean;
+  isFetching?: boolean;
   showDealBadge?: boolean;
 }) {
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -60,27 +65,40 @@ export default function ProductsGrid({
           )}
         </div>
       )}
-      {/* Keep generic grid for shared usage; category page uses its own 3/5 layout */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {items.map((p) => (
-          <ProductCard key={p.id} product={p} showDealBadge={showDealBadge} />
-        ))}
-      </div>
 
-      {/* Sentinel for infinite scroll */}
-      {fetchNextPage && (
-        <div
-          ref={loadMoreRef}
-          className="h-10 mt-6 flex items-center justify-center"
-        >
-          {isFetchingNextPage ? (
-            <span>Loading more…</span>
-          ) : hasNextPage ? (
-            <span>Scroll to load more</span>
-          ) : (
-            <span>No more products</span>
-          )}
+      {/* Spinner while searching/loading */}
+      {isLoading || isFetching ? (
+        <div className="flex flex-col items-center justify-center py-16">
+          <Spinner className="h-10 w-10 mb-4" />
+          <span className="text-gray-500 text-base">Searching…</span>
         </div>
+      ) : items.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16">
+          <span className="text-gray-500 text-base">Product not found</span>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {items.map((p) => (
+              <ProductCard key={p.id} product={p} showDealBadge={showDealBadge} />
+            ))}
+          </div>
+          {/* Sentinel for infinite scroll */}
+          {fetchNextPage && (
+            <div
+              ref={loadMoreRef}
+              className="h-10 mt-6 flex items-center justify-center"
+            >
+              {isFetchingNextPage ? (
+                <span>Loading more…</span>
+              ) : hasNextPage ? (
+                <span>Scroll to load more</span>
+              ) : (
+                <span>No more products</span>
+              )}
+            </div>
+          )}
+        </>
       )}
     </section>
   );
