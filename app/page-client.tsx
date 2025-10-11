@@ -54,17 +54,35 @@ export const ProductDeals = () => {
 
   return (
     <section className="container mx-auto px-6 md:px-12 py-10 bg-[#F4F6F8]">
+      {/* Responsive row: on mobile, h2 and link are in a row; on desktop, h2 and link are in separate flex children */}
       <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between md:text-left items-center justify-center text-center gap-2">
-        <div>
+        {/* Mobile: h2 and link in a row */}
+        <div className="w-full flex flex-row items-center justify-between md:hidden">
           <h2
-            className="text-3xl md:text-4xl font-bold tracking-tight mb-2"
+            className="text-3xl font-bold tracking-tight mb-2"
+            style={{ fontFamily: "Poppins, sans-serif" }}
+          >
+            <span className="text-black">Today's</span>
+            <span className="text-[#D4AF37]"> Deals</span>
+          </h2>
+          <a
+            href="/deals"
+            className="inline-block ml-2 text-blue-700 font-medium text-xs underline underline-offset-4 hover:text-blue-900 transition-colors"
+          >
+            View Products
+          </a>
+        </div>
+        {/* Desktop: h2 and link in separate flex children */}
+        <div className="hidden md:block">
+          <h2
+            className="text-4xl font-bold tracking-tight mb-2"
             style={{ fontFamily: "Poppins, sans-serif" }}
           >
             <span className="text-black">Today's</span>
             <span className="text-[#D4AF37]"> Deals</span>
           </h2>
           <p
-            className="text-sm md:text-base text-muted-foreground max-w-xl"
+            className="text-base text-muted-foreground max-w-xl"
             style={{ fontFamily: "sans-serif" }}
           >
             Shopping experience that gives you the flexibility to shop more
@@ -72,15 +90,16 @@ export const ProductDeals = () => {
         </div>
         <a
           href="/deals"
-          className="inline-block mt-2 md:mt-0 text-blue-700 font-medium text-sm underline underline-offset-4 hover:text-blue-900 transition-colors"
+          className="hidden md:inline-block mt-2 md:mt-0 text-blue-700 font-medium text-sm underline underline-offset-4 hover:text-blue-900 transition-colors"
         >
-          View All Products
+          View Products
         </a>
       </div>
 
       {/* MOBILE: 3-per-view horizontal scroll-snap */}
       <div className="md:hidden">
-        <div className="flex items-center justify-between mb-2">
+        {/* Navigation buttons hidden on mobile, visible only on md+ */}
+        <div className="hidden md:flex items-center justify-between mb-2">
           <button
             type="button"
             onClick={() => scrollMobile("prev")}
