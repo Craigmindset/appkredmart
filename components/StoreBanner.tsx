@@ -45,7 +45,7 @@ export default function StoreBanner() {
   return (
     <div className="flex flex-col md:flex-row w-full max-w-7xl mx-auto gap-4 px-2 md:px-2 md:h-[400px] mb-0 pb-0">
       {/* LEFT: MAIN SLIDER (desktop unchanged) */}
-      <div className="relative w-full md:w-[68%] rounded-2xl overflow-hidden bg-[#0b101a] min-h-[220px] md:min-h-[360px]">
+      <div className="relative w-full md:w-[68%] rounded-2xl overflow-hidden bg-[#0b101a] min-h-[220px] md:min-h-[350px]">
         <Image
           src={sliderImages[current].src}
           alt={sliderImages[current].alt}
@@ -121,13 +121,25 @@ export default function StoreBanner() {
           />
         </div>
 
-        {/* Promo Card 2 */}
-        <div className="relative rounded-xl overflow-hidden bg-[#f59e0b] aspect-[1/1.05] md:min-h-[180px] md:aspect-auto">
+        {/* Promo Card 2: GIF on mobile, static image on desktop */}
+        {/* Mobile only GIF */}
+        <div className="relative rounded-xl overflow-hidden bg-[#f59e0b] aspect-[1/1.05] md:min-h-[180px] md:aspect-auto block md:hidden">
           <Image
-            src={promoImages[promoIndex].src}
-            alt={promoImages[promoIndex].alt}
+            src="/StoreBanner/slide-samsung.gif"
+            alt="Samsung Promo"
             fill
             className="object-cover"
+            sizes="(max-width:768px) 50vw, 32vw"
+            priority={false}
+          />
+        </div>
+        {/* Desktop/Tablet only static image, top center */}
+        <div className="relative hidden md:flex md:justify-center md:items-start rounded-xl overflow-hidden bg-[#f59e0b] aspect-[1/1.05] md:min-h-[190px] md:aspect-auto">
+          <Image
+            src="/StoreBanner/new-samsung.gif"
+            alt="Samsung Promo"
+            fill
+            className="object-cover md:object-top"
             sizes="(max-width:768px) 50vw, 32vw"
             priority={false}
           />
