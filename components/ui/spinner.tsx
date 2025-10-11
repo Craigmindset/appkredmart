@@ -1,6 +1,10 @@
 import React from "react";
 
-export default function Spinner({ className = "h-6 w-6" }: { className?: string }) {
+export default function Spinner({
+  className = "h-6 w-6",
+}: {
+  className?: string;
+}) {
   return (
     <svg
       className={`animate-spin text-gray-400 ${className}`}
