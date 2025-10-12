@@ -72,6 +72,7 @@ export default function ProductFilter({
   onChange,
 }: ProductFilterProps) {
   const [openColors, setOpenColors] = useState(false);
+  const [mobileHidden, setMobileHidden] = useState(true);
   const colorRef = useRef<HTMLDivElement>(null);
 
   const emit = (next: FilterState) => onChange?.(next);
@@ -89,19 +90,31 @@ export default function ProductFilter({
   }, []);
 
   return (
-    <div className="w-full bg-black/5 py-0">
+    <div className="w-full bg-[#F4F6F8] py-0 relative b">
+      {/* Mobile: Open Filter button at top, above product list */}
+      {mobileHidden && (
+        <div className="md:hidden">
+          <button
+            type="button"
+            className="fixed right-4 top-22 z-50 px-5 py-2 rounded-full text-sm bg-[#0F3D73] text-white font-semibold shadow-lg"
+            onClick={() => setMobileHidden(false)}
+          >
+            Open Filter
+          </button>
+        </div>
+      )}
       {/* container */}
+      {/* Mobile: show/hide filter controls */}
       <div
         className={`
-          /* Mobile: rounded card centered with tight spacing */
           mx-auto max-w-[960px] w-[92%] rounded-2xl bg-[#d3e7f6] px-4 py-3
           grid grid-cols-2 gap-x-3 gap-y-3
           border-[#0F3D73] border
-          /* Desktop: keep your previous full-bleed & layout */
           md:w-screen md:max-w-none md:rounded-none md:bg-[#d3e7f6]
           md:flex md:flex-row md:flex-wrap md:items-center
           md:gap-x-10 md:gap-y-3 md:px-4 md:py-3 md:border-0
           md:relative md:left-1/2 md:right-1/2 md:-ml-[50vw] md:-mr-[50vw]
+          ${mobileHidden ? "hidden md:flex" : ""}
         `}
       >
         {/* gold tag (desktop only) */}
@@ -271,7 +284,7 @@ export default function ProductFilter({
         </div>
 
         {/* Reset spans full width on mobile, right-aligned */}
-        <div className="col-span-2 flex justify-end md:ml-0 md:w-auto">
+        <div className="col-span-2 flex justify-end gap-4 md:ml-0 md:w-auto">
           <button
             type="button"
             onClick={reset}
@@ -279,8 +292,19 @@ export default function ProductFilter({
           >
             Reset Filter
           </button>
+          {/* Mobile: Hide button on same row */}
+          {!mobileHidden && (
+            <button
+              type="button"
+              className="text-xs text-blue-700 underline underline-offset-2 w-fit md:hidden"
+              onClick={() => setMobileHidden(true)}
+            >
+              Hide
+            </button>
+          )}
         </div>
       </div>
+      {/* Mobile: Floating Filter button moved to top above product list */}
     </div>
   );
 }
