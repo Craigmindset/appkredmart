@@ -8,13 +8,13 @@ export default function AboutHero() {
           {/* Left: Text */}
           <div>
             <h1
-              className="text-4xl md:text-4xl font-bold mb-6"
+              className="text-3xl md:text-4xl font-bold mb-6"
               style={{ fontFamily: "Poppins, sans-serif", color: "#0F3D73" }}
             >
               About Us
             </h1>
             <p
-              className="text-lg md:text-sm mb-8 text-justify"
+              className="text-sm md:text-sm mb-8 text-justify"
               style={{ fontFamily: "sans-serif", color: "#000" }}
             >
               Kredmart is a modern e-commerce marketplace designed to make

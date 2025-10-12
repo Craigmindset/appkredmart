@@ -114,7 +114,7 @@ export default function ProductFilter({
           md:flex md:flex-row md:flex-wrap md:items-center
           md:gap-x-10 md:gap-y-3 md:px-4 md:py-3 md:border-0
           md:relative md:left-1/2 md:right-1/2 md:-ml-[50vw] md:-mr-[50vw]
-          ${mobileHidden ? "hidden md:flex" : ""}
+          ${mobileHidden ? "hidden md:flex" : "mt-16 md:mt-0"}
         `}
       >
         {/* gold tag (desktop only) */}

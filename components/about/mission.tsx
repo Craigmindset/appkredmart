@@ -19,7 +19,7 @@ export default function MissionVision() {
               </h2>
             </div>
             <p
-              className="text-gray-700 max-w-md text-2sm"
+              className="text-gray-700 max-w-md text-2sm text-justify"
               style={{ fontFamily: "sans-serif" }}
             >
               To empower commerce and enrich lives by connecting buyers and
