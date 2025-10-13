@@ -22,10 +22,8 @@ export default function MissionVision() {
               className="text-gray-700 max-w-md text-2sm text-justify"
               style={{ fontFamily: "sans-serif" }}
             >
-              To empower commerce and enrich lives by connecting buyers and
-              sellers with trust, speed, and innovation. We strive to make
-              shopping seamless and rewarding for everyone, leveraging
-              technology to transform everyday experiences and put people first.
+              Our mission is to make credit-powered shopping effortlessly
+              accessible to everyone, anytime.
             </p>
           </div>
 
@@ -46,9 +44,8 @@ export default function MissionVision() {
               className="text-gray-700 max-w-md"
               style={{ fontFamily: "sans-serif" }}
             >
-              To be the leading platform for modern shopping, fostering a
-              community where innovation, flexibility, and customer satisfaction
-              drive growth and opportunity for all.
+              To be Africa’s leading customer-centric, credit-powered
+              e-commerce platform.
             </p>
           </div>
         </div>

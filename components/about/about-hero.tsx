@@ -42,7 +42,7 @@ export default function AboutHero() {
               className="inline-flex items-center rounded-md bg-emerald-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
               type="button"
             >
-              Media File
+              Our Media File
             </button>
           </div>
           {/* Right: Image */}
