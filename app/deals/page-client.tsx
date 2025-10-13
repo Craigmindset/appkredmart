@@ -22,15 +22,12 @@ const PageClient = () => {
 
   return (
     <>
-      <DealsBanner />
-      <DealsAds />
-      <div className="w-full flex justify-center">
-        <div className="w-full max-w-6xl text-center  bg-[#001F4D] py-2">
+      <div className="w-screen flex justify-center bg-[#001F4D] py-2">
+        <div className="w-full max-w-6xl text-center">
           <h2 className="text-lg md:text-2xl font-bold text-white">
             KredMart Deals
           </h2>
           <p className="text-sm md:text-base text-white">
-            {" "}
             Exclusive offers and limited-time discounts. Don’t miss out.
           </p>
         </div>
