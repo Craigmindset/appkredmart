@@ -2,9 +2,9 @@ import Image from "next/image";
 
 export default function AboutHero() {
   return (
-    <section className="w-full py-16 bg-blue-400">
+    <section className="w-full py-12">
       <div className="container mx-auto max-w-6xl px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-stretch">
           {/* Left: Text */}
           <div>
             <h1
@@ -46,14 +46,14 @@ export default function AboutHero() {
             </button>
           </div>
           {/* Right: Image */}
-          <div className="flex justify-center items-center bg-blue-50">
-            <div className="relative w-full max-w-md h-full rounded-xl overflow-hidden shadow-lg">
+          <div className="flex h-full w-full">
+            <div className="relative h-full w-full rounded-xl overflow-hidden ">
               <Image
-                src="/StoreBanner/about-img.png"
+                src="/StoreBanner/kredmart-about.png"
                 alt="About Kredmart"
                 fill
                 priority
-                className="object-cover h-full"
+                className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>

@@ -12,7 +12,7 @@ export default function MissionVision() {
                 <Target className="text-emerald-600 w-7 h-7" />
               </span>
               <h2
-                className="text-2xl font-bold"
+                className="text-xl font-bold"
                 style={{ fontFamily: "Poppins, sans-serif", color: "#0F3D73" }}
               >
                 Our Mission
@@ -36,7 +36,7 @@ export default function MissionVision() {
                 <Eye className="text-indigo-600 w-7 h-7" />
               </span>
               <h2
-                className="text-2xl font-bold"
+                className="text-xl font-bold"
                 style={{ fontFamily: "Poppins, sans-serif", color: "#0F3D73" }}
               >
                 Our Vision

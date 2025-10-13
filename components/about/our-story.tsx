@@ -2,20 +2,20 @@ import { Store, CreditCard, Truck, Headphones } from "lucide-react";
 
 export default function OurStory() {
   return (
-    <section className="w-full py-16 bg-white">
+    <section className="w-full py-16 bg-[#D4AF37]">
       <div className="container mx-auto max-w-6xl px-4">
-        <div className="rounded-2xl shadow-lg bg-white p-6 md:p-10">
+        <div className="rounded-2xl shadow-lg bg-[#F4F6F8] p-6 md:p-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
             {/* Left: Our Story */}
             <div>
               <h2
-                className="text-3xl md:text-3xl font-bold mb-4"
+                className="text-3xl md:text-2xl font-bold mb-4"
                 style={{ fontFamily: "Poppins, sans-serif", color: "#0F3D73" }}
               >
                 Our Story
               </h2>
               <p
-                className="text-gray-700 text-lg leading-relaxed"
+                className="text-gray-700 text-2sm leading-relaxed"
                 style={{ fontFamily: "sans-serif" }}
               >
                 We started Kredmart to solve two problems we kept seeing;
@@ -33,17 +33,17 @@ export default function OurStory() {
             {/* Right: What We Do */}
             <div>
               <h2
-                className="text-2xl md:text-3xl font-bold mb-4"
+                className="text-2xl md:text-2xl font-bold mb-4"
                 style={{ fontFamily: "Poppins, sans-serif", color: "#0F3D73" }}
               >
                 What We Do
               </h2>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <Store className="w-6 h-6 text-indigo-600 mt-1" />
+                  <Store className="w-6 h-6 text-[#D4AF37] mt-1" />
                   <div>
                     <h3
-                      className="text-lg font-semibold mb-0.5"
+                      className="text-xl font-semibold mb-0.5"
                       style={{
                         fontFamily: "Poppins, sans-serif",
                         color: "#0F3D73",
@@ -61,7 +61,7 @@ export default function OurStory() {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <CreditCard className="w-6 h-6 text-indigo-600 mt-1" />
+                  <CreditCard className="w-6 h-6 text-[#D4AF37] mt-1" />
                   <div>
                     <h3
                       className="text-lg font-semibold mb-0.5"
@@ -82,7 +82,7 @@ export default function OurStory() {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Truck className="w-6 h-6 text-indigo-600 mt-1" />
+                  <Truck className="w-6 h-6 text-[#D4AF37] mt-1" />
                   <div>
                     <h3
                       className="text-lg font-semibold mb-0.5"
@@ -102,7 +102,7 @@ export default function OurStory() {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Headphones className="w-6 h-6 text-indigo-600 mt-1" />
+                  <Headphones className="w-6 h-6 text-[#D4AF37] mt-1" />
                   <div>
                     <h3
                       className="text-lg font-semibold mb-0.5"
