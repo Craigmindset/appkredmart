@@ -2,8 +2,22 @@ import React from "react";
 
 export default function WhyKredmart() {
   return (
-    <section className="w-full py-12">
-      <div className="container mx-auto max-w-6xl px-4">
+    <section
+      className="w-full py-12 relative overflow-hidden"
+      style={{ position: "relative" }}
+    >
+      {/* Background image with overlay */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: "url(/bg-about.jpg)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          opacity: 0.18,
+        }}
+      />
+      <div className="container mx-auto max-w-6xl px-4 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
           {/* Left Column */}
           <div>
