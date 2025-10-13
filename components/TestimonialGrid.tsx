@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const testimonials = [
   {
@@ -44,8 +44,32 @@ const testimonials = [
 
 export default function TestimonialGrid() {
   const [slide, setSlide] = useState(0);
-  const perPage = 3;
+  const [perPage, setPerPage] = useState(3);
+  const [paused, setPaused] = useState(false);
+
+  // Responsive perPage: 1 on mobile, 3 on desktop
+  useEffect(() => {
+    function handleResize() {
+      setPerPage(window.innerWidth < 768 ? 1 : 3);
+    }
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const totalSlides = Math.ceil(testimonials.length / perPage);
+
+  // Auto-slide on mobile (must be after totalSlides is declared)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.innerWidth >= 768) return; // Only run on mobile
+    if (paused) return;
+    const interval = setInterval(() => {
+      setSlide((prev) => (prev + 1) % totalSlides);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, [totalSlides, paused]);
+
   const startIdx = slide * perPage;
   const visibleTestimonials = testimonials.slice(startIdx, startIdx + perPage);
 
@@ -56,7 +80,13 @@ export default function TestimonialGrid() {
       <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
         What Our Customers Say
       </h2>
-      <div className="relative">
+      <div
+        className="relative"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        onTouchStart={() => setPaused(true)}
+        onTouchEnd={() => setPaused(false)}
+      >
         <div className="flex gap-6 overflow-x-auto md:grid md:grid-cols-3 md:overflow-visible scrollbar-hide pb-2">
           {visibleTestimonials.map((t, idx) => (
             <div
@@ -86,12 +116,12 @@ export default function TestimonialGrid() {
             </div>
           ))}
         </div>
-        {/* Navigation Arrows */}
+        {/* Navigation Arrows (hidden on mobile) */}
         <button
           onClick={() =>
             setSlide((prev) => (prev - 1 + totalSlides) % totalSlides)
           }
-          className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+          className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg transition-all duration-200 hover:scale-110 hidden md:block"
           aria-label="Previous testimonials"
         >
           <svg
@@ -110,7 +140,7 @@ export default function TestimonialGrid() {
         </button>
         <button
           onClick={() => setSlide((prev) => (prev + 1) % totalSlides)}
-          className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+          className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg transition-all duration-200 hover:scale-110 hidden md:block"
           aria-label="Next testimonials"
         >
           <svg
@@ -128,8 +158,8 @@ export default function TestimonialGrid() {
           </svg>
         </button>
       </div>
-      {/* Dots */}
-      <div className="flex justify-center mt-6 space-x-2">
+      {/* Dots (hidden on mobile) */}
+      <div className="hidden md:flex justify-center mt-6 space-x-2">
         {Array.from({ length: totalSlides }).map((_, idx) => (
           <button
             key={idx}

@@ -38,6 +38,7 @@ const categoryIcons = {
 
 export default function StorePage() {
   const searchParams = useSearchParams();
+  const search = searchParams.get("search")?.trim() || "";
   const q = (searchParams?.get("search") || "").toString().trim();
 
   const [filter, setFilter] = useState({
@@ -102,44 +103,49 @@ export default function StorePage() {
       <section className="w-full px-1 sm:px-4 pt-6">
         {/* Top: Categories (20%), StoreBanner (80%) */}
         <div className="grid gap-2 md:grid-cols-[20%_80%] items-stretch">
-          <aside className="hidden md:block md:col-span-1 rounded-lg bg-blue-100 p-4 h-[400px]">
-            <h4
-              className="mb-3 ml-6 text-sm font-semibold text-black-100"
-              style={{ fontFamily: "sans-serif" }}
-            >
-              Categories
-            </h4>
-            <ul
-              className=" ml-6 space-y-0 text-sm text-black"
-              style={{ fontFamily: "sans-serif" }}
-            >
-              {allCategories.map((c) => (
-                <li key={c}>
-                  <Link
-                    href={`/store/${slugifyCategory(c)}`}
-                    className="flex items-center gap-1 hover:underline leading-7"
-                  >
-                    {(() => {
-                      const IconComponent =
-                        categoryIcons[c as keyof typeof categoryIcons];
-                      return IconComponent ? (
-                        <IconComponent
-                          className="h-4 w-4"
-                          style={{ color: "#000000" }}
-                        />
-                      ) : null;
-                    })()}
-                    {c}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </aside>
+          {/* Hide categories and StoreBanner on desktop if search is active */}
+          {search === "" && (
+            <>
+              <aside className="hidden md:block md:col-span-1 rounded-lg bg-blue-100 p-4 h-[400px]">
+                <h4
+                  className="mb-3 ml-6 text-sm font-semibold text-black-100"
+                  style={{ fontFamily: "sans-serif" }}
+                >
+                  Categories
+                </h4>
+                <ul
+                  className=" ml-6 space-y-0 text-sm text-black"
+                  style={{ fontFamily: "sans-serif" }}
+                >
+                  {allCategories.map((c) => (
+                    <li key={c}>
+                      <Link
+                        href={`/store/${slugifyCategory(c)}`}
+                        className="flex items-center gap-1 hover:underline leading-7"
+                      >
+                        {(() => {
+                          const IconComponent =
+                            categoryIcons[c as keyof typeof categoryIcons];
+                          return IconComponent ? (
+                            <IconComponent
+                              className="h-4 w-4"
+                              style={{ color: "#000000" }}
+                            />
+                          ) : null;
+                        })()}
+                        {c}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </aside>
 
-          {/* ⬇️ Mobile: auto height; Desktop: keep 400px */}
-          <div className="md:col-span-1 rounded-lg border bg-card h-auto md:h-[400px]">
-            <StoreBanner />
-          </div>
+              {/* ⬇️ Mobile: auto height; Desktop: keep 400px */}
+              <div className="md:col-span-1 rounded-lg border bg-card h-auto md:h-[400px]">
+                <StoreBanner />
+              </div>
+            </>
+          )}
         </div>
 
         {/* Product Filter above all products, sticky in context */}
