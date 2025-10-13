@@ -222,47 +222,7 @@ function HeaderCore() {
         <div className="flex h-16 md:h-20 items-center justify-between">
           {/* Left: mobile drawer + logo */}
           <div className="flex items-center gap-2">
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="md:hidden text-black"
-                >
-                  <Menu className="h-5 w-5" />
-                  <span className="sr-only">Open menu</span>
-                </Button>
-              </SheetTrigger>
-
-              {/* Mobile drawer */}
-              <SheetContent
-                side="left"
-                className="w-64 bg-blue-900 h-dvh grid grid-rows-[auto_1fr_auto] p-0"
-              >
-                <SheetHeader className="px-5 py-4">
-                  <SheetTitle className="text-white">KredMart</SheetTitle>
-                </SheetHeader>
-
-                <div className="overflow-y-auto px-2 py-6">
-                  <nav className="flex flex-col gap-2">
-                    {MAIN_MENU.map((m) => (
-                      <Link
-                        key={m.href}
-                        href={m.href}
-                        className="flex items-center gap-2 rounded px-2 py-4 text-xl text-white hover:bg-blue-800"
-                      >
-                        {m.icon}
-                        <span>{m.label}</span>
-                      </Link>
-                    ))}
-                  </nav>
-                </div>
-
-                <div className="px-4 py-4 text-center text-xs text-blue-100">
-                  Powered by KredMart &copy; {new Date().getFullYear()}
-                </div>
-              </SheetContent>
-            </Sheet>
+            {/* Burger menu and drawer removed on mobile */}
 
             <Link href="/" className="flex items-center h-10">
               <img
@@ -466,7 +426,11 @@ function HeaderCore() {
                         // Remove search param from URL to refresh product grid
                         const url = new URL(window.location.href);
                         url.searchParams.delete("search");
-                        window.history.replaceState({}, '', url.pathname + url.search);
+                        window.history.replaceState(
+                          {},
+                          "",
+                          url.pathname + url.search
+                        );
                       }}
                       className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-gray-100 text-gray-400 focus:outline-none"
                       tabIndex={0}
