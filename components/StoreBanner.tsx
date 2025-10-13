@@ -6,9 +6,9 @@ import Image from "next/image";
 /* ---------- DATA ---------- */
 const sliderImages = [
   {
-    src: "/StoreBanner/8502320_192.jpg",
-    alt: "Natural Cosmetics Banner",
-    text: "Berries Natural Cosmetics - Refreshing and Moisturizing",
+    src: "/StoreBanner/kredmart-slide-img.jpg",
+    alt: "shop with kredmart",
+    text: "",
   },
   {
     src: "/StoreBanner/2149670637.jpg",
