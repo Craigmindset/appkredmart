@@ -13,12 +13,12 @@ const sliderImages = [
   {
     src: "/StoreBanner/2149670637.jpg",
     alt: "Store Banner 2",
-    text: "Discover our latest skincare collection",
+    text: "",
   },
   {
     src: "/StoreBanner/2151074307.jpg",
     alt: "Store Banner 3",
-    text: "Shop premium beauty products today",
+    text: "",
   },
 ];
 
