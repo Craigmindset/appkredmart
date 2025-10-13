@@ -2,6 +2,7 @@ import Image from "next/image";
 import AboutHero from "@/components/about/about-hero";
 import MissionVision from "@/components/about/mission";
 import OurStory from "@/components/about/our-story";
+import WhyKredmart from "@/components/about/why-kredmart";
 export default function AboutPage() {
   return (
     <>
@@ -11,6 +12,7 @@ export default function AboutPage() {
       </section>
       <MissionVision />
       <OurStory />
+      <WhyKredmart />
     </>
   );
 }
