@@ -1,6 +1,7 @@
 "use client";
 
 import HeroSlider from "@/components/hero-slider";
+import ProductFilter from "@/components/product-filter";
 import LayoutShell from "@/components/layout-shell";
 import ProductCard from "@/components/product-card";
 import { Label } from "@/components/ui/label";
@@ -197,6 +198,8 @@ export default function CategoryPage() {
   const [brand, setBrand] = useState<string | "all">("all");
   const [onlyDeals, setOnlyDeals] = useState(false);
   const [sort, setSort] = useState<"htl" | "lth" | "none">("none");
+  const [color, setColor] = useState("");
+  const [price, setPrice] = useState("");
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteProducts({
@@ -228,7 +231,9 @@ export default function CategoryPage() {
         (p: P) =>
           getTitle(p).toLowerCase().includes(s) ||
           (p?.brand || "").toLowerCase().includes(s) ||
-          (p?.category || "").toLowerCase().includes(s)
+          String(p?.category || "")
+            .toLowerCase()
+            .includes(s)
       );
     }
     if (brand !== "all")
@@ -253,6 +258,8 @@ export default function CategoryPage() {
     setBrand("all");
     setOnlyDeals(false);
     setSort("none");
+    setColor("");
+    setPrice("");
   };
 
   if (!category) {
@@ -273,22 +280,11 @@ export default function CategoryPage() {
   return (
     <LayoutShell hideHeader>
       <section className="container mx-auto px-4 pt-6">
-        {/* Category banner */}
-        <div
-          className={`w-full rounded-lg border ${bannerConfig.bgColor} p-6 flex flex-col justify-center mb-4`}
-        >
-          <div className={bannerConfig.textColor}>
-            <h2 className="text-2xl font-bold mb-2">{bannerConfig.title}</h2>
-            <p className="text-sm opacity-90 mb-4">{bannerConfig.subtitle}</p>
-            <div className="relative h-48 md:h-72 rounded-md overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={bannerConfig.image || "/placeholder.svg"}
-                alt={`${category} collection`}
-                className="h-full w-full object-cover"
-              />
-            </div>
-          </div>
+        {/* Category strip banner: only heading */}
+        <div className="w-full bg-[#001F4D] py-4 mb-4 rounded-lg">
+          <h2 className="text-2xl font-bold text-white text-center">
+            {bannerConfig.title}
+          </h2>
         </div>
 
         {/* Jumia-like DEALS STRIP */}
@@ -349,10 +345,25 @@ export default function CategoryPage() {
 
         {/* Content with filters */}
         <div className="mt-4 grid gap-4 md:grid-cols-10">
-          {/* Left filter panel */}
-          <aside className="md:col-span-2 rounded-lg border bg-card p-4 h-fit sticky top-[72px]">
-            <h4 className="mb-3 text-sm font-semibold">Filter</h4>
+          {/* Mobile filter: show ProductFilter only on mobile, sticky at top, no Reset Filters button */}
+          <div className="md:hidden mb-4 sticky top-0 z-20 bg-white">
+            <ProductFilter
+              brand={brand}
+              price={price}
+              color={color}
+              dealsOnly={onlyDeals}
+              onChange={({ brand, price, color, dealsOnly }) => {
+                setBrand(brand || "all");
+                setPrice(price || "");
+                setColor(color || "");
+                setOnlyDeals(!!dealsOnly);
+              }}
+            />
+          </div>
 
+          {/* Left filter panel: only show on desktop */}
+          <aside className="hidden md:block md:col-span-2 rounded-lg border bg-card p-4 h-fit sticky top-[150px]">
+            <h4 className="mb-3 text-sm font-semibold">Filter</h4>
             <div className="mb-4">
               <div className="text-sm font-medium mb-2">Brand</div>
               <Select onValueChange={(v) => setBrand(v)} value={brand}>
@@ -369,7 +380,6 @@ export default function CategoryPage() {
                 </SelectContent>
               </Select>
             </div>
-
             <div className="mb-4 flex items-center gap-2">
               <Switch
                 id="deals"
@@ -380,7 +390,6 @@ export default function CategoryPage() {
                 Deals only
               </Label>
             </div>
-
             <div className="mb-4">
               <div className="text-sm font-medium mb-2">Pricing</div>
               <Select
@@ -397,7 +406,6 @@ export default function CategoryPage() {
                 </SelectContent>
               </Select>
             </div>
-
             <button
               onClick={resetFilters}
               className="mt-2 inline-flex w-full items-center justify-center rounded-md border border-input bg-background px-3 py-2 text-sm"
