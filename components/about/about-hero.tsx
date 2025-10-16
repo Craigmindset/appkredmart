@@ -49,11 +49,11 @@ export default function AboutHero() {
           <div className="flex h-full w-full">
             <div className="relative h-full w-full rounded-xl overflow-hidden ">
               <Image
-                src="/StoreBanner/kredmart-about.png"
+                src="/StoreBanner/about-png.png"
                 alt="About Kredmart"
                 fill
                 priority
-                className="object-cover"
+                className="object-contain"
                 sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
