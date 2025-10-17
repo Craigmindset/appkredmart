@@ -114,7 +114,7 @@ export default function SignUpPage() {
                 className="text-3xl font-semibold leading-tight tracking-tight md:text-5xl"
                 style={{ fontFamily: "poppins}}>" }}
               >
-                {"Build your account…"}
+                {"Create your account…"}
               </h1>
               <p
                 className="mt-4 max-w-md text-sm/6 text-white/85"
