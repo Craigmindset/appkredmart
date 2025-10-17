@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 
 import LayoutShell from "@/components/layout-shell";
@@ -28,6 +29,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { poppins } from "@/lib/fonts";
 
 export default function SignUpPage() {
   const params = useSearchParams();
@@ -80,40 +82,48 @@ export default function SignUpPage() {
   return (
     <LayoutShell showFooter={false}>
       <section className="relative">
+        {/* Layered background images */}
+        <Image
+          src="/bg-about.jpg"
+          alt="Sign up background texture"
+          fill
+          className="absolute inset-0 -z-20 object-cover opacity-10"
+          priority={false}
+        />
         <img
           src="https://hlfwfvupabrc8fwr.public.blob.vercel-storage.com/young-african-ladies-viewing-something-their-mobile-phones-while-carrying-shopping-bags.png"
           alt="Background"
-          className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover"
+          className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover "
         />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
+        <div className="absolute inset-0 -z-30 bg-[#0F3D73] bg-opacity-50" />
 
         <div className="container mx-auto px-4">
           <div className="flex flex-col-reverse md:grid md:min-h-[calc(100svh-64px)] min-h-[40vh] pt-14 md:pt-0 items-center gap-8 md:grid-cols-2">
             {/* Left: Brand + Headline */}
             <div className="max-w-xl py-10 text-white md:order-1">
               <div className="mb-10 inline-flex items-center gap-3">
-                <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25">
+                {/*<div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25">
                   <div className="h-5 w-5 rounded-full bg-white" />
-                </div>
+                </div>*/}
                 <span className="text-2xl font-semibold tracking-tight">
                   KredMart
                 </span>
               </div>
 
-              <h1 className="text-3xl font-semibold leading-tight tracking-tight md:text-5xl">
+              <h1
+                className="text-3xl font-semibold leading-tight tracking-tight md:text-5xl"
+                style={{ fontFamily: "poppins}}>" }}
+              >
                 {"Build your account…"}
               </h1>
-              <p className="mt-4 max-w-md text-sm/6 text-white/85">
+              <p
+                className="mt-4 max-w-md text-sm/6 text-white/85"
+                style={{ fontFamily: " sans-serif" }}
+              >
                 {
                   "Create an account to shop, track orders, manage loans, and enjoy exclusive deals."
                 }
               </p>
-
-              <div className="mt-8 flex items-center gap-4">
-                <span className="h-1.5 w-12 rounded-full bg-white/90" />
-                <span className="h-1 w-8 rounded-full bg-white/50" />
-                <span className="h-1 w-8 rounded-full bg-white/50" />
-              </div>
             </div>
 
             {/* Right: Sign Up Card */}

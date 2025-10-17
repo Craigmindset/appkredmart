@@ -1,6 +1,7 @@
 "use client";
 
 import LayoutShell from "@/components/layout-shell";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -42,7 +43,6 @@ export default function SignInPage() {
   const setUser = useAuth((s: any) => s.setUser);
 
   const handleGoogleLogin = async () => {
-    
     router.push("/api/google");
   };
 
@@ -91,35 +91,51 @@ export default function SignInPage() {
     /* Full-bleed background with leafy texture under content */
   }
   return (
-    <section className="relative ">
+    <section className="relative">
+      {/* Layered background images */}
+      <Image
+        src="/bg-about.jpg"
+        alt="Sign in background texture"
+        fill
+        className="absolute inset-0 -z-20 object-cover opacity-10"
+        priority={false}
+      />
       <img
         src="https://hlfwfvupabrc8fwr.public.blob.vercel-storage.com/young-african-ladies-viewing-something-their-mobile-phones-while-carrying-shopping-bags.png"
         alt="Background"
-        className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover"
+        className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover "
       />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
+      <div className="absolute inset-0 -z-30 bg-[#0F3D73]/50" />
 
       <div className="container mx-auto px-4">
         <div className="flex flex-col-reverse md:grid md:min-h-[calc(100svh-64px)] min-h-[40vh] pt-14 md:pt-0 items-center gap-8 md:grid-cols-2">
           {/* Left: Brand + Headline over background */}
           <div className="text-white max-w-xl py-10 md:order-1">
             <div className="mb-10 inline-flex items-center gap-3">
-              <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25">
+              {/*<div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25">
                 <div className="h-5 w-5 rounded-full bg-white" />
-              </div>
+              </div>*/}
               <span className="text-2xl font-semibold tracking-tight">
                 KredMart
               </span>
             </div>
 
-            <h1 className="text-3xl md:text-5xl font-semibold leading-tight tracking-tight whitespace-pre-line">
-              {`Finance Shopping\n| When Needed`}
+            <h1
+              className="text-3xl md:text-5xl font-semibold leading-tight tracking-tight whitespace-pre-line"
+              style={{ fontFamily: "Poppins, sans-serif" }}
+            >
+              {`Finance Shopping\n When Needed`}
             </h1>
 
-            <p className="mt-4 text-sm/6 text-white/85 max-w-md">
-              {
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-              }
+            <p
+              className="mt-4 text-sm/6 text-white/85 max-w-md"
+              style={{ fontFamily: " sans-serif" }}
+            >
+              <>
+                Marketplace designed to make online shopping easier,
+                <br />
+                fairer, and more accessible to everyone.
+              </>
             </p>
 
             {/* Simple progress indicators to echo the design */}
