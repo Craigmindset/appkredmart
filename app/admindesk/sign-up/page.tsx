@@ -235,9 +235,9 @@ export default function MerchantSignUpPage() {
             {/* Left: Brand + Headline */}
             <div className="max-w-xl py-10 text-white md:order-1">
               <div className="mb-10 inline-flex items-center gap-3">
-                <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25">
+                {/*<div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25">
                   <div className="h-5 w-5 rounded-full bg-white" />
-                </div>
+                </div>*/}
                 <span className="text-2xl font-semibold tracking-tight">
                   KredMart Merchant
                 </span>

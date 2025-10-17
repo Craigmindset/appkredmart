@@ -34,9 +34,9 @@ export default function MerchantSignInPage() {
         <div className="flex flex-col-reverse md:grid md:min-h-[calc(100svh-64px)] min-h-[40vh] pt-14 md:pt-0 items-center gap-8 md:grid-cols-2">
           <div className="max-w-xl py-10 text-white md:order-1">
             <div className="mb-10 inline-flex items-center gap-3">
-              <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25">
+              {/*<div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25">
                 <div className="h-5 w-5 rounded-full bg-white" />
-              </div>
+              </div>*/}
               <span className="text-2xl font-semibold tracking-tight">
                 KredMart Merchant
               </span>
