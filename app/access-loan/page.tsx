@@ -114,7 +114,8 @@ export default function AccessLoanPage() {
 
               <p className="text-gray-700 text-base sm:text-lg mb-8 sm:mb-10 tracking-tight max-w-lg">
                 Whether you’re shopping for a new gadget, appliance or dealing
-                with unexpected needs, we make borrowing simple and stress-free.
+                with unexpected needs, we make shopping borrowing simple and
+                stress-free.
               </p>
 
               {/* Provider selector */}
@@ -126,7 +127,7 @@ export default function AccessLoanPage() {
                   >
                     {providerChosen
                       ? loanProviders[selectedProvider].name
-                      : "Select Provider"}
+                      : "Select Loan Provider"}
                     <ChevronDown size={16} />
                   </Button>
 
@@ -155,9 +156,9 @@ export default function AccessLoanPage() {
 
             {/* Right Side: Provider Card */}
             {!providerChosen ? (
-              <div className="w-full flex items-center justify-center min-h-[320px] sm:min-h-[420px] md:min-h-[520px] -mt-8 sm:-mt-12 md:-mt-16">
+              <div className="w-full flex items-center justify-center min-h-[320px] sm:min-h-[420px] md:min-h-[500px] -mt-8 sm:-mt-12 md:-mt-16">
                 <Image
-                  src="/kredmart-happyman.png"
+                  src="/images/access2.png"
                   alt="Loan Provider Banner"
                   width={2100}
                   height={1400}
