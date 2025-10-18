@@ -18,7 +18,13 @@ import { useToast } from "@/hooks/use-toast";
 import { formatNaira } from "@/lib/currency";
 import { GetProductDto } from "@/lib/services/products/products";
 
-export default function ProductCard({ product, showDealBadge = false }: { product: GetProductDto, showDealBadge?: boolean }) {
+export default function ProductCard({
+  product,
+  showDealBadge = false,
+}: {
+  product: GetProductDto;
+  showDealBadge?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
@@ -166,6 +172,14 @@ export default function ProductCard({ product, showDealBadge = false }: { produc
                   <a
                     href="#"
                     className="font-semibold underline hover:text-blue-900 transition"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const user =
+                        require("@/store/auth-store").useAuth.getState().user;
+                      window.location.href = user
+                        ? "/dashboard/loan-request"
+                        : "/sign-in";
+                    }}
                   >
                     clickhere
                   </a>
