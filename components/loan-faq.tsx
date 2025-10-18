@@ -50,7 +50,7 @@ export default function LoanFAQ() {
   const baseId = useId();
 
   return (
-    <section className="bg-black text-white">
+    <section className="bg-black text-[#D4AF37]">
       <div className="container mx-auto px-4 py-8 md:py-10">
         {/* Desktop-only global dropdown trigger */}
         <div className="hidden md:block">
