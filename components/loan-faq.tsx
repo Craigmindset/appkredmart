@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useId, useState } from "react"
-import { ChevronDown } from "lucide-react"
+import { useId, useState } from "react";
+import { ChevronDown } from "lucide-react";
 
-type FAQ = { q: string; a: string }
+type FAQ = { q: string; a: string };
 
 const faqs: FAQ[] = [
   {
@@ -38,14 +38,16 @@ const faqs: FAQ[] = [
     q: "What happens if I miss a repayment?",
     a: "Late or missed payments may incur charges and affect future eligibility. Always review your repayment schedule.",
   },
-]
+];
 
 export default function LoanFAQ() {
   // Mobile/tablet: which question is open
-  const [openIndex, setOpenIndex] = useState<number | null>(null)
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
   // Desktop: whether the global dropdown is open
-  const [openDesktop, setOpenDesktop] = useState(false)
-  const baseId = useId()
+  const [openDesktop, setOpenDesktop] = useState(false);
+  // Mobile: whether the mobile global dropdown is open
+  const [openMobile, setOpenMobile] = useState(false);
+  const baseId = useId();
 
   return (
     <section className="bg-black text-white">
@@ -59,9 +61,13 @@ export default function LoanFAQ() {
             onClick={() => setOpenDesktop((v) => !v)}
             className="flex w-full items-center justify-between rounded-lg border border-white/15 bg-white/5 px-5 py-4 text-left hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
           >
-            <span className="text-xl font-semibold tracking-tight">Frequently asked questions</span>
+            <span className="text-xl font-semibold tracking-tight">
+              Frequently asked questions
+            </span>
             <ChevronDown
-              className={`h-5 w-5 shrink-0 text-white/80 transition-transform ${openDesktop ? "rotate-180" : ""}`}
+              className={`h-5 w-5 shrink-0 text-white/80 transition-transform ${
+                openDesktop ? "rotate-180" : ""
+              }`}
               aria-hidden="true"
             />
           </button>
@@ -76,63 +82,109 @@ export default function LoanFAQ() {
           >
             <div className="divide-y divide-white/10">
               {faqs.map((item, idx) => (
-                <div key={idx} className="grid items-start gap-4 px-5 py-5 md:grid-cols-12">
+                <div
+                  key={idx}
+                  className="grid items-start gap-4 px-5 py-5 md:grid-cols-12"
+                >
                   {/* Left: Question */}
-                  <div className="md:col-span-5 text-sm md:text-base font-medium">{item.q}</div>
+                  <div className="md:col-span-5 text-sm md:text-base font-medium">
+                    {item.q}
+                  </div>
                   {/* Right: Answer */}
-                  <div className="md:col-span-7 text-sm text-white/80">{item.a}</div>
+                  <div className="md:col-span-7 text-sm text-white/80">
+                    {item.a}
+                  </div>
                 </div>
               ))}
             </div>
             <div className="px-5 py-4 text-xs text-white/60">
-              Need more help? Visit Dashboard → Account or email support@kredmart.example
+              Need more help? Visit Dashboard → Account or email
+              support@kredmart.example
             </div>
           </div>
         </div>
 
-        {/* Mobile/Tablet: per-question toggle list, single-row feel within item */}
+        {/* Mobile/Tablet: global toggle that expands to per-question toggle list */}
         <div className="md:hidden">
-          <h2 className="mb-3 text-lg font-semibold tracking-tight">Frequently asked questions</h2>
-          <div className="divide-y divide-white/10 rounded-lg border border-white/10">
-            {faqs.map((item, idx) => {
-              const isOpen = openIndex === idx
-              const qId = `${baseId}-q-${idx}`
-              const aId = `${baseId}-a-${idx}`
-              return (
-                <div key={qId} className="grid grid-cols-1 items-stretch" role="group">
-                  {/* Question row with chevron */}
-                  <button
-                    id={qId}
-                    type="button"
-                    aria-expanded={isOpen}
-                    aria-controls={aId}
-                    onClick={() => setOpenIndex((prev) => (prev === idx ? null : idx))}
-                    className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
-                  >
-                    <span className="text-sm font-medium">{item.q}</span>
-                    <ChevronDown
-                      className={`h-5 w-5 shrink-0 text-white/80 transition-transform ${isOpen ? "rotate-180" : ""}`}
-                      aria-hidden="true"
-                    />
-                  </button>
+          <button
+            type="button"
+            aria-expanded={openMobile}
+            aria-controls={`${baseId}-mobile-faq`}
+            onClick={() => setOpenMobile((v) => !v)}
+            className="flex w-full items-center justify-between rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-left hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+          >
+            <span className="text-base font-semibold">
+              Frequently asked questions
+            </span>
+            <ChevronDown
+              className={`h-5 w-5 shrink-0 text-white/80 transition-transform ${
+                openMobile ? "rotate-180" : ""
+              }`}
+              aria-hidden="true"
+            />
+          </button>
 
-                  {/* Answer (only visible when open) */}
-                  <div
-                    id={aId}
-                    aria-labelledby={qId}
-                    className={`px-4 pb-4 text-sm text-white/80 ${isOpen ? "" : "hidden"}`}
-                  >
-                    {item.a}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-          <div className="mt-3 text-xs text-white/60">
-            Need more help? Visit Dashboard → Account or email support@kredmart.example
+          <div
+            id={`${baseId}-mobile-faq`}
+            className={`mt-3 overflow-hidden rounded-lg border border-white/10 transition-[max-height,opacity] duration-300 ${
+              openMobile ? "opacity-100" : "max-h-0 opacity-0"
+            }`}
+            style={{ maxHeight: openMobile ? "2000px" : undefined }}
+          >
+            <div className="divide-y divide-white/10">
+              <div className="p-0">
+                {faqs.map((item, idx) => {
+                  const isOpen = openIndex === idx;
+                  const qId = `${baseId}-q-${idx}`;
+                  const aId = `${baseId}-a-${idx}`;
+                  return (
+                    <div
+                      key={qId}
+                      className="grid grid-cols-1 items-stretch"
+                      role="group"
+                    >
+                      {/* Question row with chevron */}
+                      <button
+                        id={qId}
+                        type="button"
+                        aria-expanded={isOpen}
+                        aria-controls={aId}
+                        onClick={() =>
+                          setOpenIndex((prev) => (prev === idx ? null : idx))
+                        }
+                        className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+                      >
+                        <span className="text-sm font-medium">{item.q}</span>
+                        <ChevronDown
+                          className={`h-5 w-5 shrink-0 text-white/80 transition-transform ${
+                            isOpen ? "rotate-180" : ""
+                          }`}
+                          aria-hidden="true"
+                        />
+                      </button>
+
+                      {/* Answer (only visible when open) */}
+                      <div
+                        id={aId}
+                        aria-labelledby={qId}
+                        className={`px-4 pb-4 text-sm text-white/80 ${
+                          isOpen ? "" : "hidden"
+                        }`}
+                      >
+                        {item.a}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="px-4 py-3 text-xs text-white/60">
+              Need more help? Visit Dashboard → Account or email
+              support@kredmart.example
+            </div>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
