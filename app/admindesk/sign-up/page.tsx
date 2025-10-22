@@ -228,7 +228,7 @@ export default function MerchantSignUpPage() {
           alt="Background"
           className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover"
         />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/55 via-black/25 to-transparent" />
+        <div className="absolute inset-0 -z-10 " />
 
         <div className="container mx-auto px-4">
           <div className="flex flex-col-reverse md:grid md:min-h-[calc(100svh-64px)] min-h-[40vh] pt-14 md:pt-0 items-center gap-8 md:grid-cols-2">

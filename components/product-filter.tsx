@@ -79,7 +79,7 @@ export default function ProductFilter({
   const handleChange = (field: keyof FilterState, value: string | boolean) =>
     emit({ brand, price, color, dealsOnly, [field]: value } as FilterState);
   const reset = () =>
-    emit({ brand: "all", price: "none", color: "", dealsOnly: false });
+    emit({ brand: "", price: "none", color: "", dealsOnly: false });
 
   useEffect(() => {
     const close = (e: MouseEvent) => {

@@ -66,7 +66,7 @@ export default function HeroSection() {
       <video
         ref={videoRef}
         className="absolute inset-0 h-full w-full object-cover z-0"
-        src="https://hlfwfvupabrc8fwr.public.blob.vercel-storage.com/5395661_Coll_wavebreak_People_1280x720.mp4"
+        src="https://hlfwfvupabrc8fwr.public.blob.vercel-storage.com/home-kredmart.mp4"
         autoPlay
         muted
         loop

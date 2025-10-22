@@ -101,82 +101,84 @@ export default function StorePage() {
   return (
     <>
       <section className="w-full px-1 sm:px-4 pt-6">
-        {/* Top: Categories (20%), StoreBanner (80%) */}
-        <div className="grid gap-2 md:grid-cols-[20%_80%] items-stretch">
-          {/* Hide categories and StoreBanner on desktop if search is active */}
-          {search === "" && (
-            <>
-              <aside className="hidden md:block md:col-span-1 rounded-lg bg-blue-100 p-4 h-[400px]">
-                <h4
-                  className="mb-3 ml-6 text-sm font-semibold text-black-100"
-                  style={{ fontFamily: "sans-serif" }}
-                >
-                  Categories
-                </h4>
-                <ul
-                  className=" ml-6 space-y-0 text-sm text-black"
-                  style={{ fontFamily: "sans-serif" }}
-                >
-                  {allCategories.map((c) => (
-                    <li key={c}>
-                      <Link
-                        href={`/store/${slugifyCategory(c)}`}
-                        className="flex items-center gap-1 hover:underline leading-7"
-                      >
-                        {(() => {
-                          const IconComponent =
-                            categoryIcons[c as keyof typeof categoryIcons];
-                          return IconComponent ? (
-                            <IconComponent
-                              className="h-4 w-4"
-                              style={{ color: "#000000" }}
-                            />
-                          ) : null;
-                        })()}
-                        {c}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </aside>
+        <div className="w-full max-w-7xl mx-auto px-2 md:px-6">
+          {/* Top: Categories (20%), StoreBanner (80%) */}
+          <div className="grid gap-2 md:grid-cols-[20%_80%] items-stretch">
+            {/* Hide categories and StoreBanner on desktop if search is active */}
+            {search === "" && (
+              <>
+                <aside className="hidden md:block md:col-span-1 rounded-lg bg-blue-100 p-4 h-[400px]">
+                  <h4
+                    className="mb-3 ml-6 text-sm font-semibold text-black-100"
+                    style={{ fontFamily: "sans-serif" }}
+                  >
+                    Categories
+                  </h4>
+                  <ul
+                    className=" ml-6 space-y-0 text-sm text-black"
+                    style={{ fontFamily: "sans-serif" }}
+                  >
+                    {allCategories.map((c) => (
+                      <li key={c}>
+                        <Link
+                          href={`/store/${slugifyCategory(c)}`}
+                          className="flex items-center gap-1 hover:underline leading-7"
+                        >
+                          {(() => {
+                            const IconComponent =
+                              categoryIcons[c as keyof typeof categoryIcons];
+                            return IconComponent ? (
+                              <IconComponent
+                                className="h-4 w-4"
+                                style={{ color: "#000000" }}
+                              />
+                            ) : null;
+                          })()}
+                          {c}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </aside>
 
-              {/* ⬇️ Mobile: auto height; Desktop: keep 400px */}
-              <div className="md:col-span-1 rounded-lg border bg-card h-auto md:h-[400px]">
-                <StoreBanner />
-              </div>
-            </>
-          )}
-        </div>
+                {/* ⬇️ Mobile: auto height; Desktop: keep 400px */}
+                <div className="md:col-span-1  border bg-card h-auto md:h-[400px]">
+                  <StoreBanner />
+                </div>
+              </>
+            )}
+          </div>
 
-        {/* Product Filter above all products, sticky in context */}
-        {/* ⬇️ Less padding on mobile to avoid big gaps */}
-        <div className="w-full my-0 sticky top-20 z-30 py-3 md:py-14">
-          <div className="flex justify-center">
-            <ProductFilter
-              brand={filter.brand}
-              price={filter.price}
-              color={filter.color}
-              dealsOnly={filter.dealsOnly}
-              onChange={handleFilterChange}
+          {/* Product Filter above all products, sticky in context */}
+          {/* ⬇️ Less padding on mobile to avoid big gaps */}
+          <div className="w-full my-0 sticky top-20 z-30 py-3 md:py-14">
+            <div className="flex justify-center">
+              <ProductFilter
+                brand={filter.brand}
+                price={filter.price}
+                color={filter.color}
+                dealsOnly={filter.dealsOnly}
+                onChange={handleFilterChange}
+              />
+            </div>
+          </div>
+
+          <div id="results" className="-mt-10">
+            <ProductsGrid
+              title={q ? `Search results for “${q}”` : "All Products"}
+              description={
+                q
+                  ? undefined
+                  : "Browse a curated selection of electronics, phones, audio and more."
+              }
+              fetchNextPage={fetchNextPage}
+              hasNextPage={hasNextPage}
+              isFetchingNextPage={isFetchingNextPage}
+              isLoading={data === undefined}
+              isFetching={data === undefined}
+              items={sortedProducts}
             />
           </div>
-        </div>
-
-        <div id="results" className="-mt-10">
-          <ProductsGrid
-            title={q ? `Search results for “${q}”` : "All Products"}
-            description={
-              q
-                ? undefined
-                : "Browse a curated selection of electronics, phones, audio and more."
-            }
-            fetchNextPage={fetchNextPage}
-            hasNextPage={hasNextPage}
-            isFetchingNextPage={isFetchingNextPage}
-            isLoading={data === undefined}
-            isFetching={data === undefined}
-            items={sortedProducts}
-          />
         </div>
       </section>
     </>

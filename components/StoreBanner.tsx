@@ -9,16 +9,22 @@ const sliderImages = [
     src: "/StoreBanner/kredmart-slide-img.jpg",
     alt: "shop with kredmart",
     text: "",
+    buttonUrl: "/store",
+    buttonText: "Discover",
   },
   {
-    src: "/StoreBanner/2149670637.jpg",
+    src: "/StoreBanner/g-shock ads.jpg",
     alt: "Store Banner 2",
     text: "",
+    buttonUrl: "/store/watches",
+    buttonText: "Shop Watches",
   },
   {
     src: "/StoreBanner/2151074307.jpg",
     alt: "Store Banner 3",
     text: "",
+    buttonUrl: "/store/deals",
+    buttonText: "See Deals",
   },
 ];
 
@@ -43,9 +49,9 @@ export default function StoreBanner() {
     setCurrent((p) => (p - 1 + sliderImages.length) % sliderImages.length);
 
   return (
-    <div className="flex flex-col md:flex-row w-full max-w-7xl mx-auto gap-4 px-2 md:px-2 md:h-[400px] mb-0 pb-0">
+    <div className="flex flex-col md:flex-row w-full max-w-7xl mx-auto gap-4 px-2 md:px-0 md:h-[400px] mb-0 pb-0">
       {/* LEFT: MAIN SLIDER (desktop unchanged) */}
-      <div className="relative w-full md:w-[68%] rounded-2xl overflow-hidden bg-[#0b101a] min-h-[220px] md:min-h-[350px]">
+      <div className="relative w-full md:w-[85%]  overflow-hidden bg-[#0b101a] min-h-[220px] md:min-h-[350px]">
         <Image
           src={sliderImages[current].src}
           alt={sliderImages[current].alt}
@@ -61,9 +67,16 @@ export default function StoreBanner() {
             {sliderImages[current].text}
           </h2>
           <div className="mt-3">
-            <button className="bg-white/90 text-black text-xs md:text-sm font-semibold px-4 py-2 rounded-full hover:bg-white transition">
-              Discover
-            </button>
+            {sliderImages[current].buttonUrl && (
+              <a
+                href={sliderImages[current].buttonUrl}
+                className="bg-white/90 text-black text-xs md:text-sm font-semibold px-4 py-2 rounded-full hover:bg-white transition inline-block"
+                tabIndex={0}
+                role="button"
+              >
+                {sliderImages[current].buttonText || "Discover"}
+              </a>
+            )}
           </div>
         </div>
 

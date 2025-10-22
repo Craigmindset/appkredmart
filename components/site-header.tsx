@@ -264,9 +264,13 @@ function HeaderCore() {
                   variant="ghost"
                   size="icon"
                   onClick={() => router.push("/sign-in")}
+                  className="flex items-center gap-4"
                 >
                   <Lock className="h-4 w-4" />
-                  <span className="sr-only">Login</span>
+                  <span className="hidden md:inline-block text-xs font-medium text-[#0F3D73]">
+                    Login / Sign up
+                  </span>
+                  <span className="md:hidden sr-only">Login</span>
                 </Button>
               ) : (
                 <Button
@@ -281,8 +285,17 @@ function HeaderCore() {
                         : "/dashboard"
                     )
                   }
+                  className="relative"
                 >
-                  <User className="h-4 w-4" />
+                  {user.picture ? (
+                    <img
+                      src={user.picture}
+                      alt="Profile"
+                      className="h-7 w-7 rounded-full object-cover border border-gray-300"
+                    />
+                  ) : (
+                    <User className="h-4 w-4" />
+                  )}
                   <span className="sr-only">Profile</span>
                 </Button>
               )}
@@ -290,7 +303,9 @@ function HeaderCore() {
 
             {/* desktop country & auth */}
             <div className="hidden md:flex items-center gap-2">
-              <CountrySelector />
+              <div className="mr-8">
+                <CountrySelector />
+              </div>
               {loading ? (
                 <Skeleton className="w-10 h-10" />
               ) : !user ? (
@@ -298,9 +313,12 @@ function HeaderCore() {
                   variant="ghost"
                   size="icon"
                   onClick={() => router.push("/sign-in")}
+                  className="flex items-center gap-1"
                 >
                   <Lock className="h-4 w-4" />
-                  <span className="sr-only">Login</span>
+                  <span className="text-xs font-medium text-[#0F3D73]">
+                    Login / Sign up
+                  </span>
                 </Button>
               ) : (
                 <Button
@@ -315,8 +333,17 @@ function HeaderCore() {
                         : "/dashboard"
                     )
                   }
+                  className="relative"
                 >
-                  <User className="h-4 w-4" />
+                  {user.picture ? (
+                    <img
+                      src={user.picture}
+                      alt="Profile"
+                      className="h-7 w-7 rounded-full object-cover border border-gray-300"
+                    />
+                  ) : (
+                    <User className="h-4 w-4" />
+                  )}
                   <span className="sr-only">Profile</span>
                 </Button>
               )}
@@ -327,7 +354,7 @@ function HeaderCore() {
               size="icon"
               aria-label="Cart"
               onClick={() => router.push("/cart")}
-              className="relative"
+              className="relative ml-0 md:ml-6"
             >
               <ShoppingCart className="h-5 w-5" />
               {itemCount > 0 && (
