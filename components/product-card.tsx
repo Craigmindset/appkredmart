@@ -52,8 +52,8 @@ export default function ProductCard({
   return (
     <>
       {/* Product tile */}
-      <div className="group relative rounded-lg border bg-card">
-        <div className="relative">
+      <div className="group relative rounded-lg border bg-card flex-1 flex flex-col">
+        <div className="relative flex-1 flex flex-col">
           {/* Show 2% badge if showDealBadge is true */}
           {showDealBadge && (
             <Badge
@@ -83,7 +83,7 @@ export default function ProductCard({
             alt={product.name}
             width={400}
             height={300}
-            className="h-32 w-full sm:h-48 md:h-60 rounded-t-lg object-contain cursor-pointer"
+            className="h-24 w-full sm:h-36 md:h-44 rounded-t-lg object-contain cursor-pointer" //responsible for product height
             onClick={() => onAdd(1)}
           />
 
@@ -109,8 +109,10 @@ export default function ProductCard({
         </div>
 
         <div className="p-3">
-          <div className="text-sm text-muted-foreground">{product.brand}</div>
-          <div className="line-clamp-1 font-medium text-sm">{product.name}</div>
+          <div className="text-xs text-muted-foreground">{product.brand}</div>
+          <div className="font-medium text-xs md:text-xs break-words whitespace-normal text-black-500">
+            {product.name}
+          </div>
           <div className="mt-1 font-semibold text-blue-600 text-sm">
             {formatNaira(product.price)}
           </div>

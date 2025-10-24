@@ -80,7 +80,11 @@ export default function ProductsGrid({
         <>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {items.map((p) => (
-              <ProductCard key={p.id} product={p} showDealBadge={showDealBadge} />
+              <ProductCard
+                key={p.id}
+                product={p}
+                showDealBadge={showDealBadge}
+              />
             ))}
           </div>
           {/* Sentinel for infinite scroll */}

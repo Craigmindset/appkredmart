@@ -113,9 +113,9 @@ export default function AccessLoanPage() {
               </h1>
 
               <p className="text-gray-700 text-base sm:text-lg mb-8 sm:mb-10 tracking-tight max-w-lg">
-                Whether you’re shopping for a new gadget, appliance or dealing
-                with unexpected needs, we make shopping borrowing simple and
-                stress-free.
+                Need a quick boost to shop what you love? Kredmart brings
+                together the best lenders so you can borrow easily, shop
+                confidently, and pay back on your terms — no stress attached.
               </p>
 
               {/* Provider selector */}

@@ -125,12 +125,18 @@ export const ProductDeals = () => {
         >
           {isFetching
             ? Array.from({ length: 6 }).map((_, index) => (
-                <div key={index} className="snap-start shrink-0 basis-1/3 px-1">
-                  <Skeleton className="w-full h-96" />
+                <div
+                  key={index}
+                  className="snap-start shrink-0 basis-1/3 px-1 h-50 flex flex-col"
+                >
+                  <Skeleton className="w-full h-full flex-1" />
                 </div>
               ))
             : data?.data?.map((p: any) => (
-                <div key={p.id} className="snap-start shrink-0 basis-1/3 px-1">
+                <div
+                  key={p.id}
+                  className="snap-start shrink-0 basis-1/3 px-1 h-50 flex flex-col"
+                >
                   <ProductCard product={p} />
                 </div>
               ))}

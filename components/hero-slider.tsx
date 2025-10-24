@@ -27,10 +27,10 @@ const slides = [
   {
     src: "/Shopella-hero-slider.png",
     alt: "Shopella Hero Slider",
-    headline: "Wallet Credit!",
+    headline: "Wallet Loans!",
     subheadline: "When you need it most.",
     description:
-      "Get instant shopping power with Kredmart Wallet Credit. Access flexible shopping credit to buy your favorite products and pay at your own pace.",
+      "Get instant shopping power with Kredmart Wallet Loans. Access funds to buy your favorite products and pay at your own pace.",
     button1: { text: "Browse Products", href: "/store" },
     button2: { text: "Learn More", href: "/about" },
   },
