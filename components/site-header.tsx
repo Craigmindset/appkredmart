@@ -262,9 +262,8 @@ function HeaderCore() {
               ) : !user ? (
                 <Button
                   variant="ghost"
-                  size="icon"
                   onClick={() => router.push("/sign-in")}
-                  className="flex items-center gap-4"
+                  className="flex items-center gap-2 h-10 px-1"
                 >
                   <Lock className="h-4 w-4" />
                   <span className="hidden md:inline-block text-xs font-medium text-[#0F3D73]">
@@ -303,7 +302,7 @@ function HeaderCore() {
 
             {/* desktop country & auth */}
             <div className="hidden md:flex items-center gap-2">
-              <div className="mr-8">
+              <div className="mr-4">
                 <CountrySelector />
               </div>
               {loading ? (
@@ -311,9 +310,8 @@ function HeaderCore() {
               ) : !user ? (
                 <Button
                   variant="ghost"
-                  size="icon"
                   onClick={() => router.push("/sign-in")}
-                  className="flex items-center gap-1"
+                  className="flex items-center gap-2 h-10 px-1"
                 >
                   <Lock className="h-4 w-4" />
                   <span className="text-xs font-medium text-[#0F3D73]">
@@ -354,7 +352,7 @@ function HeaderCore() {
               size="icon"
               aria-label="Cart"
               onClick={() => router.push("/cart")}
-              className="relative ml-0 md:ml-6"
+              className="relative ml-0 md:ml-4"
             >
               <ShoppingCart className="h-5 w-5" />
               {itemCount > 0 && (

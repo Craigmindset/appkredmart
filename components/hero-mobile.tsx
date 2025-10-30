@@ -63,7 +63,7 @@ const HeroMobile: React.FC = () => {
       {/* Background VIDEO */}
       <video
         className="absolute inset-0 h-full w-full object-cover z-0"
-        src="https://hlfwfvupabrc8fwr.public.blob.vercel-storage.com/Kredmart-video.mp4"
+        src="https://res.cloudinary.com/dmwyajnay/video/upload/v1761859283/home-kredmart_ncbi1i.mp4"
         autoPlay
         muted
         loop
