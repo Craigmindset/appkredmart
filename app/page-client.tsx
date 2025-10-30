@@ -127,7 +127,7 @@ export const ProductDeals = () => {
             ? Array.from({ length: 6 }).map((_, index) => (
                 <div
                   key={index}
-                  className="snap-start shrink-0 basis-1/3 px-1 h-50 flex flex-col"
+                  className="snap-start shrink-0 basis-1/3 px-1 h-50 flex flex-col"//adjust product height on mobile view
                 >
                   <Skeleton className="w-full h-full flex-1" />
                 </div>
@@ -135,7 +135,7 @@ export const ProductDeals = () => {
             : data?.data?.map((p: any) => (
                 <div
                   key={p.id}
-                  className="snap-start shrink-0 basis-1/3 px-1 h-50 flex flex-col"
+                  className="snap-start shrink-0 basis-1/3 px-1 h-50 flex flex-col"//adjust product height on mobile view
                 >
                   <ProductCard product={p} />
                 </div>

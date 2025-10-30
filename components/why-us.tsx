@@ -9,13 +9,13 @@ export default function WhyUs() {
     },
     {
       icon: Scale,
-      title: "No hidden fees",
-      desc: "Transparent pricing from application to repayment. See exact loan avaliability and your next schedules inside your dashboard.",
+      title: "Transparent & Hassle-free",
+      desc: "From application to repayment, see your loan availability, repayment dates, and charges easily in your dashboard.",
     },
     {
       icon: Zap,
-      title: "Instant wallet credit",
-      desc: "Once approved, funds reflect in your KredMart wallet so you can check out immediately for eligible items.",
+      title: "Instant wallet loans",
+      desc: "Once approved, your funds are instantly available in your Kredmart wallet, letting you shop eligible items right away.",
     },
     {
       icon: Bell,

@@ -46,8 +46,8 @@ export default function BrandCarousel() {
                 <img
                   src={b.src}
                   alt={b.name + " logo"}
-                  className="h-12 w-[100px] object-contain"
-                  style={{ filter: "brightness(0) invert(0)" }}
+                  className="h-12 w-[100px] object-contain" //responsible for brand height
+                  style={{ filter: "brightness(0) invert(0)" }}//responsible for brand color
                 />
               </div>
             ))}

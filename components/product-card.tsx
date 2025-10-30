@@ -52,8 +52,8 @@ export default function ProductCard({
   return (
     <>
       {/* Product tile */}
-      <div className="group relative rounded-lg border bg-card flex-1 flex flex-col">
-        <div className="relative flex-1 flex flex-col">
+      <div className="group relative rounded-lg border bg-card">
+        <div className="relative">
           {/* Show 2% badge if showDealBadge is true */}
           {showDealBadge && (
             <Badge

@@ -156,9 +156,9 @@ export default function AccessLoanPage() {
 
             {/* Right Side: Provider Card */}
             {!providerChosen ? (
-              <div className="w-full flex items-center justify-center min-h-[320px] sm:min-h-[420px] md:min-h-[500px] -mt-8 sm:-mt-12 md:-mt-16">
+              <div className="w-full flex items-center justify-center min-h-[320px] sm:min-h-[420px] md:min-h-[500px] -mt-8 sm:-mt-12 md:mt-16">
                 <Image
-                  src="/images/access2.png"
+                  src="/images/access.png"
                   alt="Loan Provider Banner"
                   width={2100}
                   height={1400}
