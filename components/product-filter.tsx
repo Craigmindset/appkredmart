@@ -110,10 +110,9 @@ export default function ProductFilter({
           mx-auto max-w-[960px] w-[92%] rounded-2xl bg-[#d3e7f6] px-4 py-3
           grid grid-cols-2 gap-x-3 gap-y-3
           border-[#0F3D73] border
-          md:w-screen md:max-w-none md:rounded-none md:bg-[#d3e7f6]
+          md:max-w-[1400px] md:rounded-2xl md:bg-[#d3e7f6]
           md:flex md:flex-row md:flex-wrap md:items-center
-          md:gap-x-10 md:gap-y-3 md:px-4 md:py-3 md:border-0
-          md:relative md:left-1/2 md:right-1/2 md:-ml-[50vw] md:-mr-[50vw]
+          md:gap-x-10 md:gap-y-3 md:px-6 md:py-4 md:border md:border-[#0F3D73]/20
           ${mobileHidden ? "hidden md:flex" : "mt-16 md:mt-0"}
         `}
       >
