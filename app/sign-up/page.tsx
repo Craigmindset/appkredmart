@@ -91,7 +91,7 @@ export default function SignUpPage() {
           priority={false}
         />
         <img
-          src="https://hlfwfvupabrc8fwr.public.blob.vercel-storage.com/young-african-ladies-viewing-something-their-mobile-phones-while-carrying-shopping-bags.png"
+          src="./images/signin-img.png"
           alt="Background"
           className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover "
         />
