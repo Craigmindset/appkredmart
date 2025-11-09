@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { Eye, ShoppingCart } from "lucide-react";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -35,23 +34,24 @@ export default function ProductCard({
   );
   const add = useCart((s) => s.add);
   const { toast } = useToast();
-  const router = useRouter();
-  const searchParams = useSearchParams();
 
   // Generate slug for this product
   const productSlug = generateProductSlug(product.name, product.id);
 
-  // Check if modal should be open based on URL parameter
+  // Check if modal should be open based on URL parameter (client-side only)
   useEffect(() => {
-    const previewSlug = searchParams.get("preview");
-    if (previewSlug) {
-      // Check if the slug matches this product (by comparing IDs)
-      const slugId = extractIdFromSlug(previewSlug);
-      if (product.id.endsWith(slugId)) {
-        setOpen(true);
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const previewSlug = params.get("preview");
+      if (previewSlug) {
+        // Check if the slug matches this product (by comparing IDs)
+        const slugId = extractIdFromSlug(previewSlug);
+        if (product.id.endsWith(slugId)) {
+          setOpen(true);
+        }
       }
     }
-  }, [searchParams, product.id]);
+  }, [product.id]);
 
   const onAdd = (q = 1) => {
     add(product as any, q);
