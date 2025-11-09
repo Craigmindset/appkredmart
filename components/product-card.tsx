@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Eye, ShoppingCart } from "lucide-react";
 import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,6 +18,7 @@ import { useCart } from "@/store/cart-store";
 import { useToast } from "@/hooks/use-toast";
 import { formatNaira } from "@/lib/currency";
 import { GetProductDto } from "@/lib/services/products/products";
+import { generateProductSlug, extractIdFromSlug } from "@/lib/product-slug";
 
 export default function ProductCard({
   product,
@@ -33,6 +35,23 @@ export default function ProductCard({
   );
   const add = useCart((s) => s.add);
   const { toast } = useToast();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Generate slug for this product
+  const productSlug = generateProductSlug(product.name, product.id);
+
+  // Check if modal should be open based on URL parameter
+  useEffect(() => {
+    const previewSlug = searchParams.get("preview");
+    if (previewSlug) {
+      // Check if the slug matches this product (by comparing IDs)
+      const slugId = extractIdFromSlug(previewSlug);
+      if (product.id.endsWith(slugId)) {
+        setOpen(true);
+      }
+    }
+  }, [searchParams, product.id]);
 
   const onAdd = (q = 1) => {
     add(product as any, q);
@@ -41,18 +60,46 @@ export default function ProductCard({
     setTimeout(() => setAdded(false), 1200);
   };
 
-  // Reset added state when modal closes
+  // Update URL when modal opens/closes
   const handleOpenChange = (v: boolean) => {
     setOpen(v);
-    if (!v) setAdded(false);
-    if (!v)
+    
+    if (v) {
+      // Open modal and update URL with product slug
+      window.history.pushState(null, "", `?preview=${productSlug}`);
+    } else {
+      // Close modal and remove query parameter
+      window.history.pushState(null, "", window.location.pathname);
+      setAdded(false);
       setMainImg(product.images?.[0] ?? product.image ?? "/placeholder.svg");
+    }
   };
+
+  // Handle browser back button
+  useEffect(() => {
+    const handlePopState = () => {
+      const previewSlug = new URLSearchParams(window.location.search).get("preview");
+      if (previewSlug) {
+        const slugId = extractIdFromSlug(previewSlug);
+        setOpen(product.id.endsWith(slugId));
+      } else {
+        setOpen(false);
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [product.id]);
 
   return (
     <>
-      {/* Product tile */}
-      <div className="group relative rounded-lg border bg-card">
+      {/* Product tile - clickable to open preview modal */}
+      <article
+        className="group relative rounded-lg border bg-card cursor-pointer"
+        itemScope
+        itemType="https://schema.org/Product"
+        onClick={() => handleOpenChange(true)}
+      >
         <div className="relative">
           {/* Show 2% badge if showDealBadge is true */}
           {showDealBadge && (
@@ -83,8 +130,8 @@ export default function ProductCard({
             alt={product.name}
             width={400}
             height={300}
-            className="h-24 w-full sm:h-36 md:h-44 rounded-t-lg object-contain cursor-pointer" //responsible for product height
-            onClick={() => onAdd(1)}
+            className="h-24 w-full sm:h-36 md:h-44 rounded-t-lg object-contain" //responsible for product height
+            itemProp="image"
           />
 
           {/* Hover actions */}
@@ -92,7 +139,10 @@ export default function ProductCard({
             <Button
               size="icon"
               variant="secondary"
-              onClick={() => onAdd(1)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onAdd(1);
+              }}
               aria-label="Add to cart"
             >
               <ShoppingCart className="h-5 w-5" />
@@ -100,7 +150,10 @@ export default function ProductCard({
             <Button
               size="icon"
               variant="secondary"
-              onClick={() => setOpen(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleOpenChange(true);
+              }}
               aria-label="Preview"
             >
               <Eye className="h-5 w-5" />
@@ -109,15 +162,36 @@ export default function ProductCard({
         </div>
 
         <div className="p-3">
-          <div className="text-xs text-muted-foreground">{product.brand}</div>
-          <div className="font-medium text-xs md:text-xs break-words whitespace-normal text-black-500">
-            {product.name}
+          <div className="text-xs text-muted-foreground" itemProp="brand">
+            {product.brand}
           </div>
-          <div className="mt-1 font-semibold text-blue-600 text-sm">
-            {formatNaira(product.price)}
+          <h3
+            className="font-medium text-xs md:text-xs break-words whitespace-normal text-black-500"
+            itemProp="name"
+          >
+            {product.name}
+          </h3>
+          <div
+            className="mt-1 font-semibold text-blue-600 text-sm"
+            itemProp="offers"
+            itemScope
+            itemType="https://schema.org/Offer"
+          >
+            <meta itemProp="priceCurrency" content="NGN" />
+            <span itemProp="price" content={product.price.toString()}>
+              {formatNaira(product.price)}
+            </span>
+            <link
+              itemProp="availability"
+              href={
+                product.status === "Active" && product.quantity > 0
+                  ? "https://schema.org/InStock"
+                  : "https://schema.org/OutOfStock"
+              }
+            />
           </div>
         </div>
-      </div>
+      </article>
 
       {/* Modal */}
       <Dialog open={open} onOpenChange={handleOpenChange}>

@@ -10,7 +10,42 @@ import Newsletter from "@/components/newsletter";
 import { getQueryClient } from "@/lib/query-client";
 import { getProducts } from "@/lib/services/products/use-get-products";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { Metadata } from "next";
 import { ProductDeals } from "./page-client";
+
+export const metadata: Metadata = {
+  title: "Kredmart - Shop Smart, Live Better | Online Shopping with Flexible Payments",
+  description:
+    "Shop the latest products at Kredmart with flexible payment options. Find electronics, fashion, home goods, and more. Enjoy fast delivery and secure payments. Shop now!",
+  keywords: [
+    "online shopping",
+    "Kredmart",
+    "buy now pay later",
+    "flexible payments",
+    "electronics",
+    "fashion",
+    "home goods",
+    "e-commerce Nigeria",
+    "wallet loans",
+  ],
+  openGraph: {
+    title: "Kredmart - Shop Smart, Live Better",
+    description:
+      "Shop the latest products at Kredmart with flexible payment options. Enjoy fast delivery and secure payments.",
+    type: "website",
+    url: "https://kredmart.com",
+    siteName: "Kredmart",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kredmart - Shop Smart, Live Better",
+    description:
+      "Shop the latest products at Kredmart with flexible payment options. Enjoy fast delivery and secure payments.",
+  },
+  alternates: {
+    canonical: "https://kredmart.com",
+  },
+};
 
 export default async function Page() {
   const queryClient = getQueryClient();
