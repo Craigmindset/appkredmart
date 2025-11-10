@@ -27,9 +27,7 @@ const sliderImages = [
   },
 ];
 
-const promoImages = [
-  { src: "/StoreBanner/creditcredit-ad.jpg", alt: "Join Now Promo" },
-];
+const promoImages = [{ src: "/StoreBanner/store.gif", alt: "Join Now Promo" }];
 
 export default function StoreBanner() {
   const [current, setCurrent] = useState(0);
@@ -122,7 +120,10 @@ export default function StoreBanner() {
         "
       >
         {/* Promo Card 1 */}
-        <div className="relative rounded-xl overflow-hidden bg-[#f59e0b] aspect-[1/1.05] md:min-h-[180px] md:aspect-auto">
+        <a
+          href="/store/electronics"
+          className="relative rounded-xl overflow-hidden bg-[#f59e0b] aspect-[1/1.05] md:min-h-[180px] md:aspect-auto block cursor-pointer hover:opacity-90 transition"
+        >
           <Image
             src={promoImages[promoIndex].src}
             alt={promoImages[promoIndex].alt}
@@ -131,7 +132,7 @@ export default function StoreBanner() {
             sizes="(max-width:768px) 50vw, 32vw"
             priority={false}
           />
-        </div>
+        </a>
 
         {/* Promo Card 2: GIF on mobile, static image on desktop */}
         {/* Mobile only GIF */}

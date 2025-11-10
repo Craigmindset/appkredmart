@@ -4,7 +4,7 @@ import ProductsGrid from "@/components/products-grid";
 import ProductFilter from "@/components/product-filter";
 import StoreBanner from "@/components/StoreBanner";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useCallback, useMemo } from "react";
 
 import { slugifyCategory } from "@/lib/categories";
@@ -38,6 +38,7 @@ const categoryIcons = {
 
 export default function StorePage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const search = searchParams.get("search")?.trim() || "";
   const q = (searchParams?.get("search") || "").toString().trim();
 
@@ -56,8 +57,14 @@ export default function StorePage() {
       dealsOnly: boolean;
     }) => {
       setFilter(next);
+
+      // If brand is selected, navigate to brand page with SEO-friendly URL
+      if (next.brand && next.brand !== filter.brand) {
+        const brandSlug = next.brand.toLowerCase().replace(/\s+/g, "-");
+        router.push(`/store/brand/${brandSlug}`, { scroll: false });
+      }
     },
-    []
+    [filter.brand, router]
   );
 
   let sortBy: string | undefined = undefined;

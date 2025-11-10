@@ -120,10 +120,10 @@ export default function AccessLoanPage() {
 
               {/* Provider selector */}
               <div className="relative inline-block mb-8 sm:mb-10 w-full">
-                <div className="flex items-center gap-2 mb-8 sm:mb-10 justify-center md:justify-start">
+                <div className="flex flex-col md:flex-row items-center gap-2 mb-8 sm:mb-10 justify-center md:justify-start">
                   <Button
                     onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="bg-[#1d3633] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#162a28] flex items-center gap-2"
+                    className="bg-[#1e5de6] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#162a28] flex items-center gap-2"
                   >
                     {providerChosen
                       ? loanProviders[selectedProvider].name
@@ -132,12 +132,12 @@ export default function AccessLoanPage() {
                   </Button>
 
                   {dropdownOpen && (
-                    <div className="flex items-center gap-0 ml-2">
-                      <div className="w-40 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                    <div className="flex items-center gap-0 md:absolute md:top-12 md:left-0 ml-2 md:ml-0 mt-2 md:mt-0">
+                      <div className="w-56 bg-white border border-gray-200 rounded-md shadow-lg z-10">
                         {loanProviders.map((provider, index) => (
                           <div
                             key={provider.name}
-                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                            className="px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 cursor-pointer whitespace-nowrap"
                             onClick={() => {
                               setSelectedProvider(index);
                               setProviderChosen(true);
