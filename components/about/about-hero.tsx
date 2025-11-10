@@ -39,7 +39,7 @@ export default function AboutHero() {
               <b>Kredmart — Smart shopping made simple.</b>
             </p>
             <button
-              className="inline-flex items-center rounded-md bg-emerald-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+              className="inline-flex items-center rounded-md bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
               type="button"
             >
               Our Media File
@@ -49,7 +49,7 @@ export default function AboutHero() {
           <div className="flex h-full w-full">
             <div className="relative h-full w-full rounded-xl overflow-hidden ">
               <Image
-                src="/StoreBanner/about-png.png"
+                src="/StoreBanner/kredmart-about-img.png"
                 alt="About Kredmart"
                 fill
                 priority

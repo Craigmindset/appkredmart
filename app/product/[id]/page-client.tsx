@@ -3,7 +3,15 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, ShoppingCart, Heart, Share2, Truck, Shield, RefreshCw } from "lucide-react";
+import {
+  ChevronRight,
+  ShoppingCart,
+  Heart,
+  Share2,
+  Truck,
+  Shield,
+  RefreshCw,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -110,7 +118,9 @@ export default function ProductDetailClient({
             itemType="https://schema.org/ListItem"
           >
             <Link
-              href={`/store/${product.category.toLowerCase().replace(/\s+/g, "-")}`}
+              href={`/store/${product.category
+                .toLowerCase()
+                .replace(/\s+/g, "-")}`}
               className="hover:text-foreground transition-colors"
               itemProp="item"
             >

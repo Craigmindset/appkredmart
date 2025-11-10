@@ -2,7 +2,10 @@
  * Generate a URL-friendly slug from product name and ID
  * Example: "Samsung Galaxy S24 Ultra 256GB" + "690f3f94" -> "samsung-galaxy-s24-ultra-256gb-690f3f94"
  */
-export function generateProductSlug(productName: string, productId: string): string {
+export function generateProductSlug(
+  productName: string,
+  productId: string
+): string {
   const nameSlug = productName
     .toLowerCase()
     .trim()
@@ -13,7 +16,7 @@ export function generateProductSlug(productName: string, productId: string): str
 
   // Append last 8 characters of ID for uniqueness
   const shortId = productId.slice(-8);
-  
+
   return `${nameSlug}-${shortId}`;
 }
 
@@ -34,10 +37,13 @@ export function extractIdFromSlug(slug: string): string {
  * 2. Or maintain a slug-to-ID mapping
  * 3. Or use the full ID in the slug (longer but guaranteed unique)
  */
-export function parseProductSlug(slug: string): { shortId: string; nameSlug: string } {
+export function parseProductSlug(slug: string): {
+  shortId: string;
+  nameSlug: string;
+} {
   const parts = slug.split("-");
   const shortId = parts[parts.length - 1];
   const nameSlug = parts.slice(0, -1).join("-");
-  
+
   return { shortId, nameSlug };
 }

@@ -121,7 +121,7 @@ export default function ThreeColumnAd() {
       >
         <div
           className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center min-w-[60vw] sm:min-w-0 cursor-pointer"
-          style={{ width: 300, height: 250 }}
+          style={{ width: 350, height: 250 }}
           onClick={() => router.push("/store?search=Airpods")}
           tabIndex={0}
           role="button"
@@ -142,7 +142,7 @@ export default function ThreeColumnAd() {
         </div>
         <div
           className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center min-w-[80vw] sm:min-w-0"
-          style={{ width: 300, height: 250 }}
+          style={{ width: 350, height: 250 }}
         >
           <img
             src="/StoreBanner/kredmart-1 (2).png"
@@ -159,7 +159,7 @@ export default function ThreeColumnAd() {
         </div>
         <div
           className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center min-w-[80vw] sm:min-w-0"
-          style={{ width: 450, height: 250 }}
+          style={{ width: 350, height: 250 }}
         >
           <img
             src="/StoreBanner/kredmart-1 (1).png"
@@ -229,7 +229,7 @@ export default function ThreeColumnAd() {
       >
         <div
           className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center min-w-[80vw] sm:min-w-0"
-          style={{ width: 450, height: 280 }}
+          style={{ width: 350, height: 250 }}
         >
           <img
             src="/StoreBanner/kredmart-img (2).png"
@@ -246,7 +246,7 @@ export default function ThreeColumnAd() {
         </div>
         <div
           className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center min-w-[80vw] sm:min-w-0"
-          style={{ width: 300, height: 280 }}
+          style={{ width: 350, height: 250 }}
         >
           <img
             src="/StoreBanner/kredmart-img (1).png"
@@ -263,7 +263,7 @@ export default function ThreeColumnAd() {
         </div>
         <div
           className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center min-w-[80vw] sm:min-w-0"
-          style={{ width: 300, height: 280 }}
+          style={{ width: 350, height: 250 }}
         >
           <img
             src="/StoreBanner/kredmart-img (3).png"

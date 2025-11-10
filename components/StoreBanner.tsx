@@ -10,7 +10,6 @@ const sliderImages = [
     alt: "shop with kredmart",
     text: "",
     buttonUrl: "/store",
-    buttonText: "Discover",
   },
   {
     src: "/StoreBanner/g-shock ads.jpg",
@@ -20,11 +19,11 @@ const sliderImages = [
     buttonText: "Shop Watches",
   },
   {
-    src: "/StoreBanner/2151074307.jpg",
+    src: "/StoreBanner/store-banner.jpg",
     alt: "Store Banner 3",
     text: "",
-    buttonUrl: "/store/deals",
-    buttonText: "See Deals",
+    buttonUrl: "/store/electronics",
+    buttonText: "Electronics",
   },
 ];
 
@@ -66,18 +65,18 @@ export default function StoreBanner() {
           <h2 className="text-white text-lg md:text-3xl font-extrabold leading-snug max-w-[90%] md:max-w-[70%] drop-shadow">
             {sliderImages[current].text}
           </h2>
-          <div className="mt-3">
-            {sliderImages[current].buttonUrl && (
+          {sliderImages[current].buttonText && (
+            <div className="mt-3">
               <a
                 href={sliderImages[current].buttonUrl}
                 className="bg-white/90 text-black text-xs md:text-sm font-semibold px-4 py-2 rounded-full hover:bg-white transition inline-block"
                 tabIndex={0}
                 role="button"
               >
-                {sliderImages[current].buttonText || "Discover"}
+                {sliderImages[current].buttonText}
               </a>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* arrows (desktop only) */}

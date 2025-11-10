@@ -14,7 +14,8 @@ import { Metadata } from "next";
 import { ProductDeals } from "./page-client";
 
 export const metadata: Metadata = {
-  title: "Kredmart - Shop Smart, Live Better | Online Shopping with Flexible Payments",
+  title:
+    "Kredmart - Shop Smart, Live Better | Online Shopping with Flexible Payments",
   description:
     "Shop the latest products at Kredmart with flexible payment options. Find electronics, fashion, home goods, and more. Enjoy fast delivery and secure payments. Shop now!",
   keywords: [

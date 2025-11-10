@@ -63,7 +63,7 @@ export default function ProductCard({
   // Update URL when modal opens/closes
   const handleOpenChange = (v: boolean) => {
     setOpen(v);
-    
+
     if (v) {
       // Open modal and update URL with product slug
       window.history.pushState(null, "", `?preview=${productSlug}`);
@@ -78,7 +78,9 @@ export default function ProductCard({
   // Handle browser back button
   useEffect(() => {
     const handlePopState = () => {
-      const previewSlug = new URLSearchParams(window.location.search).get("preview");
+      const previewSlug = new URLSearchParams(window.location.search).get(
+        "preview"
+      );
       if (previewSlug) {
         const slugId = extractIdFromSlug(previewSlug);
         setOpen(product.id.endsWith(slugId));
