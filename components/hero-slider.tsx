@@ -20,7 +20,7 @@ const slides = [
     headline: "Shop Freely",
     subheadline: "Pay Flexibly",
     description:
-      " your credit-powered marketplace where you can shop top products, unlock wallet loans instantly, and get the best deals all in one place..",
+      " Your credit-powered marketplace where you can shop top products, unlock wallet loans instantly, and get the best deals all in one place.",
     button1: { text: "Get Loans", href: "/sign-up" },
     button2: { text: "Visit Store", href: "/store" },
   },

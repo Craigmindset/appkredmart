@@ -54,11 +54,11 @@ export default function OverviewAdminPage() {
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="rounded-lg p-8 bg-gradient-to-br from-blue-50 to-blue-100">
-        <h1 className="text-3xl font-bold text-gray-900">
+      <div className="rounded-lg p-8 bg-gradient-to-r from-[#0F3D73] to-[#D4AF37]">
+        <h1 className="text-3xl font-bold text-white">
           Welcome, {user?.firstname} {user?.lastname}!
         </h1>
-        <p className="text-gray-600 mt-2">
+        <p className="text-blue-100 mt-2">
           Here's an overview of your platform
         </p>
       </div>
@@ -67,7 +67,7 @@ export default function OverviewAdminPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Revenue Card */}
         <div className="relative group">
-          <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:shadow-lg transition-shadow">
+          <Card className="bg-[#0F3D73] text-white hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -89,7 +89,7 @@ export default function OverviewAdminPage() {
 
         {/* Orders Card */}
         <div className="relative group">
-          <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white hover:shadow-lg transition-shadow">
+          <Card className="bg-[#D4AF37] text-white hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -98,7 +98,7 @@ export default function OverviewAdminPage() {
                     {data?.totalOrders.toLocaleString() || 0}
                   </p>
                 </div>
-                <ShoppingCart className="h-8 w-8 text-green-200" />
+                <ShoppingCart className="h-8 w-8 text-white" />
               </div>
             </CardContent>
             <Link
@@ -111,7 +111,7 @@ export default function OverviewAdminPage() {
 
         {/* Products Card */}
         <div className="relative group">
-          <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white hover:shadow-lg transition-shadow">
+          <Card className="bg-[#1A73E8] text-white hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -120,7 +120,7 @@ export default function OverviewAdminPage() {
                     {data?.totalProducts?.toLocaleString() || 0}
                   </p>
                 </div>
-                <Package className="h-8 w-8 text-purple-200" />
+                <Package className="h-8 w-8 text-white" />
               </div>
             </CardContent>
             <Link
@@ -133,7 +133,7 @@ export default function OverviewAdminPage() {
 
         {/* Users Card */}
         <div className="relative group">
-          <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:shadow-lg transition-shadow">
+          <Card className="bg-black text-white hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -142,7 +142,7 @@ export default function OverviewAdminPage() {
                     {data?.totalUsers.toLocaleString() || 0}
                   </p>
                 </div>
-                <Users className="h-8 w-8 text-orange-200" />
+                <Users className="h-8 w-8 text-white" />
               </div>
             </CardContent>
             <Link

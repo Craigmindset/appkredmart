@@ -30,6 +30,7 @@ import {
   Wallet,
   ShoppingCart,
   Loader2,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/lib/services/user/user";
@@ -83,12 +84,20 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-svh w-full bg-slate-50">
       <Sidebar collapsible="icon" className="border-r border-sidebar-border">
         <SidebarHeader className="border-b border-sidebar-border bg-sidebar">
-          <div className="px-3 py-4">
+          <div className="px-3 py-4 flex items-center justify-between">
             <img
               src="/Kredmart Logo-02.png"
               alt="KredMart Logo"
-              className="h-8 w-auto object-contain"
+              className="h-6 md:h-8 w-auto object-contain"
             />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden h-8 w-8"
+              onClick={() => setOpenMobile(false)}
+            >
+              <X className="h-5 w-5" />
+            </Button>
           </div>
         </SidebarHeader>
 
@@ -161,7 +170,11 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             <div className="flex items-center gap-2">
               <SidebarTrigger className="text-slate-600 hover:text-slate-900" />
               <Link href="/" className="flex items-center gap-2">
-                <BrandLogo size="sm" variant="gradient" showText />
+                <img
+                  src="/logo-blue.png"
+                  alt="KredMart"
+                  className="h-6 w-auto"
+                />
               </Link>
             </div>
 
@@ -223,7 +236,11 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             <div className="flex items-center gap-3">
               <SidebarTrigger className="text-slate-600 hover:text-slate-900" />
               <Link href="/" className="flex items-center gap-2">
-                <BrandLogo size="sm" variant="gradient" showText />
+                <img
+                  src="/logo-blue.png"
+                  alt="KredMart"
+                  className="h-8 w-auto"
+                />
               </Link>
             </div>
 

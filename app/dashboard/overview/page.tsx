@@ -12,6 +12,8 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Eye,
+  Wallet,
+  PiggyBank,
 } from "lucide-react";
 import Link from "next/link";
 import { useUser } from "@/lib/services/user/user";
@@ -24,13 +26,13 @@ export default function OverviewPage() {
   const { data: overview } = useUserOverview();
   const stats = [
     {
-      title: "Total Balance",
+      title: "Wallet Balance",
       value: formatNaira(overview?.totalBalance || 0),
       change: "0%",
       trend: "up",
-      icon: DollarSign,
-      gradient: "from-emerald-500 to-teal-600",
-      bgGradient: "from-emerald-50 to-teal-50",
+      icon: Wallet,
+      gradient: "from-[#0F3D73] to-[#0F3D73]",
+      bgGradient: "from-blue-50 to-blue-50",
       description: "Available wallet balance",
     },
     {
@@ -38,9 +40,9 @@ export default function OverviewPage() {
       value: overview?.activeLoans || 0,
       change: "No change",
       trend: "neutral",
-      icon: CreditCard,
-      gradient: "from-blue-500 to-indigo-600",
-      bgGradient: "from-blue-50 to-indigo-50",
+      icon: PiggyBank,
+      gradient: "from-[#D4AF37] to-[#D4AF37]",
+      bgGradient: "from-yellow-50 to-yellow-50",
       description: "Currently active loans",
     },
     {
@@ -49,8 +51,8 @@ export default function OverviewPage() {
       change: "0%",
       trend: "up",
       icon: ShoppingCart,
-      gradient: "from-purple-500 to-pink-600",
-      bgGradient: "from-purple-50 to-pink-50",
+      gradient: "from-[#1A73E8] to-[#1A73E8]",
+      bgGradient: "from-blue-50 to-blue-50",
       description: "Orders this month",
     },
     {
@@ -59,8 +61,8 @@ export default function OverviewPage() {
       change: "0%",
       trend: "up",
       icon: Package,
-      gradient: "from-orange-500 to-red-600",
-      bgGradient: "from-orange-50 to-red-50",
+      gradient: "from-black to-black",
+      bgGradient: "from-slate-50 to-slate-50",
       description: "Awaiting delivery",
     },
   ];
@@ -110,7 +112,7 @@ export default function OverviewPage() {
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl p-6 text-white">
+      <div className="bg-gradient-to-r from-[#0F3D73] to-[#D4AF37] rounded-2xl p-6 text-white">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold mb-2">
@@ -126,6 +128,60 @@ export default function OverviewPage() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Quick Actions - Show on mobile only, right after welcome card */}
+      <div className="grid grid-cols-3 md:hidden gap-2">
+        <Link href="/dashboard/loan-request">
+          <Card className="border-0 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group">
+            <CardContent className="p-3">
+              <div className="flex flex-col items-center gap-2 text-center">
+                <div className="h-10 w-10 rounded-full bg-[#D4AF37] flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <PiggyBank className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900 text-xs leading-tight">
+                    Request Loan
+                  </h3>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href="/store">
+          <Card className="border-0 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group">
+            <CardContent className="p-3">
+              <div className="flex flex-col items-center gap-2 text-center">
+                <div className="h-10 w-10 rounded-full bg-[#1A73E8] flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <ShoppingCart className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900 text-xs leading-tight">
+                    Shop Now
+                  </h3>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href="/dashboard/wallet">
+          <Card className="border-0 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group">
+            <CardContent className="p-3">
+              <div className="flex flex-col items-center gap-2 text-center">
+                <div className="h-10 w-10 rounded-full bg-[#0F3D73] flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Wallet className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900 text-xs leading-tight whitespace-nowrap">
+                    Manage Wallet
+                  </h3>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
 
       {/* Stats Cards */}
@@ -267,14 +323,14 @@ export default function OverviewPage() {
         </CardContent>
       </Card>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Quick Actions - Desktop only */}
+      <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-4">
         <Link href="/dashboard/loan-request">
           <Card className="border-0 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <CreditCard className="h-6 w-6 text-white" />
+                <div className="h-12 w-12 rounded-full bg-[#D4AF37] flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <PiggyBank className="h-6 w-6 text-white" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900">Request Loan</h3>
@@ -291,7 +347,7 @@ export default function OverviewPage() {
           <Card className="border-0 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <div className="h-12 w-12 rounded-full bg-[#1A73E8] flex items-center justify-center group-hover:scale-110 transition-transform">
                   <ShoppingCart className="h-6 w-6 text-white" />
                 </div>
                 <div>
@@ -307,8 +363,8 @@ export default function OverviewPage() {
           <Card className="border-0 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <DollarSign className="h-6 w-6 text-white" />
+                <div className="h-12 w-12 rounded-full bg-[#0F3D73] flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Wallet className="h-6 w-6 text-white" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900">

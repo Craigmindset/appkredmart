@@ -191,9 +191,9 @@ export function Overview() {
           className="block h-full w-full"
         >
           <Card className="overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer h-full w-full">
-            <CardHeader className="bg-emerald-600 text-emerald-50 pb-4">
+            <CardHeader className="bg-[#0F3D73] text-white pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-emerald-50 text-lg">
+                <CardTitle className="text-white text-lg">
                   Total Sales
                 </CardTitle>
                 <DollarSign className="h-6 w-6 opacity-90" />
@@ -225,9 +225,9 @@ export function Overview() {
           className="block h-full w-full"
         >
           <Card className="overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer h-full w-full">
-            <CardHeader className="bg-blue-600 text-blue-50 pb-4">
+            <CardHeader className="bg-[#D4AF37] text-white pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-blue-50 text-lg">
+                <CardTitle className="text-white text-lg">
                   Total Orders
                 </CardTitle>
                 <ShoppingCart className="h-6 w-6 opacity-90" />
@@ -259,11 +259,9 @@ export function Overview() {
           className="block h-full w-full"
         >
           <Card className="overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer h-full w-full">
-            <CardHeader className="bg-purple-600 text-purple-50 pb-4">
+            <CardHeader className="bg-[#1A73E8] text-white pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-purple-50 text-lg">
-                  Products
-                </CardTitle>
+                <CardTitle className="text-white text-lg">Products</CardTitle>
                 <Package className="h-6 w-6 opacity-90" />
               </div>
             </CardHeader>
