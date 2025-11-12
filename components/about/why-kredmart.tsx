@@ -25,20 +25,19 @@ export default function WhyKredmart() {
               className="text-2xl md:text-3xl font-bold mb-6"
               style={{ fontFamily: "Poppins, sans-serif", color: "#0F3D73" }}
             >
-              Why Shop with Kredmart
+              What We Offer
             </h2>
             <div className="mb-6">
               <h3
                 className="text-lg font-semibold mb-1"
                 style={{ color: "#0F3D73" }}
               >
-                Built on Trust
+                Top Deals & Trusted Products
               </h3>
               <p className="text-sm text-gray-700 text-justify md:text-left">
-                Every product and seller on KredMart goes through strict
-                verification and quality checks. We guarantee authenticity and
-                back every order with a clear, fair return policy so you can
-                shop with complete confidence.
+                Kredmart connects consumers to dependable merchants who offer
+                unbeatable prices on a variety of products, including
+                electronics, gadgets, fashion, and lifestyle items.
               </p>
             </div>
             <div className="mb-6">
@@ -46,12 +45,11 @@ export default function WhyKredmart() {
                 className="text-lg font-semibold mb-1"
                 style={{ color: "#0F3D73" }}
               >
-                Your Security Comes First
+                Wallet Loans
               </h3>
               <p className="text-sm text-gray-700 text-justify md:text-left">
-                We protect your data and payments with bank-level encryption and
-                trusted payment gateways. Every transaction is safe, private,
-                and verified.
+                Instantly purchase using funds that have been deposited into
+                your Kredmart Wallet and receive approval for flexible credit.
               </p>
             </div>
             <div className="mb-6">
@@ -59,11 +57,36 @@ export default function WhyKredmart() {
                 className="text-lg font-semibold mb-1"
                 style={{ color: "#0F3D73" }}
               >
-                Multiple Payment
+                Various Payment Methods
               </h3>
               <p className="text-sm text-gray-700 text-justify md:text-left">
-                Kredmart offers multiple payment solutions, including wallet
-                backed loan payment.
+                Utilise your wallet balance, credit card, or secure payment
+                gateways to make your payment, whichever method is most
+                convenient for you.
+              </p>
+            </div>
+            <div className="mb-6">
+              <h3
+                className="text-lg font-semibold mb-1"
+                style={{ color: "#0F3D73" }}
+              >
+                Rapid Delivery
+              </h3>
+              <p className="text-sm text-gray-700 text-justify md:text-left">
+                Our trusted logistics partners provide seamless
+                nationwide delivery.
+              </p>
+            </div>
+            <div className="mb-6">
+              <h3
+                className="text-lg font-semibold mb-1"
+                style={{ color: "#0F3D73" }}
+              >
+                Merchant Support
+              </h3>
+              <p className="text-sm text-gray-700 text-justify md:text-left">
+                Our  infrastructure enables merchants to access real-time
+                dashboards, payment confirmation , and automated settlements.
               </p>
             </div>
           </div>
@@ -96,7 +119,7 @@ export default function WhyKredmart() {
               Brands
             </h3>
             <p className="text-sm text-gray-800 text-justify md:text-left">
-              At KredMart, we understand how important trust is when choosing a
+              At Kredmart, we understand how important trust is when choosing a
               product. That’s why we are committed to offering only authentic,
               high-quality products from verified brands you can rely on. Every
               item we sell meets strict quality standards to ensure you get
