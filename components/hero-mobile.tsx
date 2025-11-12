@@ -23,14 +23,14 @@ const slides = [
     headline: "Shop Freely",
     subheadline: "Pay Flexibly",
     description:
-      " your credit-powered marketplace where you can shop top products, unlock wallet loans instantly, and get the best deals all in one place..",
+      " Your credit-powered marketplace where you can shop top products, unlock wallet loans instantly, and get the best deals all in one place..",
     button1: { text: "Get Loans", href: "/sign-up" },
     button2: { text: "Visit Store", href: "/store" },
   },
   {
     src: "/Shopella-hero-slider.png",
     alt: "Shopella Hero Slider",
-    headline: "Wallet Credit!",
+    headline: "Wallet Loans!",
     subheadline: "When you need it most.",
     description:
       "Get instant shopping power with Kredmart Wallet Credit. Access flexible shopping credit to buy your favorite products and pay at your own pace.",
