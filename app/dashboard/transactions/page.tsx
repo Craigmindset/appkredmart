@@ -158,11 +158,10 @@ export default function TransactionsPage() {
   return (
     <Card>
       <CardHeader className="flex-row items-center justify-between space-y-0">
-        <CardTitle>Transactions</CardTitle>
+        <CardTitle className="text-lg md:text-2xl mr-3">Transactions</CardTitle>
         <div className="flex items-center gap-2">
           <Button
-            variant="outline"
-            className="bg-transparent"
+            className="bg-[#0F3D73] hover:bg-[#0F3D73]/90 text-white text-xs md:text-sm"
             onClick={downloadStatement}
           >
             Download Statement

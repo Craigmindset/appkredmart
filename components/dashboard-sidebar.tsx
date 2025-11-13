@@ -171,7 +171,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               <SidebarTrigger className="text-slate-600 hover:text-slate-900" />
               <Link href="/" className="flex items-center gap-2">
                 <img
-                  src="/logo-blue.png"
+                  src="/Kredmart Logo-01.png"
                   alt="KredMart"
                   className="h-6 w-auto"
                 />
@@ -237,7 +237,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               <SidebarTrigger className="text-slate-600 hover:text-slate-900" />
               <Link href="/" className="flex items-center gap-2">
                 <img
-                  src="/logo-blue.png"
+                  src="/Kredmart Logo-01.png"
                   alt="KredMart"
                   className="h-8 w-auto"
                 />
