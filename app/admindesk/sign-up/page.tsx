@@ -37,7 +37,7 @@ function Timeline({ current }: { current: Step }) {
           return (
             <div key={it.key} className="flex flex-1 items-center">
               <div
-                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 ${
+                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 whitespace-nowrap ${
                   active
                     ? "bg-foreground text-background ring-foreground/10"
                     : done
@@ -45,7 +45,7 @@ function Timeline({ current }: { current: Step }) {
                     : "bg-muted text-muted-foreground ring-border"
                 }`}
               >
-                <Icon className="mr-1.5 h-3.5 w-3.5" />
+                <Icon className="mr-1.5 h-3.5 w-3.5 flex-shrink-0" />
                 {it.label}
               </div>
               {idx < items.length - 1 && (
@@ -55,7 +55,7 @@ function Timeline({ current }: { current: Step }) {
                       ? "bg-emerald-600/40"
                       : active
                       ? "bg-foreground/40"
-                      : "bg-muted"
+                      : "bg-blue-400"
                   }`}
                 />
               )}
@@ -224,7 +224,7 @@ export default function MerchantSignUpPage() {
     <LayoutShell showFooter={false}>
       <section className="relative">
         <img
-          src="https://hlfwfvupabrc8fwr.public.blob.vercel-storage.com/merchant.jpg"
+          src="/images/login-bg.jpg"
           alt="Background"
           className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover"
         />

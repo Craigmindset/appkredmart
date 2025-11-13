@@ -117,27 +117,10 @@ export default function MerchantSignInPage() {
 
                 <Button
                   type="submit"
-                  className="mt-2 h-11 w-full"
+                  className="mt-2 h-11 w-full bg-blue-900 hover:bg-blue-800"
                   disabled={loading}
                 >
                   {loading ? "Signing in..." : "Sign In"}
-                </Button>
-
-                <div className="mt-4 flex items-center gap-3">
-                  <Separator className="flex-1" />
-                  <span className="text-xs text-muted-foreground">Or</span>
-                  <Separator className="flex-1" />
-                </div>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="h-11 w-full bg-transparent"
-                >
-                  <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-foreground text-background text-[10px]">
-                    G
-                  </span>
-                  Sign in with Google
                 </Button>
               </form>
 
