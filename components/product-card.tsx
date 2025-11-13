@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Eye, ShoppingCart } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -34,6 +35,7 @@ export default function ProductCard({
   );
   const add = useCart((s) => s.add);
   const { toast } = useToast();
+  const router = useRouter();
 
   // Generate slug for this product
   const productSlug = generateProductSlug(product.name, product.id);
@@ -53,11 +55,16 @@ export default function ProductCard({
     }
   }, [product.id]);
 
-  const onAdd = (q = 1) => {
+  const onAdd = (q = 1, fromModal = false) => {
     add(product as any, q);
     toast({ title: "Added to cart", description: product.name });
     setAdded(true);
-    setTimeout(() => setAdded(false), 1200);
+    setTimeout(() => {
+      setAdded(false);
+      if (fromModal) {
+        router.push("/cart");
+      }
+    }, 1200);
   };
 
   // Update URL when modal opens/closes
@@ -327,7 +334,7 @@ export default function ProductCard({
                   className={`ml-auto px-3 py-1.5 text-xs rounded-md transition-colors ${
                     added ? "bg-green-600 hover:bg-green-700 text-white" : ""
                   }`}
-                  onClick={() => onAdd(qty)}
+                  onClick={() => onAdd(qty, true)}
                 >
                   {added
                     ? "Added!"

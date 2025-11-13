@@ -1,37 +1,46 @@
-"use client"
+"use client";
 
-import { useMemo, useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
-import { loanProviders, type LoanProvider } from "@/lib/loan-providers"
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { loanProviders, type LoanProvider } from "@/lib/loan-providers";
 
 const BANNER_URL =
-  "https://hlfwfvupabrc8fwr.public.blob.vercel-storage.com/young-african-ladies-viewing-something-their-mobile-phones-while-carrying-shopping-bags.png"
+  "https://res.cloudinary.com/dylmpyglw/image/upload/v1763033923/signin-img_wsnvcf.png";
 
 export default function LoanRequestPage() {
-  const [step, setStep] = useState<"start" | "select">("start")
-  const [selectedName, setSelectedName] = useState<string>(loanProviders[0].name)
-  const router = useRouter()
+  const [step, setStep] = useState<"start" | "select">("start");
+  const [selectedName, setSelectedName] = useState<string>(
+    loanProviders[0].name
+  );
+  const router = useRouter();
 
   const selected: LoanProvider = useMemo(
-    () => loanProviders.find((p) => p.name === selectedName) || loanProviders[0],
-    [selectedName],
-  )
+    () =>
+      loanProviders.find((p) => p.name === selectedName) || loanProviders[0],
+    [selectedName]
+  );
 
   const onApply = () => {
     // If your provider URL is external, consider window.location.assign(selected.applyUrl)
-    router.push(selected.applyUrl)
-  }
+    router.push(selected.applyUrl);
+  };
 
   // Safe logo fallback so src is never an empty string
   const logoSrc =
     typeof selected.logo === "string" && selected.logo.trim().length > 0
       ? selected.logo
-      : "/placeholder.svg?height=60&width=180"
+      : "/placeholder.svg?height=60&width=180";
 
   return (
     <div className="space-y-6">
@@ -41,13 +50,20 @@ export default function LoanRequestPage() {
           <img
             src={BANNER_URL || "/placeholder.svg"}
             alt="Loan banner"
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover md:hidden"
+          />
+          <img
+            src="/StoreBanner/bg-loans.png"
+            alt="Loan banner"
+            className="absolute inset-0 h-full w-full object-cover hidden md:block"
           />
         </div>
         <CardHeader className="pb-2">
-          <CardTitle className="text-2xl">{"Get Started with your Loan"}</CardTitle>
+          <CardTitle className="text-xl md:text-2xl">
+            {"Get Started with your Loan"}
+          </CardTitle>
         </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">
+        <CardContent className="text-sm text-muted-foreground text-justify">
           {
             "Kredmart is a credit backed ecommerce shopping site, connecting user to premium loan providers to enable a shopping wallet backed loan. Please Note, this is a wallet backed loan linked to your account to purchase an item of your choose. Kindly select your loan provider and apply"
           }
@@ -60,9 +76,15 @@ export default function LoanRequestPage() {
           <CardContent className="py-6">
             <div className="flex flex-col items-center justify-center gap-4 text-center">
               <p className="max-w-2xl text-sm text-muted-foreground">
-                {"Choose a loan provider to view requirements and apply for a wallet‑backed shopping loan."}
+                {
+                  "Choose a loan provider to view requirements and apply for a wallet‑backed shopping loan."
+                }
               </p>
-              <Button size="lg" onClick={() => setStep("select")}>
+              <Button
+                size="lg"
+                onClick={() => setStep("select")}
+                className="bg-[#0F3D73] hover:bg-[#0F3D73]/90"
+              >
                 {"Select Loan Provider"}
               </Button>
             </div>
@@ -72,13 +94,17 @@ export default function LoanRequestPage() {
         // Layout 2: Provider selection + details + apply
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">{"Choose a Provider and Review Details"}</CardTitle>
+            <CardTitle className="text-lg">
+              {"Choose a Provider and Review Details"}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Provider selector */}
             <div className="grid gap-4 md:grid-cols-3">
               <div className="md:col-span-1">
-                <Label className="mb-1 block text-sm font-medium">{"Loan Provider"}</Label>
+                <Label className="mb-1 block text-sm font-medium">
+                  {"Loan Provider"}
+                </Label>
                 <Select onValueChange={setSelectedName} value={selectedName}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select provider" />
@@ -102,7 +128,9 @@ export default function LoanRequestPage() {
                     className="h-10 w-auto object-contain"
                   />
                   <div className="text-sm text-muted-foreground">
-                    {"Review the requirements and eligibility criteria below before applying."}
+                    {
+                      "Review the requirements and eligibility criteria below before applying."
+                    }
                   </div>
                 </div>
               </div>
@@ -113,7 +141,9 @@ export default function LoanRequestPage() {
             {/* Two-column details */}
             <div className="grid gap-6 md:grid-cols-2">
               <div>
-                <h3 className="mb-3 text-base font-semibold">{"Loan Requirements"}</h3>
+                <h3 className="mb-3 text-base font-semibold">
+                  {"Loan Requirements"}
+                </h3>
                 <ul className="list-inside list-disc space-y-1 text-sm text-muted-foreground">
                   {selected.requirements.bulletPoints?.map((b) => (
                     <li key={b}>{b}</li>
@@ -146,7 +176,9 @@ export default function LoanRequestPage() {
               </div>
 
               <div>
-                <h3 className="mb-3 text-base font-semibold">{"Eligibility"}</h3>
+                <h3 className="mb-3 text-base font-semibold">
+                  {"Eligibility"}
+                </h3>
                 <ul className="list-inside list-disc space-y-1 text-sm text-muted-foreground">
                   {(selected.eligibility?.length
                     ? selected.eligibility
@@ -172,5 +204,5 @@ export default function LoanRequestPage() {
         </Card>
       )}
     </div>
-  )
+  );
 }

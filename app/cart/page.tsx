@@ -19,14 +19,17 @@ export default function CartPage() {
   return (
     <LayoutShell>
       <section className="container mx-auto px-3 sm:px-4 md:px-6 py-8 md:py-10 min-h-[56vh]">
-        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+        <h1
+          className="text-xl sm:text-3xl font-semibold tracking-tight"
+          style={{ fontFamily: "sans-serif" }}
+        >
           Your Cart
         </h1>
 
         {items.length === 0 ? (
           <div className="mt-8">
             <p className="text-muted-foreground">Your cart is empty.</p>
-            <Button asChild className="mt-4">
+            <Button asChild className="mt-4 bg-[#0F3D73] hover:bg-[#0F3D73]/90">
               <Link href="/store">Continue shopping</Link>
             </Button>
           </div>
@@ -129,7 +132,11 @@ export default function CartPage() {
 
               {/* Row actions */}
               <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between pt-2">
-                <Button asChild variant="link" className="px-0 h-auto">
+                <Button
+                  asChild
+                  variant="link"
+                  className="px-0 h-auto text-[#0F3D73] hover:text-[#0F3D73]/80"
+                >
                   <Link href="/store" className="text-sm">
                     Continue shopping
                   </Link>
