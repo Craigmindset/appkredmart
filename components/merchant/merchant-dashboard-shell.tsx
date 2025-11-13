@@ -34,16 +34,8 @@ import {
   ShoppingBag,
   Upload,
   Wallet,
-  Megaphone,
+  Store,
 } from "lucide-react";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
 import { useUnreadCount } from "@/lib/services/notifications/use-notification";
@@ -106,14 +98,13 @@ export function MerchantDashboardShell({
     <SidebarProvider>
       <Sidebar className="border-r border-gray-200 bg-blue-900 z-20">
         <SidebarHeader className="border-b border-blue-700 bg-blue-900">
-          <div className="flex items-center gap-3 px-3 py-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white">
-              <Settings className="h-5 w-5" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-lg font-bold text-white">KredMart</span>
-              <span className="text-xs text-blue-300">Merchant Portal</span>
-            </div>
+          <div className="flex flex-col items-center gap-2 px-3 py-4">
+            <img
+              src="/Kredmart Logo-02.png"
+              alt="KredMart Logo"
+              className="h-6 sm:h-6 w-auto"
+            />
+            <span className="text-xs text-blue-300">Merchant Portal</span>
           </div>
         </SidebarHeader>
         <SidebarContent className="bg-blue-900 overflow-y-auto scrollbar-hide">
@@ -177,101 +168,67 @@ export function MerchantDashboardShell({
       </Sidebar>
       <SidebarInset className="flex-1 bg-gray-50">
         {/* Sticky Header */}
-        <header className="sticky top-0 z-10 w-full border-b border-blue-700 bg-blue-700/95 backdrop-blur supports-[backdrop-filter]:bg-blue-700/90">
-          <div className="flex h-16 items-center justify-between px-6">
-            <div className="flex items-center gap-4">
-              <SidebarTrigger className="h-8 w-8 p-0 hover:bg-blue-800 rounded-md transition-colors" />
-              <Separator orientation="vertical" className="h-6 bg-blue-300" />
-              <div>
-                <h1 className="text-xl font-bold text-white">
-                  Merchant Dashboard
+        <header className="sticky top-0 z-10 w-full border-b border-blue-700 bg-blue-700/95 backdrop-blur supports-[backdrop-filter]:bg-blue-700/90 overflow-x-hidden">
+          <div className="flex h-16 items-center justify-between px-3 sm:px-6">
+            {/* LEFT: title area */}
+            <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
+              <SidebarTrigger className="h-8 w-8 p-0 hover:bg-blue-800 rounded-md transition-colors flex-shrink-0" />
+              <Separator
+                orientation="vertical"
+                className="h-6 bg-blue-300 flex-shrink-0"
+              />
+              <div className="min-w-0">
+                <h1 className="text-base sm:text-xl font-bold text-white truncate">
+                  Merchant
                 </h1>
-                <p className="text-sm text-blue-200">
+                <p className="text-xs sm:text-sm text-blue-200 truncate">
                   Welcome, {user?.firstname}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              {/* Broadcast Button */}
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="hover:bg-blue-800"
-                    title="Send Broadcast"
-                  >
-                    <Megaphone className="h-5 w-5 text-yellow-300" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Send Broadcast Message</DialogTitle>
-                  </DialogHeader>
-                  <form className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-1">
-                        Message
-                      </label>
-                      <textarea
-                        className="w-full border rounded p-2 min-h-[80px]"
-                        placeholder="Enter your broadcast message..."
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1">
-                        Recipients
-                      </label>
-                      <select
-                        className="w-full border rounded p-2"
-                        defaultValue="all"
-                      >
-                        <option value="all">All Users & Merchants</option>
-                        <option value="users">All Users</option>
-                        <option value="merchants">All Merchants</option>
-                      </select>
-                    </div>
-                    <DialogFooter>
-                      <Button
-                        type="submit"
-                        className="w-full bg-blue-700 text-white hover:bg-blue-800"
-                      >
-                        Send Broadcast
-                      </Button>
-                    </DialogFooter>
-                  </form>
-                </DialogContent>
-              </Dialog>
-              {/* Home and Store Links */}
+
+            {/* RIGHT: action area */}
+            <div className="flex items-center gap-1 sm:gap-3 flex-shrink-0 min-w-0">
+              {/* Home and Store Links (hidden on mobile, visible on sm+) */}
               <Link
                 href="/"
-                className="text-white hover:text-blue-200 text-sm font-medium px-2 py-1 rounded hover:bg-blue-800 transition-colors"
+                className="hidden sm:flex text-white hover:text-blue-200 text-sm font-medium px-2 py-1 rounded hover:bg-blue-800 transition-colors items-center gap-1 flex-shrink-0"
+                title="Home"
               >
-                Home
+                <span>Home</span>
               </Link>
               <Link
                 href="/store"
-                className="text-white hover:text-blue-200 text-sm font-medium px-2 py-1 rounded hover:bg-blue-800 transition-colors"
+                className="hidden sm:flex text-white hover:text-blue-200 text-sm font-medium px-2 py-1 rounded hover:bg-blue-800 transition-colors items-center gap-1 flex-shrink-0"
+                title="Store"
               >
-                Store
+                <span>Store</span>
               </Link>
-              {/* Wallet */}
+
+              {/* Wallet: restrict width and truncate on small */}
               <Link
                 href="/admindesk/dashboard/wallet"
-                className="flex items-center gap-2 text-white hover:text-blue-200 text-sm font-medium px-2 py-1 rounded hover:bg-blue-800 transition-colors"
+                className="flex items-center gap-2 text-white hover:text-blue-200 text-sm font-medium px-2 py-1 rounded hover:bg-blue-800 transition-colors flex-shrink-0"
                 prefetch={false}
               >
-                <Wallet className="h-4 w-4 text-green-300" />
-                <span className="hidden sm:inline text-sm font-medium text-white">
-                  ₦{wallet?.balance.toLocaleString()}
+                <Wallet className="h-4 w-4 text-green-300 flex-shrink-0" />
+                <span className="hidden sm:inline text-sm font-medium text-white max-w-[180px] truncate">
+                  ₦{wallet?.balance?.toLocaleString()}
+                </span>
+                {/* small-screen condensed wallet: show abbreviated amount to avoid width issues */}
+                <span className="sm:hidden text-sm font-medium text-white max-w-[80px] truncate">
+                  ₦
+                  {wallet?.balance
+                    ? Number(wallet.balance).toLocaleString()
+                    : ""}
                 </span>
               </Link>
-              {/* Profile */}
+
+              {/* Profile (avatar + name hidden on mobile) */}
               <Button
                 variant="ghost"
                 size="sm"
-                className="gap-2 hover:bg-blue-800"
+                className="gap-2 hover:bg-blue-800 flex-shrink-0"
               >
                 <Avatar className="h-7 w-7">
                   <AvatarImage
@@ -287,18 +244,20 @@ export function MerchantDashboardShell({
                   {user?.firstname}
                 </span>
               </Button>
+
               {/* Logout */}
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleLogout}
-                className="hover:bg-blue-800"
+                className="hover:bg-blue-800 flex-shrink-0 p-2"
               >
                 <LogOut className="h-4 w-4 text-blue-200" />
               </Button>
             </div>
           </div>
         </header>
+
         <main className="flex-1 overflow-hidden">
           <div className="h-full overflow-auto">
             <div className="animate-in slide-in-from-right-5 duration-300 ease-out">
