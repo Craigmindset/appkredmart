@@ -6,15 +6,15 @@ export default function MissionVision() {
       <div className="container mx-auto max-w-6xl px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
           {/* Left Column: Mission & Vision */}
-          <div className="flex flex-col gap-8">
-            {/* Mission */}
-            <div className="flex flex-col items-center md:items-start text-center md:text-left">
+          <div className="flex flex-col gap-4 md:gap-8">
+            {/* Mission Card */}
+            <div className="border-[0.5px] border-[#0F3D73] rounded-lg p-4 bg-blue-50 flex flex-col items-center md:items-start text-center md:text-left">
               <div className="flex items-center gap-3 mb-2">
                 <span className="flex items-center justify-center w-10 h-10 rounded-full bg-emerald-100">
-                  <Target className="text-emerald-600 w-7 h-7" />
+                  <Target className="text-emerald-600 w-5 h-5 md:w-7 md:h-7" />
                 </span>
                 <h2
-                  className="text-xl font-bold"
+                  className="text-lg md:text-xl font-bold"
                   style={{
                     fontFamily: "Poppins, sans-serif",
                     color: "#0F3D73",
@@ -24,7 +24,7 @@ export default function MissionVision() {
                 </h2>
               </div>
               <p
-                className="text-gray-700 text-2sm text-justify"
+                className="text-gray-700 text-2sm "
                 style={{ fontFamily: "sans-serif" }}
               >
                 Our mission is to make credit-powered shopping effortlessly
@@ -32,14 +32,14 @@ export default function MissionVision() {
               </p>
             </div>
 
-            {/* Vision */}
-            <div className="flex flex-col items-center md:items-start text-center md:text-left">
+            {/* Vision Card */}
+            <div className="border-[0.5px] border-[#0F3D73] rounded-lg p-4 bg-blue-50 flex flex-col items-center md:items-start text-center md:text-left">
               <div className="flex items-center gap-3 mb-2">
                 <span className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100">
-                  <Eye className="text-indigo-600 w-7 h-7" />
+                  <Eye className="text-indigo-600 w-5 h-5 md:w-7 md:h-7" />
                 </span>
                 <h2
-                  className="text-xl font-bold"
+                  className="text-lg md:text-xl font-bold"
                   style={{
                     fontFamily: "Poppins, sans-serif",
                     color: "#0F3D73",
@@ -60,10 +60,10 @@ export default function MissionVision() {
           <div className="flex flex-col items-center md:items-start text-center md:text-left h-full flex-1">
             <div className="flex items-center gap-3 mb-2">
               <span className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100">
-                <Eye className="text-indigo-600 w-7 h-7" />
+                <Target className="text-indigo-600 w-5 h-5 md:w-7 md:h-7" />
               </span>
               <h2
-                className="text-xl font-bold"
+                className="text-lg md:text-xl font-bold"
                 style={{ fontFamily: "Poppins, sans-serif", color: "#0F3D73" }}
               >
                 Our Purpose

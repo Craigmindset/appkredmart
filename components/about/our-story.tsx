@@ -9,7 +9,7 @@ export default function OurStory() {
             {/* Left: Our Story */}
             <div>
               <h2
-                className="text-3xl md:text-2xl font-bold mb-4"
+                className="text-xl text-center md:text-2xl font-bold mb-4"
                 style={{ fontFamily: "Poppins, sans-serif", color: "#0F3D73" }}
               >
                 Our Story
@@ -33,7 +33,7 @@ export default function OurStory() {
             {/* Right: What We Do */}
             <div>
               <h2
-                className="text-2xl md:text-2xl font-bold mb-4"
+                className="text-2xl text-center md:text-2xl font-bold mb-4"
                 style={{ fontFamily: "Poppins, sans-serif", color: "#0F3D73" }}
               >
                 What We Do
@@ -43,7 +43,7 @@ export default function OurStory() {
                   <Store className="w-6 h-6 text-[#D4AF37] mt-1" />
                   <div>
                     <h3
-                      className="text-xl font-semibold mb-0.5"
+                      className=" text-lg md:text-xl font-semibold mb-0.5"
                       style={{
                         fontFamily: "Poppins, sans-serif",
                         color: "#0F3D73",

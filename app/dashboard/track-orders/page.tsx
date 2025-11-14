@@ -38,7 +38,7 @@ function fulfillmentToStep(fulfillment: Order["fulfillment"]) {
   switch (fulfillment) {
     case "Processing":
       return 2; // confirmed + packed
-    case "Ready for Delivery":
+    case "Ready For Delivery":
     case "Item Picked":
       return 3; // item picked
     case "Rider On Move":
@@ -80,7 +80,11 @@ export default function TrackOrdersPage() {
             value={id}
             onChange={(e) => setId(e.target.value)}
           />
-          <Button onClick={() => setOrderId(id)} disabled={isLoading}>
+          <Button
+            onClick={() => setOrderId(id)}
+            disabled={isLoading}
+            className="bg-[#0F3D73] hover:bg-[#0F3D73]/90"
+          >
             {isLoading ? <Loader2 className="animate-spin" /> : "Find"}
           </Button>
         </div>
