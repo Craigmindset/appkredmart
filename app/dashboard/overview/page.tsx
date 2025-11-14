@@ -112,7 +112,7 @@ export default function OverviewPage() {
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-[#0F3D73] to-[#D4AF37] rounded-2xl p-6 text-white">
+      <div className="bg-[#0F3D73] rounded-2xl p-6 text-white">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold mb-2">
@@ -141,7 +141,7 @@ export default function OverviewPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900 text-xs leading-tight">
-                    Request Loan
+                    Access Loan
                   </h3>
                 </div>
               </div>
@@ -333,7 +333,7 @@ export default function OverviewPage() {
                   <PiggyBank className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900">Request Loan</h3>
+                  <h3 className="font-semibold text-slate-900">Access Loan</h3>
                   <p className="text-sm text-slate-600">
                     Quick access to credit
                   </p>

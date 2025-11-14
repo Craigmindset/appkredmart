@@ -161,7 +161,10 @@ export default function CartPage() {
                 Taxes and shipping calculated at checkout.
               </p>
               <div className="mt-4">
-                <Button asChild className="w-full h-10">
+                <Button
+                  asChild
+                  className="w-full h-10 bg-blue-900 hover:bg-blue-800"
+                >
                   <Link href="/checkout">Proceed to Checkout</Link>
                 </Button>
               </div>

@@ -104,25 +104,25 @@ export default function Welcome({ username = "User" }: WelcomeProps) {
 
           {/* Loan Card */}
           <Card className="group relative overflow-hidden border-0 bg-white/70 backdrop-blur-sm hover:bg-white/90 transition-all duration-500 hover:scale-105 hover:shadow-2xl">
-            <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-green-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[#0F3D73]/10 to-[#0F3D73]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <CardContent className="p-8 relative z-10">
               <div className="flex items-center justify-between mb-6">
-                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <div className="h-12 w-12 rounded-xl bg-[#0F3D73] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                   <CreditCard className="h-6 w-6 text-white" />
                 </div>
                 <Badge
                   variant="secondary"
-                  className="bg-green-100 text-green-700 hover:bg-green-200"
+                  className="bg-blue-100 text-blue-700 hover:bg-blue-200"
                 >
                   Fast Approval
                 </Badge>
               </div>
 
               <h3
-                className="text-xl font-bold mb-3 group-hover:text-green-600 transition-colors"
+                className="text-xl font-bold mb-3 group-hover:text-[#0F3D73] transition-colors"
                 style={{ fontFamily: "Poppins, sans-serif" }}
               >
-                Request a Loan
+                Access Loan
               </h3>
               <p
                 className="text-gray-600 mb-6 text-sm leading-relaxed"
@@ -133,7 +133,7 @@ export default function Welcome({ username = "User" }: WelcomeProps) {
               </p>
 
               <Link href="/create-wallet">
-                <Button className="w-full bg-gradient-to-r from-green-800 to-green-600 hover:from-green-600 hover:to-green-700 group-hover:shadow-lg transition-all duration-300">
+                <Button className="w-full bg-[#0F3D73] hover:bg-[#0F3D73]/90 group-hover:shadow-lg transition-all duration-300">
                   Apply for Loan
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
@@ -143,22 +143,22 @@ export default function Welcome({ username = "User" }: WelcomeProps) {
 
           {/* Shopping Card */}
           <Card className="group relative overflow-hidden border-0 bg-white/70 backdrop-blur-sm hover:bg-white/90 transition-all duration-500 hover:scale-105 hover:shadow-2xl">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/10 to-[#D4AF37]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <CardContent className="p-8 relative z-10">
               <div className="flex items-center justify-between mb-6">
-                <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <div className="h-12 w-12 rounded-xl bg-[#D4AF37] flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                   <ShoppingBag className="h-6 w-6 text-white" />
                 </div>
                 <Badge
                   variant="secondary"
-                  className="bg-purple-100 text-purple-700 hover:bg-purple-200"
+                  className="bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
                 >
                   New Arrivals
                 </Badge>
               </div>
 
               <h3
-                className="text-xl font-bold mb-3 group-hover:text-purple-600 transition-colors"
+                className="text-xl font-bold mb-3 group-hover:text-[#D4AF37] transition-colors"
                 style={{ fontFamily: "Poppins, sans-serif" }}
               >
                 Continue Shopping
@@ -172,7 +172,7 @@ export default function Welcome({ username = "User" }: WelcomeProps) {
               </p>
 
               <Link href="/store">
-                <Button className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 group-hover:shadow-lg transition-all duration-300">
+                <Button className="w-full bg-[#D4AF37] hover:bg-[#D4AF37]/90 group-hover:shadow-lg transition-all duration-300">
                   Start Shopping
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
