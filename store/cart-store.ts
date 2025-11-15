@@ -2,13 +2,13 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Product } from "@/lib/products";
+import type { GetProductDto } from "@/lib/services/products/products";
 
-export type CartItem = { product: Product; quantity: number };
+export type CartItem = { product: GetProductDto; quantity: number };
 
 type CartState = {
   items: CartItem[];
-  add: (product: Product, quantity?: number) => void;
+  add: (product: GetProductDto, quantity?: number) => void;
   remove: (id: string) => void;
   increment: (id: string) => void;
   decrement: (id: string) => void;

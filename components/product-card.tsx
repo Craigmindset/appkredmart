@@ -56,7 +56,7 @@ export default function ProductCard({
   }, [product.id]);
 
   const onAdd = (q = 1, fromModal = false) => {
-    add(product as any, q);
+    add(product, q);
     toast({ title: "Added to cart", description: product.name });
     setAdded(true);
     setTimeout(() => {

@@ -9,6 +9,7 @@ export interface GetProductDto {
   brand?: string; // Added brand field (optional for now)
   merchant: {
     company: string;
+    logo?: string;
   };
   label?: string;
   specs?: string[];

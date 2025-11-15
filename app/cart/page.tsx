@@ -7,6 +7,8 @@ import { Trash2, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { formatNaira } from "@/lib/currency";
+import CrossSellProducts from "@/components/cross-sell-products";
+import { useRelatedProducts } from "@/lib/services/products/use-related-products";
 
 export default function CartPage() {
   const items = useCart((s) => s.items);
@@ -15,6 +17,16 @@ export default function CartPage() {
   const remove = useCart((s) => s.remove);
   const clear = useCart((s) => s.clear);
   const total = useCart(cartSelectors.total);
+
+  // Get related products based on first item in cart
+  const firstProductId = items[0]?.product.id;
+  const { data: recommendedProducts, isLoading: recommendedLoading } =
+    useRelatedProducts(firstProductId || "", 6, !!firstProductId);
+
+  // Debug cross-sell on cart
+  console.log("Cart - First Product ID:", firstProductId);
+  console.log("Cart - Recommended Products:", recommendedProducts);
+  console.log("Cart - Recommended Loading:", recommendedLoading);
 
   return (
     <LayoutShell>
@@ -70,6 +82,24 @@ export default function CartPage() {
                         <p className="text-[13px] sm:text-sm font-medium leading-tight truncate">
                           {i.product.name}
                         </p>
+                        {i.product.merchant?.company && (
+                          <div className="mt-0.5 flex items-center gap-1.5">
+                            {i.product.merchant.logo && (
+                              <div className="relative h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0">
+                                <Image
+                                  src={i.product.merchant.logo}
+                                  alt={`${i.product.merchant.company} logo`}
+                                  fill
+                                  sizes="20px"
+                                  className="object-contain rounded-sm"
+                                />
+                              </div>
+                            )}
+                            <p className="text-[11px] sm:text-xs text-red-800 truncate">
+                              Vendor: {i.product.merchant.company}
+                            </p>
+                          </div>
+                        )}
                         {/* price */}
                         <p className="mt-1 text-[13px] sm:text-sm font-semibold">
                           {formatNaira(i.product.price)}
@@ -176,6 +206,20 @@ export default function CartPage() {
             </aside>
           </div>
         )}
+
+        {/* Recommended Products Section */}
+        {items.length > 0 &&
+          recommendedProducts &&
+          recommendedProducts.length > 0 && (
+            <div className="mt-12">
+              <CrossSellProducts
+                title="Complete Your Purchase"
+                description="Products you might also need"
+                products={recommendedProducts}
+                isLoading={recommendedLoading}
+              />
+            </div>
+          )}
       </section>
     </LayoutShell>
   );

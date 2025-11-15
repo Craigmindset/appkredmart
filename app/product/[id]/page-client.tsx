@@ -21,6 +21,9 @@ import { useToast } from "@/hooks/use-toast";
 import { formatNaira } from "@/lib/currency";
 import { GetProductDto } from "@/lib/services/products/products";
 import LayoutShell from "@/components/layout-shell";
+import CrossSellProducts from "@/components/cross-sell-products";
+import { useRelatedProducts } from "@/lib/services/products/use-related-products";
+import { useFrequentlyBoughtTogether } from "@/lib/services/products/use-frequently-bought-together";
 
 interface ProductDetailClientProps {
   product: GetProductDto;
@@ -37,8 +40,21 @@ export default function ProductDetailClient({
   const add = useCart((s) => s.add);
   const { toast } = useToast();
 
+  // Fetch cross-sell products
+  const { data: relatedProducts, isLoading: relatedLoading } =
+    useRelatedProducts(product.id);
+  const { data: frequentlyBought, isLoading: frequentlyLoading } =
+    useFrequentlyBoughtTogether(product.id);
+
+  // Debug: Check what's being returned
+  console.log("Product ID:", product.id);
+  console.log("Related Products:", relatedProducts);
+  console.log("Related Loading:", relatedLoading);
+  console.log("Frequently Bought:", frequentlyBought);
+  console.log("Frequently Loading:", frequentlyLoading);
+
   const handleAddToCart = () => {
-    add(product as any, qty);
+    add(product, qty);
     toast({
       title: "Added to cart",
       description: `${qty} x ${product.name}`,
@@ -344,6 +360,30 @@ export default function ProductDetailClient({
           </div>
         </div>
       </section>
+
+      {/* Frequently Bought Together Section */}
+      {frequentlyBought && frequentlyBought.length > 0 && (
+        <section className="container mx-auto px-6 md:px-12">
+          <CrossSellProducts
+            title="Frequently Bought Together"
+            description="Customers who bought this item also bought"
+            products={frequentlyBought}
+            isLoading={frequentlyLoading}
+          />
+        </section>
+      )}
+
+      {/* Related Products Section */}
+      {relatedProducts && relatedProducts.length > 0 && (
+        <section className="container mx-auto px-6 md:px-12">
+          <CrossSellProducts
+            title="You May Also Like"
+            description="Similar products you might be interested in"
+            products={relatedProducts}
+            isLoading={relatedLoading}
+          />
+        </section>
+      )}
     </LayoutShell>
   );
 }
