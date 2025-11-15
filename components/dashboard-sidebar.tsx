@@ -88,7 +88,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             <img
               src="/Kredmart Logo-02.png"
               alt="KredMart Logo"
-              className="h-6 md:h-8 w-auto object-contain"
+              className="h-5 md:h-8 w-auto object-contain"
             />
             <Button
               variant="ghost"
@@ -173,7 +173,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 <img
                   src="/Kredmart Logo-01.png"
                   alt="KredMart"
-                  className="h-6 w-auto"
+                  className="h-5 w-auto"
                 />
               </Link>
             </div>

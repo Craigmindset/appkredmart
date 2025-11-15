@@ -208,7 +208,7 @@ export default function SignInPage() {
                               placeholder="••••••••••••"
                               className="pr-10"
                               minLength={6}
-                              maxLength={11}
+                              maxLength={20}
                               {...field}
                             />
                             <button

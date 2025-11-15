@@ -222,7 +222,7 @@ export default function AccountPage() {
             <Button
               onClick={onSaveProfile}
               disabled={isUpdatingProfile}
-              className="w-full md:w-auto"
+              className="w-full md:w-auto bg-[#0F3D73] hover:bg-[#0F3D73]/90"
             >
               Save Changes
             </Button>
@@ -295,7 +295,7 @@ export default function AccountPage() {
             <Button
               onClick={onUpdatePassword}
               disabled={updatingPwd}
-              className="w-full md:w-auto"
+              className="w-full md:w-auto bg-[#0F3D73] hover:bg-[#0F3D73]/90"
             >
               {updatingPwd ? "Updating..." : "Update Password"}
             </Button>
@@ -313,7 +313,12 @@ export default function AccountPage() {
             Contact our support team for billing, orders, loans, or general
             queries.
           </div>
-          <Button onClick={() => setSupportOpen(true)}>Contact Support</Button>
+          <Button
+            onClick={() => setSupportOpen(true)}
+            className="bg-[#0F3D73] hover:bg-[#0F3D73]/90"
+          >
+            Contact Support
+          </Button>
         </CardContent>
       </Card>
 
@@ -344,7 +349,7 @@ export default function AccountPage() {
               <Button
                 type="submit"
                 disabled={supportSubmitting}
-                className="w-full md:w-auto"
+                className="w-full md:w-auto bg-[#0F3D73] hover:bg-[#0F3D73]/90"
               >
                 {supportSubmitting ? "Sending..." : "Send Message"}
               </Button>

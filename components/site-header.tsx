@@ -265,7 +265,8 @@ function HeaderCore() {
                   onClick={() => router.push("/sign-in")}
                   className="flex items-center gap-2 h-10 px-1"
                 >
-                  <Lock className="h-4 w-4" />
+                  <User className="h-4 w-4 md:hidden" />
+                  <Lock className="h-4 w-4 hidden md:block" />
                   <span className="hidden md:inline-block text-xs font-medium text-[#0F3D73]">
                     Login / Sign up
                   </span>

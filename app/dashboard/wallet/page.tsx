@@ -15,7 +15,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
-import { Copy, Loader2 } from "lucide-react";
+import { Copy, Loader2, CreditCard } from "lucide-react";
 import { useWallet, type CurrencyCode } from "@/store/wallet-store";
 import { useAuth } from "@/store/auth-store";
 import { useToast } from "@/hooks/use-toast";
@@ -28,10 +28,10 @@ const NETWORKS: { code: NetworkCode; name: string; logo: string }[] = [
   {
     code: "AIRTEL",
     name: "Airtel",
-    logo: "/placeholder.svg?height=16&width=16",
+    logo: "/brand-logos/airtel-logo.png",
   },
-  { code: "GLO", name: "Glo", logo: "/placeholder.svg?height=16&width=16" },
-  { code: "MTN", name: "MTN", logo: "/placeholder.svg?height=16&width=16" },
+  { code: "GLO", name: "Glo", logo: "/brand-logos/glo-logo.jpeg" },
+  { code: "MTN", name: "MTN", logo: "/brand-logos/mtn-logo.png" },
 ];
 
 const DATA_PLANS: { code: NetworkCode; label: string; price: number }[] = [
@@ -218,8 +218,14 @@ export default function WalletPage() {
         <CardContent>
           <div className="text-2xl font-semibold">{symbolPreview}</div>
           <div className="mt-3 flex gap-2">
-            <Button variant="outline" onClick={() => addFunds(5000)}>
-              Add ₦5,000
+            {/* This button will connect to Paystack API */}
+            <Button
+              variant="outline"
+              className="border-[#0F3D73] text-[#0F3D73] hover:bg-[#0F3D73] hover:text-white text-xs sm:text-sm px-3 sm:px-4 h-8 sm:h-10"
+              onClick={() => addFunds(5000)}
+            >
+              <CreditCard className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+              Fund with Card
             </Button>
             {/* Withdraw button removed as requested */}
           </div>
@@ -367,11 +373,11 @@ export default function WalletPage() {
                     />
                   </div>
 
-                  <div className="md:col-span-3">
+                  <div className="md:col-span-3 relative">
                     <Button
-                      className="w-full md:w-auto"
+                      className="w-full md:w-auto bg-[#0F3D73] hover:bg-[#0F3D73]/90"
                       onClick={handleAirtimePurchase}
-                      disabled={airLoading}
+                      disabled={true}
                     >
                       {airLoading ? (
                         <span className="inline-flex items-center gap-2">
@@ -382,6 +388,9 @@ export default function WalletPage() {
                         "Purchase"
                       )}
                     </Button>
+                    <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap">
+                      Coming Soon
+                    </span>
                   </div>
                 </div>
               ) : (
@@ -456,11 +465,11 @@ export default function WalletPage() {
                     </Select>
                   </div>
 
-                  <div className="md:col-span-3">
+                  <div className="md:col-span-3 relative">
                     <Button
-                      className="w-full md:w-auto"
+                      className="w-full md:w-auto bg-[#0F3D73] hover:bg-[#0F3D73]/90"
                       onClick={handleDataPurchase}
-                      disabled={dataLoading}
+                      disabled={true}
                     >
                       {dataLoading ? (
                         <span className="inline-flex items-center gap-2">
@@ -471,6 +480,9 @@ export default function WalletPage() {
                         "Purchase Data"
                       )}
                     </Button>
+                    <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap">
+                      Coming Soon
+                    </span>
                   </div>
                 </div>
               )}

@@ -7,6 +7,7 @@ export type InsuranceOption = {
   price: number; // e.g. 5000
   description: string; // e.g. "1 year Screen & Water Protection (claim ₦50,000)"
   claim: string; // e.g. "₦50,000"
+  disabled?: boolean; // optional: marks option as coming soon
 };
 
 export const insuranceOptions: InsuranceOption[] = [
@@ -16,6 +17,7 @@ export const insuranceOptions: InsuranceOption[] = [
     price: 5000,
     description: "1 year Screen & Water Protection",
     claim: "₦50,000",
+    disabled: true,
   },
   {
     id: "cover100k",
@@ -23,6 +25,7 @@ export const insuranceOptions: InsuranceOption[] = [
     price: 10000,
     description: "1 year Screen & Water Protection",
     claim: "₦100,000",
+    disabled: true,
   },
 ];
 
@@ -51,6 +54,7 @@ export default function Insurance({
       >
         {insuranceOptions.map((option) => {
           const active = selected === option.id;
+          const isDisabled = option.disabled;
 
           return (
             <div
@@ -64,21 +68,30 @@ export default function Insurance({
                   ${option.id === "cover50k" ? "bg-green-50" : ""}
                   ${option.id === "cover100k" ? "bg-blue-50" : ""}
                   ${active ? "ring-2 ring-[#466cf4]" : ""}
+                  ${isDisabled ? "opacity-60 cursor-not-allowed" : ""}
                 `}
             >
+              {/* Coming Soon Badge */}
+              {isDisabled && (
+                <span className="absolute top-2 right-2 bg-yellow-500 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full z-10">
+                  Coming Soon
+                </span>
+              )}
+
               {/* Clickable/keyboard-focusable option */}
               <button
                 type="button"
                 role="radio"
                 aria-checked={active}
-                onClick={() => toggle(option.id, option.price)}
+                disabled={isDisabled}
+                onClick={() => !isDisabled && toggle(option.id, option.price)}
                 onKeyDown={(e) => {
-                  if (e.key === " " || e.key === "Enter") {
+                  if (!isDisabled && (e.key === " " || e.key === "Enter")) {
                     e.preventDefault();
                     toggle(option.id, option.price);
                   }
                 }}
-                className="w-full text-left px-3 py-2 flex items-start gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#466cf4] rounded-lg"
+                className="w-full text-left px-3 py-2 flex items-start gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#466cf4] rounded-lg disabled:cursor-not-allowed"
               >
                 {/* Custom radio indicator */}
                 <span
