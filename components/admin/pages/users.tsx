@@ -87,7 +87,7 @@ export default function UsersAdminPage() {
           user.phone,
           user._count.orders,
           user.loanApplications[0]?.status || "None",
-          user.wallet.accountNumber || "None",
+          user?.wallet?.accountNumber || "None",
           user.status,
         ].join(",")
       ),
@@ -256,7 +256,7 @@ export default function UsersAdminPage() {
                       </Badge>
                     </TableCell>
                     <TableCell className="font-mono text-sm">
-                      {user.wallet.accountNumber || "None"}
+                      {user?.wallet?.accountNumber || "None"}
                     </TableCell>
                     <TableCell>
                       <Badge

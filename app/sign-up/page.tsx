@@ -362,7 +362,7 @@ export default function SignUpPage() {
                           <Separator className="flex-1" />
                         </div>
 
-                        <Button
+                        {/* <Button
                           type="button"
                           variant="outline"
                           className="h-11 w-full bg-transparent"
@@ -374,7 +374,7 @@ export default function SignUpPage() {
                             {"G"}
                           </span>
                           {"Sign up with Google"}
-                        </Button>
+                        </Button> */}
                       </form>
                     </Form>
 

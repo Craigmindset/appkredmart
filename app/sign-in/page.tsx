@@ -19,12 +19,15 @@ import { loginSchema, loginSchemaType } from "@/lib/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function SignInPage() {
   const router = useRouter();
+  const params = useSearchParams();
+  const error = params.get("error");
   // Prefill email from localStorage if available
   const [initialEmail, setInitialEmail] = useState("");
   useEffect(() => {
@@ -33,6 +36,21 @@ export default function SignInPage() {
       if (cachedEmail) setInitialEmail(cachedEmail);
     }
   }, []);
+
+  useEffect(() => {
+    if (error) {
+      const errorMessageMap: Record<string, string> = {
+        UserNotFound:
+          "We could not find an account associated with your Google email.",
+        Unauthorized: "Your Google account could not be authenticated.",
+        Default: "An unknown error occurred. Please try again.",
+      };
+      const message = errorMessageMap[error ?? ""] ?? "";
+      if (message) {
+        toast.error(message);
+      }
+    }
+  }, [error]);
 
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -43,7 +61,7 @@ export default function SignInPage() {
   const setUser = useAuth((s: any) => s.setUser);
 
   const handleGoogleLogin = async () => {
-    router.push("/api/google");
+    router.push("/api/google/login");
   };
 
   async function onSubmit(data: loginSchemaType) {
