@@ -95,15 +95,30 @@ export default function CartPage() {
                                 />
                               </div>
                             )}
-                            <p className="text-[11px] sm:text-xs text-red-800 truncate">
-                              Vendor: {i.product.merchant.company}
-                            </p>
                           </div>
                         )}
                         {/* price */}
                         <p className="mt-1 text-[13px] sm:text-sm font-semibold">
                           {formatNaira(i.product.price)}
                         </p>
+                        {i.product.merchant?.company && (
+                          <div className="mt-1 flex items-center gap-1.5">
+                            {i.product.merchant.logo && (
+                              <div className="relative h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0">
+                                <Image
+                                  src={i.product.merchant.logo}
+                                  alt={`${i.product.merchant.company} logo`}
+                                  fill
+                                  sizes="20px"
+                                  className="object-contain rounded-sm"
+                                />
+                              </div>
+                            )}
+                            <p className="text-[11px] sm:text-xs text-red-800 whitespace-nowrap">
+                              Vendor: {i.product.merchant.company}
+                            </p>
+                          </div>
+                        )}
                       </div>
 
                       {/* Right controls: qty stepper + delete */}
