@@ -29,7 +29,7 @@ export default function CartPage() {
   console.log("Cart - Recommended Loading:", recommendedLoading);
 
   return (
-    <LayoutShell>
+    <LayoutShell showFooter={false}>
       <section className="container mx-auto px-3 sm:px-4 md:px-6 py-8 md:py-10 min-h-[56vh]">
         <h1
           className="text-xl sm:text-3xl font-semibold tracking-tight"
@@ -161,21 +161,19 @@ export default function CartPage() {
               </ul>
 
               {/* Row actions */}
-              <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between pt-2">
+              <div className="flex flex-row gap-3 items-center justify-between pt-2">
                 <Button
                   asChild
                   variant="link"
                   className="px-0 h-auto text-[#0F3D73] hover:text-[#0F3D73]/80"
                 >
-                  <Link href="/store" className="text-sm">
+                  <Link href="/store" className="text-xs sm:text-sm">
                     Continue shopping
                   </Link>
                 </Button>
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={clear}>
-                    Clear cart
-                  </Button>
-                </div>
+                <Button variant="outline" size="sm" onClick={clear}>
+                  Clear cart
+                </Button>
               </div>
             </div>
 
@@ -211,9 +209,9 @@ export default function CartPage() {
         {items.length > 0 &&
           recommendedProducts &&
           recommendedProducts.length > 0 && (
-            <div className="mt-12">
+            <div className="mt-8 text-blue-800">
               <CrossSellProducts
-                title="Complete Your Purchase"
+                title=""
                 description="Products you might also need"
                 products={recommendedProducts}
                 isLoading={recommendedLoading}

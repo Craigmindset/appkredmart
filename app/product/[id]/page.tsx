@@ -11,15 +11,17 @@ type Props = {
 // Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id: slugOrId } = await params;
-  
+
   // Extract ID from slug if it's a slug, otherwise use as-is
-  const productId = slugOrId.includes("-") ? extractIdFromSlug(slugOrId) : slugOrId;
+  const productId = slugOrId.includes("-")
+    ? extractIdFromSlug(slugOrId)
+    : slugOrId;
 
   try {
     // Try to find product by the short ID (last 8 chars)
     // Note: You may need to update the API to support partial ID search
     const product = await productsService.getProductById(productId);
-    
+
     // Generate proper slug for canonical URL
     const productSlug = generateProductSlug(product.name, product.id);
 
@@ -28,9 +30,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? product.description.substring(0, 160)
       : `Buy ${product.name} at the best price. ${
           product.brand ? `Brand: ${product.brand}. ` : ""
-        }Category: ${product.category}. Shop now on Kredmart!`;
+        }Category: ${
+          product.category?.[0] || "Products"
+        }. Shop now on Kredmart!`;
 
-    const productImage = product.image || product.images?.[0] || "/placeholder.svg";
+    const productImage =
+      product.image || product.images?.[0] || "/placeholder.svg";
 
     return {
       title: productTitle,
@@ -38,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       keywords: [
         product.name,
         product.brand || "",
-        product.category,
+        ...(product.category || []),
         "buy online",
         "Kredmart",
         "e-commerce",
@@ -83,9 +88,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductPage({ params }: Props) {
   const { id: slugOrId } = await params;
-  
+
   // Extract ID from slug if it's a slug
-  const productId = slugOrId.includes("-") ? extractIdFromSlug(slugOrId) : slugOrId;
+  const productId = slugOrId.includes("-")
+    ? extractIdFromSlug(slugOrId)
+    : slugOrId;
 
   let product;
   try {
@@ -93,7 +100,7 @@ export default async function ProductPage({ params }: Props) {
   } catch (error) {
     notFound();
   }
-  
+
   // Generate proper slug
   const productSlug = generateProductSlug(product.name, product.id);
 
@@ -128,7 +135,7 @@ export default async function ProductPage({ params }: Props) {
         .toISOString()
         .split("T")[0],
     },
-    category: product.category,
+    category: product.category?.[0] || "Products",
   };
 
   return (
@@ -162,8 +169,12 @@ export default async function ProductPage({ params }: Props) {
               {
                 "@type": "ListItem",
                 position: 3,
-                name: product.category,
-                item: `https://kredmart.com/store/${product.category.toLowerCase().replace(/\s+/g, "-")}`,
+                name: product.category?.[0] || "Products",
+                item: `https://kredmart.com/store/${(
+                  product.category?.[0] || "all"
+                )
+                  .toLowerCase()
+                  .replace(/\s+/g, "-")}`,
               },
               {
                 "@type": "ListItem",

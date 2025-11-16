@@ -5,7 +5,7 @@ export interface GetProductDto {
   name: string;
   description: string;
   sku: string;
-  category: string;
+  category: string[]; // Changed from string to string[] to match API response
   brand?: string; // Added brand field (optional for now)
   merchant: {
     company: string;

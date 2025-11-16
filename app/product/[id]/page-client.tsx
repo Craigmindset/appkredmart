@@ -134,13 +134,14 @@ export default function ProductDetailClient({
             itemType="https://schema.org/ListItem"
           >
             <Link
-              href={`/store/${product.category
-                .toLowerCase()
-                .replace(/\s+/g, "-")}`}
+              href={`/store/${
+                product.category?.[0]?.toLowerCase().replace(/\s+/g, "-") ||
+                "all"
+              }`}
               className="hover:text-foreground transition-colors"
               itemProp="item"
             >
-              <span itemProp="name">{product.category}</span>
+              <span itemProp="name">{product.category?.[0] || "Products"}</span>
             </Link>
             <meta itemProp="position" content="3" />
           </li>
