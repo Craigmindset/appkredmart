@@ -214,11 +214,12 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       >
         <SidebarHeader className="border-b border-blue-700 bg-blue-900 z-[60]">
           <div className="flex items-center gap-3 px-3 py-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white">
-              <Settings className="h-5 w-5" />
-            </div>
             <div className="flex flex-col">
-              <span className="text-lg font-bold text-white">KredMart</span>
+              <img
+                src="/Kredmart Logo-02.png"
+                alt="KredMart Logo"
+                className="h-6 w-auto object-contain mb-3"
+              />
               <span className="text-xs text-blue-300">Admin Portal</span>
             </div>
           </div>

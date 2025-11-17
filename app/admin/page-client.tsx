@@ -78,13 +78,20 @@ export default function AdminSignIn() {
             <X className="h-4 w-4" />
             <span className="sr-only">Close</span>
           </Button>
-          <div className="flex justify-center mb-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-600 text-white">
-              <Shield className="h-6 w-6" />
-            </div>
+          <div className="flex justify-center mb-10">
+            <img
+              src="/Kredmart Logo-01.png"
+              alt="Kredmart Logo"
+              className=" h-3 w-auto md:h-6 w-auto"
+              style={{ maxWidth: 180 }}
+            />
           </div>
-          <CardTitle className="text-2xl font-bold">Admin Portal</CardTitle>
-          <p className="text-gray-600">Sign in to KredMart Admin Dashboard</p>
+          <CardTitle className=" text-xl md:text-3xl font-bold mt-32">
+            Admin Portal
+          </CardTitle>
+          <p className="text-gray-600 text-sm md:text-lg">
+            Sign in to KredMart Admin Dashboard
+          </p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -137,7 +144,11 @@ export default function AdminSignIn() {
               </div>
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full bg-[#0F3D73] hover:bg-[#0F3D73]/90 text-white"
+              disabled={loading}
+            >
               {loading ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
