@@ -217,19 +217,7 @@ export default function WalletPage() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-semibold">{symbolPreview}</div>
-          <div className="mt-3 flex gap-2">
-            {/* This button will connect to Paystack API */}
-            <Button
-              variant="outline"
-              type="button"
-              className="border-[#0F3D73] text-[#0F3D73] hover:bg-[#0F3D73] hover:text-white text-xs sm:text-sm px-3 sm:px-4 h-8 sm:h-10"
-              onClick={() => addFunds(5000)}
-            >
-              <CreditCard className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-              Fund with Card
-            </Button>
-            {/* Withdraw button removed as requested */}
-          </div>
+          {/* Removed add fund button as requested */}
 
           <Separator className="my-6" />
 
@@ -237,9 +225,9 @@ export default function WalletPage() {
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-3">
               <img
-                src={bankLogo || "/placeholder.svg"}
+                src="/brand-logos/wema bank logo.jpeg"
                 alt="Bank logo"
-                className="h-7 w-7 rounded object-contain"
+                className="h-8 w-8 rounded object-contain"
               />
               <div>
                 <div className="text-sm font-medium">{data?.bankName}</div>
