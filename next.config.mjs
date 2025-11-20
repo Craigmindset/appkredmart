@@ -12,12 +12,12 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: "/api/google/login",
-        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google/login`,
-      },
-      {
         source: "/api/google",
         destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`,
+      },
+      {
+        source: "/api/google/login",
+        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google/login`,
       },
       {
         source: "/api/google/callback",

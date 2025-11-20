@@ -221,6 +221,7 @@ export default function WalletPage() {
             {/* This button will connect to Paystack API */}
             <Button
               variant="outline"
+              type="button"
               className="border-[#0F3D73] text-[#0F3D73] hover:bg-[#0F3D73] hover:text-white text-xs sm:text-sm px-3 sm:px-4 h-8 sm:h-10"
               onClick={() => addFunds(5000)}
             >
@@ -241,7 +242,7 @@ export default function WalletPage() {
                 className="h-7 w-7 rounded object-contain"
               />
               <div>
-                <div className="text-sm font-medium">{bankName}</div>
+                <div className="text-sm font-medium">{data?.bankName}</div>
                 <div className="text-xs text-muted-foreground">
                   Linked wallet account
                 </div>
@@ -249,24 +250,26 @@ export default function WalletPage() {
             </div>
             <div className="flex flex-col items-start gap-2 md:flex-row md:items-center">
               <div className="flex items-center gap-2">
-                <div className="font-mono text-sm">{accountNumber}</div>
+                <div className="font-mono text-sm">{data?.accountNumber}</div>
                 <Button
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8"
-                  onClick={() => copy(accountNumber, "Account number")}
+                  onClick={() =>
+                    copy(data?.accountNumber || "", "Account number")
+                  }
                   aria-label="Copy account number"
                 >
                   <Copy className="h-4 w-4" />
                 </Button>
               </div>
               <div className="flex items-center gap-2">
-                <div className="text-sm">{accountName}</div>
+                <div className="text-sm">{data?.accountName}</div>
                 <Button
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8"
-                  onClick={() => copy(accountName, "Account name")}
+                  onClick={() => copy(data?.accountName || "", "Account name")}
                   aria-label="Copy account name"
                 >
                   <Copy className="h-4 w-4" />

@@ -61,7 +61,7 @@ export default function SignInPage() {
   const setUser = useAuth((s: any) => s.setUser);
 
   const handleGoogleLogin = async () => {
-    router.push("/api/google/login");
+    router.push("/api/google");
   };
 
   async function onSubmit(data: loginSchemaType) {
