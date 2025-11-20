@@ -38,18 +38,20 @@ import {
   Download,
   Eye,
   EyeOff,
+  Loader2,
   MoreHorizontal,
-  Plus,
   Send,
   WalletIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { useMerchantWallet } from "@/lib/services/wallet/use-merchant-wallet";
 import { useMerchantWalletTransactions } from "@/lib/services/wallet/use-merchant-wallet-history";
-import { formatDate } from "date-fns";
 import { upperCaseText } from "@/lib/utils";
+import { formatDate } from "date-fns";
+import { useGetBanks } from "@/lib/services/use-get-banks";
+import { useAccountNumberValidate } from "@/lib/services/use-account-validate";
 
 // Demo transaction data
 const demoTransactions = [
@@ -134,12 +136,18 @@ export function Wallet() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { data: wallet } = useMerchantWallet();
   const { data: transactions } = useMerchantWalletTransactions();
+  const { data: banks } = useGetBanks();
   const [withdrawalData, setWithdrawalData] = useState({
     receiverBank: "",
     receiverAccount: "",
     receiverName: "",
     amount: "",
   });
+  const {
+    mutateAsync,
+    data: accountValidated,
+    loading: validatingAccountNumber,
+  } = useAccountNumberValidate();
   const [transferPin, setTransferPin] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -166,6 +174,29 @@ export function Wallet() {
     setShowWithdrawModal(false);
     setShowPinModal(true);
   };
+
+  const handleAccountNumberVerification = useCallback(
+    async (receiverAccount: string, receiverBank: string) => {
+      await mutateAsync({
+        account_number: receiverAccount,
+        bank_code: receiverBank,
+      });
+    },
+    []
+  );
+
+  useEffect(() => {
+    if (
+      withdrawalData.receiverBank &&
+      withdrawalData.receiverAccount &&
+      withdrawalData.receiverAccount.length > 9
+    ) {
+      handleAccountNumberVerification(
+        withdrawalData.receiverAccount,
+        withdrawalData.receiverBank
+      );
+    }
+  }, [withdrawalData.receiverAccount, withdrawalData.receiverBank]);
 
   const handlePinSubmit = () => {
     if (transferPin.length !== 4) {
@@ -445,7 +476,7 @@ export function Wallet() {
             <div>
               <Label htmlFor="receiverBank">Select Receiver Bank</Label>
               <div className="relative">
-                <Input
+                {/* <Input
                   id="receiverBank"
                   placeholder="Type bank name or select from dropdown"
                   value={withdrawalData.receiverBank}
@@ -456,7 +487,7 @@ export function Wallet() {
                     }))
                   }
                   className="pr-10"
-                />
+                /> */}
                 <Select
                   value={withdrawalData.receiverBank}
                   onValueChange={(value) =>
@@ -466,26 +497,18 @@ export function Wallet() {
                     }))
                   }
                 >
-                  <SelectTrigger className="absolute right-0 top-0 h-full w-10 border-0 bg-transparent p-0 hover:bg-muted">
+                  <SelectTrigger className="w-full">
                     <SelectValue />
-                    <svg
-                      className="h-4 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
                   </SelectTrigger>
                   <SelectContent>
-                    {nigerianBanks.map((bank) => (
+                    {/* {nigerianBanks.map((bank) => (
                       <SelectItem key={bank} value={bank}>
                         {bank}
+                      </SelectItem>
+                    ))} */}
+                    {banks?.map((bank) => (
+                      <SelectItem key={bank.id} value={bank.code}>
+                        {bank.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -510,17 +533,27 @@ export function Wallet() {
 
             <div>
               <Label htmlFor="receiverName">Account Name</Label>
-              <Input
-                id="receiverName"
-                placeholder="Account holder name"
-                value={withdrawalData.receiverName}
-                onChange={(e) =>
-                  setWithdrawalData((prev) => ({
-                    ...prev,
-                    receiverName: e.target.value,
-                  }))
-                }
-              />
+              <div className="relative">
+                <Input
+                  id="receiverName"
+                  placeholder="Account holder name"
+                  // value={withdrawalData.receiverName}
+                  value={accountValidated?.account_name || ""}
+                  readOnly
+                  disabled
+                  // onChange={(e) =>
+                  //   setWithdrawalData((prev) => ({
+                  //     ...prev,
+                  //     receiverName: e.target.value,
+                  //   }))
+                  // }
+                />
+                {validatingAccountNumber && (
+                  <div className="absolute right-2 bottom-1/2 translate-y-1/2">
+                    <Loader2 className=" animate-spin" />
+                  </div>
+                )}
+              </div>
             </div>
 
             <div>

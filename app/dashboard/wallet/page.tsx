@@ -49,7 +49,6 @@ export default function WalletPage() {
   const { data, loading } = useUserWallet();
   const user = useAuth((s) => s.user);
 
-  const balance = useWallet((s) => s.balance);
   const currency = useWallet((s) => s.currency);
   const setCurrency = useWallet((s) => s.setCurrency);
   const addFunds = useWallet((s) => s.addFunds);
@@ -90,7 +89,7 @@ export default function WalletPage() {
 
   const symbolPreview = useMemo(
     () => formatMoneyColon(data?.balance || 0, currency),
-    [balance, currency]
+    [data?.balance, currency]
   );
 
   const copy = async (text: string, label: string) => {
