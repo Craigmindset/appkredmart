@@ -257,7 +257,7 @@ export function Wallet() {
       </div>
 
       {/* Wallet Overview */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
         {/* Balance Card */}
         <Card className="lg:col-span-2">
           <CardHeader className="pb-4">
@@ -306,7 +306,7 @@ export function Wallet() {
         </Card>
 
         {/* Account Details Card */}
-        <Card>
+        {/*<Card>
           <CardHeader className="pb-4">
             <CardTitle>Account Details</CardTitle>
           </CardHeader>
@@ -365,7 +365,7 @@ export function Wallet() {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
 
       {/* Transaction History */}
