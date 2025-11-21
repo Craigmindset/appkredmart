@@ -90,9 +90,25 @@ export function MerchantDashboardShell({
     (user?.firstname?.[0] ?? "") +
     (user?.lastname?.[0] ?? (user?.firstname ? "" : "M"));
 
+  const { refetch } = useUser();
+  const router = require("next/navigation").useRouter();
+  const [shouldLogout, setShouldLogout] = React.useState(false);
   const handleLogout = async () => {
+    console.log("Logout button clicked in merchant dashboard shell");
     await logout();
+    setShouldLogout(true);
   };
+
+  React.useEffect(() => {
+    if (shouldLogout) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        refetch();
+        router.push("/");
+      }
+      setShouldLogout(false);
+    }
+  }, [shouldLogout, refetch, router]);
 
   return (
     <SidebarProvider>
@@ -156,7 +172,10 @@ export function MerchantDashboardShell({
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
-                onClick={handleLogout}
+                onClick={() => {
+                  console.log("Sidebar logout button clicked");
+                  handleLogout();
+                }}
                 className="w-full justify-start px-3 py-2 text-blue-200 hover:bg-blue-800 hover:text-white rounded-lg transition-colors duration-200"
               >
                 <LogOut className="h-4 w-4 mr-3" />
@@ -249,7 +268,10 @@ export function MerchantDashboardShell({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={handleLogout}
+                onClick={() => {
+                  console.log("Header logout button clicked");
+                  handleLogout();
+                }}
                 className="hover:bg-blue-800 flex-shrink-0 p-2"
               >
                 <LogOut className="h-4 w-4 text-blue-200" />
