@@ -54,6 +54,7 @@ import { useGetBanks } from "@/lib/services/use-get-banks";
 import { useAccountNumberValidate } from "@/lib/services/use-account-validate";
 import { useMerchantWithdraw } from "@/lib/services/payments/merchant-withdraw";
 import { AxiosError } from "axios";
+import { useMerchantWithdrawPin } from "@/lib/services/payments/merchant-withdraw-pin";
 
 // Demo transaction data
 const demoTransactions = [
@@ -140,6 +141,8 @@ export function Wallet() {
   const { data: transactions } = useMerchantWalletTransactions();
   const { data: banks } = useGetBanks();
   const { mutateAsync: withdrawWalletAsync } = useMerchantWithdraw();
+  const { mutateAsync: withdrawWalletPinAsync, isPending: loadingPin } =
+    useMerchantWithdrawPin();
   const [withdrawalData, setWithdrawalData] = useState({
     receiverBank: "",
     receiverAccount: "",
@@ -235,19 +238,15 @@ export function Wallet() {
     }
   }, [withdrawalData.receiverAccount, withdrawalData.receiverBank]);
 
-  const handlePinSubmit = () => {
+  const handlePinSubmit = async () => {
     if (transferPin.length !== 4) {
       toast.error("Please enter a 4-digit PIN");
       return;
     }
 
-    setIsLoading(true);
-
-    // Simulate PIN verification
-    setTimeout(() => {
-      if (transferPin === "1234") {
-        // Demo PIN
-        setIsLoading(false);
+    // setIsLoading(true);
+    await withdrawWalletPinAsync({ pin: transferPin })
+      .then(() => {
         setShowPinModal(false);
         setShowSuccessModal(true);
 
@@ -259,18 +258,51 @@ export function Wallet() {
           amount: "",
         });
         setTransferPin("");
+      })
+      .catch((err) => {
+        if (err instanceof AxiosError) {
+          const message = err.response?.data.message;
+          const description = message || "An error occured";
 
-        // Auto close success modal and redirect
-        setTimeout(() => {
-          setShowSuccessModal(false);
-          toast.success("Transfer completed successfully");
-        }, 3000);
-      } else {
-        setIsLoading(false);
-        toast.error("Incorrect PIN. Please try again.");
+          if (description) {
+            toast.error(`An error occured!`, {
+              description,
+            });
+          }
+        } else if (err instanceof Error) {
+          toast.error(err.message);
+        }
         setTransferPin("");
-      }
-    }, 2000);
+      });
+
+    // // Simulate PIN verification
+    // setTimeout(() => {
+    //   if (transferPin === "1234") {
+    //     // Demo PIN
+    //     setIsLoading(false);
+    //     setShowPinModal(false);
+    //     setShowSuccessModal(true);
+
+    //     // Reset form
+    //     setWithdrawalData({
+    //       receiverBank: "",
+    //       receiverAccount: "",
+    //       receiverName: "",
+    //       amount: "",
+    //     });
+    //     setTransferPin("");
+
+    //     // Auto close success modal and redirect
+    //     setTimeout(() => {
+    //       setShowSuccessModal(false);
+    //       toast.success("Transfer completed successfully");
+    //     }, 3000);
+    //   } else {
+    //     setIsLoading(false);
+    //     toast.error("Incorrect PIN. Please try again.");
+    //     setTransferPin("");
+    //   }
+    // }, 2000);
   };
 
   const downloadReceipt = (transaction: any) => {
@@ -649,7 +681,7 @@ export function Wallet() {
                 className="text-center text-lg tracking-widest"
               />
               <div className="text-xs text-muted-foreground mt-1 text-center">
-                Demo PIN: 1234
+                Demo PIN: 123456
               </div>
             </div>
 
@@ -657,15 +689,15 @@ export function Wallet() {
               <Button
                 variant="outline"
                 onClick={() => setShowPinModal(false)}
-                disabled={isLoading}
+                disabled={loadingPin}
               >
                 Cancel
               </Button>
               <Button
                 onClick={handlePinSubmit}
-                disabled={isLoading || transferPin.length !== 4}
+                disabled={loadingPin || transferPin.length !== 6}
               >
-                {isLoading ? "Verifying..." : "Submit"}
+                {loadingPin ? "Verifying..." : "Submit"}
               </Button>
             </div>
           </div>
