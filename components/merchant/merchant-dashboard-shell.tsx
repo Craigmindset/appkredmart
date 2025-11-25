@@ -88,20 +88,20 @@ const MerchantDashboardShellInner = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { user } = useUser();
   const { data: unreadCount } = useUnreadCount();
   const { data: wallet } = useMerchantWallet();
   const { mutateAsync: logout } = useLogout();
   const pathname = usePathname();
 
-  // const initials =
-  //   (user?.firstname?.[0] ?? "") +
-  //   (user?.lastname?.[0] ?? (user?.firstname ? "" : "M"));
+  const initials =
+    (user?.firstname?.[0] ?? "") +
+    (user?.lastname?.[0] ?? (user?.firstname ? "" : "M"));
 
   const { refetch } = useUser();
   const router = require("next/navigation").useRouter();
   const [shouldLogout, setShouldLogout] = React.useState(false);
   const handleLogout = async () => {
-    console.log("Logout button clicked in merchant dashboard shell");
     await logout();
     setShouldLogout(true);
   };
@@ -161,26 +161,25 @@ const MerchantDashboardShellInner = ({
         <SidebarFooter className="border-t border-blue-700 bg-blue-900 p-4">
           <div className="flex items-center gap-3 mb-3">
             <Avatar className="h-8 w-8">
-              {/* <AvatarImage
+              <AvatarImage
                 src={user?.picture || "/placeholder.svg?height=32&width=32"}
                 alt={initials}
               />
               <AvatarFallback className="bg-blue-600 text-white text-sm">
                 {initials.toUpperCase()}
-              </AvatarFallback> */}
+              </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              {/* <p className="text-sm font-medium text-white truncate">
+              <p className="text-sm font-medium text-white truncate">
                 {user?.company}
               </p>
-              <p className="text-xs text-blue-300 truncate">{user?.email}</p> */}
+              <p className="text-xs text-blue-300 truncate">{user?.email}</p>
             </div>
           </div>
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
                 onClick={() => {
-                  console.log("Sidebar logout button clicked");
                   handleLogout();
                 }}
                 className="w-full justify-start px-3 py-2 text-blue-200 hover:bg-blue-800 hover:text-white rounded-lg transition-colors duration-200"
@@ -256,7 +255,7 @@ const MerchantDashboardShellInner = ({
                 size="sm"
                 className="gap-2 hover:bg-blue-800 flex-shrink-0"
               >
-                {/* <Avatar className="h-7 w-7">
+                <Avatar className="h-7 w-7">
                   <AvatarImage
                     src={user?.picture || "/placeholder.svg?height=32&width=32"}
                     alt={initials}
@@ -268,7 +267,7 @@ const MerchantDashboardShellInner = ({
                 </Avatar>
                 <span className="hidden sm:inline text-sm font-medium text-white">
                   {user?.firstname}
-                </span> */}
+                </span>
               </Button>
 
               {/* Logout */}
@@ -276,7 +275,6 @@ const MerchantDashboardShellInner = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  console.log("Header logout button clicked");
                   handleLogout();
                 }}
                 className="hover:bg-blue-800 flex-shrink-0 p-2"
