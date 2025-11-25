@@ -52,6 +52,8 @@ import { upperCaseText } from "@/lib/utils";
 import { formatDate } from "date-fns";
 import { useGetBanks } from "@/lib/services/use-get-banks";
 import { useAccountNumberValidate } from "@/lib/services/use-account-validate";
+import { useMerchantWithdraw } from "@/lib/services/payments/merchant-withdraw";
+import { AxiosError } from "axios";
 
 // Demo transaction data
 const demoTransactions = [
@@ -137,6 +139,7 @@ export function Wallet() {
   const { data: wallet } = useMerchantWallet();
   const { data: transactions } = useMerchantWalletTransactions();
   const { data: banks } = useGetBanks();
+  const { mutateAsync: withdrawWalletAsync } = useMerchantWithdraw();
   const [withdrawalData, setWithdrawalData] = useState({
     receiverBank: "",
     receiverAccount: "",
@@ -156,7 +159,7 @@ export function Wallet() {
     toast.success(`${label} copied to clipboard`);
   };
 
-  const handleWithdrawSubmit = () => {
+  const handleWithdrawSubmit = async () => {
     if (
       !withdrawalData.receiverBank ||
       !withdrawalData.receiverAccount ||
@@ -171,8 +174,42 @@ export function Wallet() {
       return;
     }
 
-    setShowWithdrawModal(false);
-    setShowPinModal(true);
+    // Send withdraw data if successful enable pinModal and disable withdrawModal
+    await withdrawWalletAsync({
+      amount: withdrawalData.amount,
+      receiverAccount: withdrawalData.receiverAccount,
+      receiverBank: withdrawalData.receiverBank,
+      // currency: "NGN",
+      // method: "bank_transfer",
+      // accountDetails: JSON.stringify({
+      //   bank: withdrawalData.receiverBank,
+      //   account_number: withdrawalData.receiverAccount,
+      //   account_name: accountValidated?.account_name,
+      // }),
+      // pin: "", // PIN will be handled in the next modal
+    })
+      .then((res) => {
+        toast.success(
+          "Withdrawal initiated. Please enter your PIN to confirm."
+        );
+        setShowWithdrawModal(false);
+        setShowPinModal(true);
+      })
+      .catch((err) => {
+        // Error handling is done in the mutation's onError
+        if (err instanceof AxiosError) {
+          const message = err.response?.data.message;
+          const description = message || "An error occured";
+
+          if (description) {
+            toast.error(`An error occured!`, {
+              description,
+            });
+          }
+        } else if (err instanceof Error) {
+          toast.error(err.message);
+        }
+      });
   };
 
   const handleAccountNumberVerification = useCallback(

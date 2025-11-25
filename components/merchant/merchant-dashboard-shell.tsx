@@ -73,11 +73,6 @@ export function MerchantDashboardShell({
   children: React.ReactNode;
 }) {
   const { user, loading } = useUser();
-  const { data: unreadCount } = useUnreadCount();
-  const { data: wallet } = useMerchantWallet();
-  const { mutateAsync: logout } = useLogout();
-  const pathname = usePathname();
-
   if (loading) {
     return <Loader2 className="animate-spin" />;
   }
@@ -85,10 +80,22 @@ export function MerchantDashboardShell({
   if (!loading && (!user || user?.role !== "merchant")) {
     redirect("/admindesk");
   }
+  return <MerchantDashboardShellInner>{children}</MerchantDashboardShellInner>;
+}
 
-  const initials =
-    (user?.firstname?.[0] ?? "") +
-    (user?.lastname?.[0] ?? (user?.firstname ? "" : "M"));
+const MerchantDashboardShellInner = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const { data: unreadCount } = useUnreadCount();
+  const { data: wallet } = useMerchantWallet();
+  const { mutateAsync: logout } = useLogout();
+  const pathname = usePathname();
+
+  // const initials =
+  //   (user?.firstname?.[0] ?? "") +
+  //   (user?.lastname?.[0] ?? (user?.firstname ? "" : "M"));
 
   const { refetch } = useUser();
   const router = require("next/navigation").useRouter();
@@ -154,19 +161,19 @@ export function MerchantDashboardShell({
         <SidebarFooter className="border-t border-blue-700 bg-blue-900 p-4">
           <div className="flex items-center gap-3 mb-3">
             <Avatar className="h-8 w-8">
-              <AvatarImage
+              {/* <AvatarImage
                 src={user?.picture || "/placeholder.svg?height=32&width=32"}
                 alt={initials}
               />
               <AvatarFallback className="bg-blue-600 text-white text-sm">
                 {initials.toUpperCase()}
-              </AvatarFallback>
+              </AvatarFallback> */}
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">
+              {/* <p className="text-sm font-medium text-white truncate">
                 {user?.company}
               </p>
-              <p className="text-xs text-blue-300 truncate">{user?.email}</p>
+              <p className="text-xs text-blue-300 truncate">{user?.email}</p> */}
             </div>
           </div>
           <SidebarMenu>
@@ -201,7 +208,7 @@ export function MerchantDashboardShell({
                   Merchant
                 </h1>
                 <p className="text-xs sm:text-sm text-blue-200 truncate">
-                  Welcome, {user?.firstname}
+                  {/* Welcome, {user?.firstname} */}
                 </p>
               </div>
             </div>
@@ -249,7 +256,7 @@ export function MerchantDashboardShell({
                 size="sm"
                 className="gap-2 hover:bg-blue-800 flex-shrink-0"
               >
-                <Avatar className="h-7 w-7">
+                {/* <Avatar className="h-7 w-7">
                   <AvatarImage
                     src={user?.picture || "/placeholder.svg?height=32&width=32"}
                     alt={initials}
@@ -261,7 +268,7 @@ export function MerchantDashboardShell({
                 </Avatar>
                 <span className="hidden sm:inline text-sm font-medium text-white">
                   {user?.firstname}
-                </span>
+                </span> */}
               </Button>
 
               {/* Logout */}
@@ -290,4 +297,4 @@ export function MerchantDashboardShell({
       </SidebarInset>
     </SidebarProvider>
   );
-}
+};
