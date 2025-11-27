@@ -61,7 +61,8 @@ export default function SignInPage() {
   const setUser = useAuth((s: any) => s.setUser);
 
   const handleGoogleLogin = async () => {
-    router.push("/api/google");
+    // Google sign-in temporarily disabled.
+    // router.push("/api/google");
   };
 
   async function onSubmit(data: loginSchemaType) {
@@ -268,6 +269,7 @@ export default function SignInPage() {
                   </div>
 
                   {/* Google button (placeholder) */}
+                  {/* Google sign-in temporarily disabled
                   <Button
                     type="button"
                     variant="outline"
@@ -279,6 +281,7 @@ export default function SignInPage() {
                     </span>
                     {"Log In with Google"}
                   </Button>
+                  */}
                 </form>
               </Form>
 

@@ -3,6 +3,7 @@ import AboutHero from "@/components/about/about-hero";
 import MissionVision from "@/components/about/mission";
 import OurStory from "@/components/about/our-story";
 import WhyKredmart from "@/components/about/why-kredmart";
+import Chat from "@/components/Chat";
 export default function AboutPage() {
   return (
     <>
@@ -21,6 +22,7 @@ export default function AboutPage() {
       <MissionVision />
       <OurStory />
       <WhyKredmart />
+      <Chat />
     </>
   );
 }

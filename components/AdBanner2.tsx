@@ -11,7 +11,7 @@ export default function AdBanner() {
       title: ["Silver", "MACBOOK PRO"],
       desc: "6.9 inch Super Retina XDR OLED, Triple 48 mp camera, 16GB RAM, 1TB SSD, 8-core CPU, 10-core GPU, and more.",
       img: "https://hlfwfvupabrc8fwr.public.blob.vercel-storage.com/apple-m1.png",
-      cta: { href: "/category/audio", text: "Shop by Apple Brand" },
+      cta: { href: "/store/brand/apple", text: "Shop by Apple Brand" },
     },
     {
       label: "Apple",
@@ -25,7 +25,7 @@ export default function AdBanner() {
       title: ["Clear", "SPEAKERS"],
       desc: "Amazing sound, deep bass, portable Bluetooth speakers for every occasion.",
       img: "/StoreBanner/TV Stand.png",
-      cta: { href: "/category/audio", text: "Shop JBL Speakers" },
+      cta: { href: "/store/electronics", text: "Shop Electronics " },
     },
   ];
 

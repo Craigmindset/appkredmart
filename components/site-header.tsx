@@ -87,8 +87,10 @@ function TopBar() {
   return (
     <div className="w-full bg-blue-900 text-white text-xs py-2 flex items-center justify-center gap-4 pr-4">
       <div className="flex items-center gap-2">
-        <Truck className="h-4 w-4 mr-1 inline-block" />
-        <span>Return Policy</span>
+        <Link href="/warranty" className="flex items-center gap-2">
+          <Truck className="h-4 w-4 mr-1 inline-block" />
+          <span>Warranty</span>
+        </Link>
       </div>
       <span className="hidden sm:inline-block h-4 border-l border-blue-700 mx-2" />
       <div className="flex items-center gap-1">
@@ -108,11 +110,21 @@ function TopBar() {
 }
 
 /* ----------------------------- Country picker ----------------------------- */
-type Country = { code: "NGN" | "GHA" | "GB"; label: string; flag: string };
+type Country = {
+  code: "NGN" | "GHA" | "GB";
+  label: string;
+  flag: string;
+  disabled?: boolean;
+};
 const COUNTRIES: Country[] = [
   { code: "NGN", label: "Nigeria", flag: "/images/flags/ng.png" },
-  { code: "GHA", label: "Ghana", flag: "/images/flags/gh.png" },
-  { code: "GB", label: "United Kingdom", flag: "/images/flags/uk.png" },
+  { code: "GHA", label: "Ghana", flag: "/images/flags/gh.png", disabled: true },
+  {
+    code: "GB",
+    label: "United Kingdom",
+    flag: "/images/flags/uk.png",
+    disabled: true,
+  },
 ];
 
 function CountrySelector() {
@@ -137,8 +149,14 @@ function CountrySelector() {
         {COUNTRIES.map((country) => (
           <DropdownMenuItem
             key={country.code}
-            onClick={() => setSelected(country)}
-            className="flex items-center gap-2"
+            onClick={() => !country.disabled && setSelected(country)}
+            className={[
+              "flex items-center gap-2",
+              country.disabled
+                ? "opacity-50 cursor-not-allowed"
+                : "cursor-pointer",
+            ].join(" ")}
+            aria-disabled={country.disabled ? true : undefined}
           >
             <img
               src={country.flag}

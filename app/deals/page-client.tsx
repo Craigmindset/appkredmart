@@ -3,6 +3,7 @@ import ProductsGrid from "@/components/products-grid";
 import DealsBanner from "@/components/deals-banner";
 import DealsAds from "@/components/deals-ads";
 import React from "react";
+import Chat from "@/components/Chat";
 // import { products } from "@/lib/products";
 import { useInfiniteProducts } from "@/lib/services/products/use-infinite-products";
 
@@ -43,6 +44,7 @@ const PageClient = () => {
           />
         </div>
       </div>
+      <Chat />
     </>
   );
 };

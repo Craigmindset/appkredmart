@@ -8,6 +8,7 @@ import { ChevronDown } from "lucide-react";
 import SiteHeader from "@/components/site-header";
 import { Suspense } from "react";
 import SiteFooter from "@/components/site-footer";
+import Chat from "@/components/Chat";
 import WhyUs from "@/components/why-us";
 import LoanFaq from "@/components/loan-faq";
 
@@ -238,6 +239,7 @@ export default function AccessLoanPage() {
       <LoanFaq />
       <hr className="my-0 border-t-1 border-white w-full" />
       <SiteFooter />
+      <Chat />
     </>
   );
 }
