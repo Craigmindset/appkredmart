@@ -208,8 +208,12 @@ export default function WalletPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="NGN">NGN (₦)</SelectItem>
-                <SelectItem value="GHA">GHA (₵)</SelectItem>
-                <SelectItem value="GB">GB (£)</SelectItem>
+                <SelectItem value="GHA" disabled>
+                  GHA (₵)
+                </SelectItem>
+                <SelectItem value="GB" disabled>
+                  GB (£)
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>

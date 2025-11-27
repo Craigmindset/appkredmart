@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/site-header";
 import Insurance, { insuranceOptions } from "./insurance";
 import { useGetShipment } from "@/lib/services/order/use-get-shipment";
+import { Product } from "@/lib/products";
 import { formatNaira } from "@/lib/currency";
 import { useCreateOrder } from "@/lib/services/order/use-create-order";
 import { useLandmarks } from "@/lib/services/site-settings/use-landmark";
@@ -203,9 +204,10 @@ export default function CheckoutPage() {
 
   /** Totals */
   const subtotal = getCartTotal;
-  const vat = subtotal * 0.075;
+  // VAT has been removed from the customer-facing summary; exclude it from calculations
+  const vat = 0;
   const delivery = shipmentPrice || 0;
-  const total = subtotal + vat + delivery + insurancePrice;
+  const total = subtotal + delivery + insurancePrice;
 
   /** BNPL math */
   const calculateBnplPayment = () => {
@@ -237,9 +239,28 @@ export default function CheckoutPage() {
 
   /** ------------------------ Payment flows ------------------------ */
   const processPaystackPayment = async () => {
+    // Map cart items to the API Product shape expected by the order service
+    const itemsForApi = cartItems.map((i) => ({
+      product: {
+        id: i.product.id,
+        name: i.product.name,
+        price: i.product.price,
+        image: i.product.image || (i.product.images?.[0] ?? "/placeholder.svg"),
+        images: i.product.images || (i.product.image ? [i.product.image] : []),
+        brand: (i.product as any).brand || "",
+        category: Array.isArray(i.product.category)
+          ? i.product.category[0]
+          : (i.product.category as any) || "",
+        description: i.product.description || "",
+        specs: i.product.specs || [],
+        label: (i.product as any).label,
+      } as Product,
+      quantity: i.quantity,
+    }));
+
     await createOrderAsync({
       user: guestInfo,
-      items: cartItems,
+      items: itemsForApi,
       paymentMethod: "PAYSTACK",
     }).then((response) => {
       if (response.redirect_url) {
@@ -259,15 +280,24 @@ export default function CheckoutPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: total,
-          duration: selectedBnplDuration,
-          customerInfo: guestInfo,
-          cartItems,
-          monthlyPayment: calculateBnplPayment(),
-          insurance: selectedInsurance
-            ? insuranceOptions.find((o) => o.id === selectedInsurance)
-            : null,
-        }),
+            amount: total,
+            duration: selectedBnplDuration,
+            customerInfo: guestInfo,
+            // Normalize cart items for the payment API
+            cartItems: cartItems.map((i) => ({
+              product: {
+                id: i.product.id,
+                name: i.product.name,
+                price: i.product.price,
+                image: i.product.image || (i.product.images?.[0] ?? "/placeholder.svg"),
+              },
+              quantity: i.quantity,
+            })),
+            monthlyPayment: calculateBnplPayment(),
+            insurance: selectedInsurance
+              ? insuranceOptions.find((o) => o.id === selectedInsurance)
+              : null,
+          }),
       });
       const data = await response.json();
       if (data.success) {
@@ -292,14 +322,22 @@ export default function CheckoutPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: total,
-          provider: selectedLoanProvider,
-          customerInfo: guestInfo,
-          cartItems,
-          insurance: selectedInsurance
-            ? insuranceOptions.find((o) => o.id === selectedInsurance)
-            : null,
-        }),
+            amount: total,
+            provider: selectedLoanProvider,
+            customerInfo: guestInfo,
+            cartItems: cartItems.map((i) => ({
+              product: {
+                id: i.product.id,
+                name: i.product.name,
+                price: i.product.price,
+                image: i.product.image || (i.product.images?.[0] ?? "/placeholder.svg"),
+              },
+              quantity: i.quantity,
+            })),
+            insurance: selectedInsurance
+              ? insuranceOptions.find((o) => o.id === selectedInsurance)
+              : null,
+          }),
       });
       const data = await response.json();
       if (data.success) {
@@ -362,10 +400,63 @@ export default function CheckoutPage() {
   }
 
   const handleGetShipment = async () => {
-    await getShipmentAsync({ user: guestInfo, items: cartItems }).then(
+    // Ensure we send a Product-shaped item to the shipment API
+    const itemsForShipment = cartItems.map((i) => ({
+      product: {
+        id: i.product.id,
+        name: i.product.name,
+        price: i.product.price,
+        image: i.product.image || (i.product.images?.[0] ?? "/placeholder.svg"),
+        images: i.product.images || (i.product.image ? [i.product.image] : []),
+        brand: (i.product as any).brand || "",
+        category: Array.isArray(i.product.category)
+          ? i.product.category[0]
+          : (i.product.category as any) || "",
+        description: i.product.description || "",
+        specs: i.product.specs || [],
+        label: (i.product as any).label,
+      } as Product,
+      quantity: i.quantity,
+    }));
+
+    await getShipmentAsync({ user: guestInfo, items: itemsForShipment }).then(
       (response) => {
         if (response) {
-          setCart(response.cart);
+          // Map the verified cart back into our store's CartItem shape (GetProductDto)
+          const mapped = response.cart.map((c: any) => ({
+            product: {
+              id: c.product.id,
+              name: c.product.name,
+              description: c.product.description || "",
+              sku: (c.product as any).sku || "",
+              category: [
+                typeof c.product.category === "string"
+                  ? c.product.category
+                  : Array.isArray(c.product.category)
+                  ? c.product.category[0]
+                  : "",
+              ],
+              brand: c.product.brand || "",
+              merchant: {
+                company: c.product.merchant?.company || "",
+                logo: c.product.merchant?.logo || "",
+              },
+              label: c.product.label,
+              specs: c.product.specs || [],
+              price: c.product.price || 0,
+              discount: (c.product as any).discount || 0,
+              markup: (c.product as any).markup || 0,
+              quantity: (c.product as any).quantity || 0,
+              status: (c.product as any).status || "Active",
+              images: c.product.images || (c.product.image ? [c.product.image] : []),
+              image: c.product.image || (c.product.images?.[0] ?? "/placeholder.svg"),
+              createdAt: c.product.createdAt,
+              updatedAt: c.product.updatedAt,
+            },
+            quantity: c.quantity,
+          }));
+
+          setCart(mapped);
           setShipmentPrice(response.deliveryPrice);
           setDeliveryFetched(true);
         }
@@ -1125,7 +1216,9 @@ function OrderSummary({
             </span>
           }
         />
+        {/*
         <Row label="VAT" value={money(vat)} />
+        */}
 
         {insurance && (
           <Row
