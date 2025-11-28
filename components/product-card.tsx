@@ -72,11 +72,25 @@ export default function ProductCard({
     setOpen(v);
 
     if (v) {
-      // Open modal and update URL with product slug
-      window.history.pushState(null, "", `?preview=${productSlug}`);
+      // Open modal and update URL with product slug while preserving other query params
+      const params = new URLSearchParams(window.location.search);
+      params.set("preview", productSlug);
+      const newSearch = params.toString();
+      window.history.pushState(
+        null,
+        "",
+        `${window.location.pathname}${newSearch ? `?${newSearch}` : ""}`
+      );
     } else {
-      // Close modal and remove query parameter
-      window.history.pushState(null, "", window.location.pathname);
+      // Close modal and remove only the preview query parameter (preserve others)
+      const params = new URLSearchParams(window.location.search);
+      params.delete("preview");
+      const newSearch = params.toString();
+      window.history.pushState(
+        null,
+        "",
+        `${window.location.pathname}${newSearch ? `?${newSearch}` : ""}`
+      );
       setAdded(false);
       setMainImg(product.images?.[0] ?? product.image ?? "/placeholder.svg");
     }

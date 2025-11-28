@@ -1,5 +1,6 @@
 "use client";
 import ProductCard from "@/components/product-card";
+import AdBannerMobile from "@/components/adbannerMobile";
 import { useEffect, useRef, useState } from "react";
 import { useGetProducts } from "@/lib/services/products/use-get-products";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -127,7 +128,7 @@ export const ProductDeals = () => {
             ? Array.from({ length: 6 }).map((_, index) => (
                 <div
                   key={index}
-                  className="snap-start shrink-0 basis-1/3 px-1 h-50 flex flex-col"//adjust product height on mobile view
+                  className="snap-start shrink-0 basis-1/3 px-1 h-50 flex flex-col" //adjust product height on mobile view
                 >
                   <Skeleton className="w-full h-full flex-1" />
                 </div>
@@ -135,13 +136,15 @@ export const ProductDeals = () => {
             : data?.data?.map((p: any) => (
                 <div
                   key={p.id}
-                  className="snap-start shrink-0 basis-1/3 px-1 h-50 flex flex-col"//adjust product height on mobile view
+                  className="snap-start shrink-0 basis-1/3 px-1 h-50 flex flex-col" //adjust product height on mobile view
                 >
                   <ProductCard product={p} />
                 </div>
               ))}
         </div>
         {/* Removed mobile page indicator and prev/next page buttons for cleaner navigation-only UI */}
+        {/* Mobile-only ad banner */}
+        <AdBannerMobile />
       </div>
 
       {/* DESKTOP/TABLET: keep grid + side page buttons */}

@@ -70,7 +70,9 @@ export default async function Page() {
       <HydrationBoundary state={dehydrate(queryClient)}>
         <ProductDeals />
       </HydrationBoundary>
-      <AdBanner />
+      <div className="hidden md:block">
+        <AdBanner />
+      </div>
       <ThreeColumnAd />
       <TestimonialGrid />
       <Newsletter />
