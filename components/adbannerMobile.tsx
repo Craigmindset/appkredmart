@@ -64,6 +64,20 @@ export default function AdBannerMobile({ cards }: { cards?: Card[] }) {
           </div>
         ))}
       </div>
+      {/* Full-width single ad row beneath the 2x2 grid */}
+      <div className="mt-3 w-full px-0">
+        <Link href="/deals" className="block w-full">
+          <div className="relative w-full h-44 overflow-hidden shadow-sm rounded-lg">
+            <Image
+              src="/images/display-ad.png"
+              alt="Kredmart Ad"
+              fill
+              className="object-cover w-full h-full"
+              sizes="100vw"
+            />
+          </div>
+        </Link>
+      </div>
     </div>
   );
 }
