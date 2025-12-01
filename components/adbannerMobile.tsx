@@ -13,7 +13,7 @@ type Card = {
 export default function AdBannerMobile({ cards }: { cards?: Card[] }) {
   const defaults: Card[] = [
     {
-      image: "/images/Galaxy_A52.jpg",
+      image: "/StoreBanner/shopnow.gif",
       label: "Smart Deals",
       href: "/deals",
     },
@@ -69,7 +69,7 @@ export default function AdBannerMobile({ cards }: { cards?: Card[] }) {
         <Link href="/deals" className="block w-full">
           <div className="relative w-full h-44 overflow-hidden shadow-sm rounded-lg">
             <Image
-              src="/images/display-ad.png"
+              src="/images/banner-ad.png"
               alt="Kredmart Ad"
               fill
               className="object-cover w-full h-full"

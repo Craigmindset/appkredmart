@@ -176,7 +176,7 @@ export default function ThreeColumnAd() {
         </div>
       </div>
       {/* Second row for mobile (Clear Speakers, VR Gaming) - stacked, no slider */}
-      <div className="flex flex-col gap-4 sm:hidden w-full mt-2">
+      <div className="hidden w-full mt-2">
         <div
           className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center w-full"
           style={{
