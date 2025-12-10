@@ -48,6 +48,7 @@ export default function WalletPage() {
   const { toast } = useToast();
   const { data, loading } = useUserWallet();
   const user = useAuth((s) => s.user);
+  const balance = data?.balance || 0;
 
   const currency = useWallet((s) => s.currency);
   const setCurrency = useWallet((s) => s.setCurrency);

@@ -13,24 +13,24 @@ type Card = {
 export default function AdBannerMobile({ cards }: { cards?: Card[] }) {
   const defaults: Card[] = [
     {
-      image: "/StoreBanner/shopnow.gif",
-      label: "Smart Deals",
-      href: "/deals",
+      image: "/images/refridge-ad.png",
+      label: "Refrigerators",
+      href: "/store/electronics?preview=scanfrost-sfl150-eco-chest-freezer-480ed941",
     },
     {
-      image: "/images/Galaxy_A52.jpg",
-      label: "Explore",
-      href: "/store",
+      image: "/images/washmachine-ad.png",
+      label: "Washing Machines",
+      href: "/store/electronics",
     },
     {
-      image: "/images/Galaxy_A52.jpg",
-      label: "New Arrivals",
-      href: "/new",
+      image: "/images/inverter-ad.png",
+      label: "Power Solutions",
+      href: "/store/electronics?preview=ecoflow-delta-pro-30c535e3",
     },
     {
-      image: "/images/Galaxy_A52.jpg",
-      label: "Top Picks",
-      href: "/top-picks",
+      image: "/images/aircondition-ad.png",
+      label: "Air Conditioners",
+      href: "/store/electronics",
     },
   ];
 
