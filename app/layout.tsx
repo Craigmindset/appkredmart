@@ -9,6 +9,9 @@ import { Toaster } from "@/components/ui/sonner";
 export const metadata: Metadata = {
   title: "KredMart",
   description: "financed ecommerce platform",
+  icons: {
+    icon: "/Kredmart Logo-04.png",
+  },
 };
 
 export default async function RootLayout({
