@@ -62,7 +62,7 @@ export default function ThreeColumnAd() {
       {/* First row for mobile (Airpods Pro, Apple Watch) - stacked, no slider */}
       <div className="flex flex-col gap-4 sm:hidden w-full">
         <div
-          className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center w-full cursor-pointer"
+          className="group rounded-2xl shadow-lg overflow-hidden flex items-center justify-center w-full cursor-pointer hidden"
           style={{
             maxWidth: "100vw",
             width: "100%",

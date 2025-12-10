@@ -118,7 +118,7 @@ export default function ProductCard({
     <>
       {/* Product tile - clickable to open preview modal */}
       <article
-        className="group relative rounded-lg border bg-card cursor-pointer"
+        className="group relative rounded-lg border bg-card cursor-pointer h-56 sm:h-64 flex flex-col"
         itemScope
         itemType="https://schema.org/Product"
         onClick={() => handleOpenChange(true)}
@@ -153,7 +153,7 @@ export default function ProductCard({
             alt={product.name}
             width={400}
             height={300}
-            className="h-24 w-full sm:h-36 md:h-44 rounded-t-lg object-contain" //responsible for product height
+            className="w-full h-28 sm:h-36 md:h-44 rounded-t-lg object-contain flex-shrink-0" // equalized image height
             itemProp="image"
           />
 
@@ -184,18 +184,19 @@ export default function ProductCard({
           </div>
         </div>
 
-        <div className="p-3">
+        <div className="p-3 flex-1 flex flex-col justify-between">
           <div className="text-xs text-muted-foreground" itemProp="brand">
             {product.brand}
           </div>
           <h3
-            className="font-medium text-xs md:text-xs break-words whitespace-normal text-black-500"
+            className="font-medium text-[11px] md:text-xs break-words whitespace-normal text-black-500 line-clamp-2 min-h-[2.5em]"
             itemProp="name"
+            style={{ overflowWrap: 'break-word' }}
           >
             {product.name}
           </h3>
           <div
-            className="mt-1 font-semibold text-blue-600 text-sm"
+            className="mt-1 font-semibold text-blue-600 text-sm truncate"
             itemProp="offers"
             itemScope
             itemType="https://schema.org/Offer"
