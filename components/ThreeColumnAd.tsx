@@ -128,8 +128,8 @@ export default function ThreeColumnAd() {
           aria-label="Go to Airpods in store"
         >
           <img
-            src="/StoreBanner/kredmart-1 (3).png"
-            alt="Airpods Pro"
+            src="/images/washing-machine.png"
+            alt="Washing Machine"
             style={{
               width: "100%",
               height: "100%",
@@ -145,8 +145,8 @@ export default function ThreeColumnAd() {
           style={{ width: 350, height: 250 }}
         >
           <img
-            src="/StoreBanner/kredmart-1 (2).png"
-            alt="Apple Watch"
+            src="/images/airconditioner.png"
+            alt="Air Conditioner"
             style={{
               width: "100%",
               height: "100%",
