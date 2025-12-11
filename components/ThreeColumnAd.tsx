@@ -162,8 +162,8 @@ export default function ThreeColumnAd() {
           style={{ width: 350, height: 250 }}
         >
           <img
-            src="/StoreBanner/kredmart-1 (1).png"
-            alt="Ad banner 3"
+            src="/images/laptop-ad.png"
+            alt="laptop"
             style={{
               width: "100%",
               height: "100%",
@@ -187,7 +187,7 @@ export default function ThreeColumnAd() {
           }}
         >
           <img
-            src="/StoreBanner/kredmart-img (2).png"
+            src="/images/power-ad.png"
             alt="Clear Speakers"
             style={{
               width: "100%",
@@ -232,7 +232,7 @@ export default function ThreeColumnAd() {
           style={{ width: 350, height: 250 }}
         >
           <img
-            src="/StoreBanner/kredmart-img (2).png"
+            src="/images/power-ad.png"
             alt="Clear Speakers"
             style={{
               width: "100%",
