@@ -249,7 +249,7 @@ export default function ThreeColumnAd() {
           style={{ width: 350, height: 250 }}
         >
           <img
-            src="/StoreBanner/kredmart-img (1).png"
+            src="/images/refrigerator.png"
             alt="Ad banner 5"
             style={{
               width: "100%",
@@ -266,8 +266,8 @@ export default function ThreeColumnAd() {
           style={{ width: 350, height: 250 }}
         >
           <img
-            src="/StoreBanner/kredmart-img (3).png"
-            alt="VR Gaming"
+            src="/images/top-sales.png"
+            alt="sales"
             style={{
               width: "100%",
               height: "100%",
