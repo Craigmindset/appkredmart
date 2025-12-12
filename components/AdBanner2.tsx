@@ -22,7 +22,7 @@ export default function AdBanner() {
     },
     {
       label: "SMART TV",
-      title: ["Clear", "SPEAKERS"],
+      title: ["4k", "Smart"],
       desc: "Amazing sound, deep bass, portable Bluetooth speakers for every occasion.",
       img: "/StoreBanner/TV Stand.png",
       cta: { href: "/store/electronics", text: "Shop Electronics " },
