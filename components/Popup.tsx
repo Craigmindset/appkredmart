@@ -27,7 +27,7 @@ export default function Popup() {
     >
       <div
         className="relative bg-white rounded-lg shadow-lg max-w-xs w-full p-0 md:max-w-md"
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         <button
           className="absolute top-2 right-2 text-gray-700 hover:text-red-500 text-3xl md:text-4xl font-bold bg-white/80 rounded-full w-10 h-10 flex items-center justify-center shadow-md border border-gray-200"

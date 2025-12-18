@@ -118,7 +118,7 @@ export default function ProductCard({
     <>
       {/* Product tile - clickable to open preview modal */}
       <article
-        className="group relative rounded-lg border bg-card cursor-pointer h-56 sm:h-64 flex flex-col"
+        className="group relative rounded-lg border bg-card cursor-pointer h-56 sm:h-64 md:h-72 lg:h-80 flex flex-col"
         itemScope
         itemType="https://schema.org/Product"
         onClick={() => handleOpenChange(true)}
@@ -191,7 +191,7 @@ export default function ProductCard({
           <h3
             className="font-medium text-[11px] md:text-xs break-words whitespace-normal text-black-500 line-clamp-2 min-h-[2.5em]"
             itemProp="name"
-            style={{ overflowWrap: 'break-word' }}
+            style={{ overflowWrap: "break-word" }}
           >
             {product.name}
           </h3>

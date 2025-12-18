@@ -3,7 +3,6 @@ import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
 import "./globals.css";
 
-
 import RootProviders from "@/components/providers";
 import { Toaster } from "@/components/ui/sonner";
 import Popup from "@/components/Popup";

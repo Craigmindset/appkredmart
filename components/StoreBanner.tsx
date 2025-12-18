@@ -48,7 +48,7 @@ export default function StoreBanner() {
   return (
     <div className="flex flex-col md:flex-row w-full max-w-7xl mx-auto gap-4 px-2 md:px-0 md:h-[400px] mb-0 pb-0">
       {/* LEFT: MAIN SLIDER (desktop unchanged) */}
-      <div className="relative w-full md:w-[85%] overflow-hidden bg-[#0b101a] h-[200px] md:h-[350px]">
+      <div className="relative w-full md:w-[85%] overflow-hidden bg-[#0b101a] h-[200px] md:h-[390px]">
         <Image
           src={sliderImages[current].src}
           alt={sliderImages[current].alt}
